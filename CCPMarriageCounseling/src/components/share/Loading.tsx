@@ -1,8 +1,17 @@
 import React, { useEffect, useRef } from "react";
-import { View, Animated, Image } from "react-native";
-import Logo from "./Logo";
+import { View, Animated, StyleProp, ViewStyle } from "react-native";
 
-const Loading = () => {
+interface LoadingProps {
+  size?: number;
+  color?: string;
+  style?: StyleProp<ViewStyle>;
+}
+
+const Loading: React.FC<LoadingProps> = ({
+  size = 100,
+  color = "#E83E8C",
+  style,
+}) => {
   const scaleValue = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -22,15 +31,21 @@ const Loading = () => {
     ).start();
   }, [scaleValue]);
 
+  const defaultContainerStyle: ViewStyle = {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "",
+  };
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" }}>
+    <View style={[defaultContainerStyle, style]}>
       <Animated.Image
         source={require("../../../assets/images/ccp-logo.png")}
         style={{
-          width: 100,
-          height: 100,
-          marginBottom: 20,
-          tintColor: "#E83E8C",
+          width: size,
+          height: size,
+          tintColor: color,
           transform: [{ scale: scaleValue }],
         }}
       />

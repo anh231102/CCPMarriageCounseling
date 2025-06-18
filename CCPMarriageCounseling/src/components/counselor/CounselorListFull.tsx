@@ -25,7 +25,14 @@ const CounselorListFull = ({ data, searchQuery }: Props) => {
         <Image source={{ uri: item.avatar || "https://via.placeholder.com/100" }} className="w-20 h-20 rounded-full" />
         <View className="flex-1 ml-4">
           <Text className="text-secondary-dark font-bold text-base">{item.fullname}</Text>
-          <Text className="text-secondary mb-1">{item.subCategories.map((cat) => cat.name).join(", ")}</Text>
+          <Text
+            className="text-secondary mb-1"
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {item.subCategories.map((cat) => cat.name).join(", ")}
+          </Text>
+
           <Text className="text-secondary text-sm mb-2">{item.yearOfJob} năm kinh nghiệm</Text>
 
           <View className="flex-row items-center">
@@ -37,7 +44,7 @@ const CounselorListFull = ({ data, searchQuery }: Props) => {
       </View>
 
       <View className="flex-row justify-between items-center mt-3 pt-3 border-t border-gray-100">
-        <Text className="text-primary font-bold">{`${item.price.toLocaleString("vi-VN")}đ/buổi`}</Text>
+        <Text className="text-primary font-bold">{`${item.price.toLocaleString("vi-VN")}đ/50 phút`}</Text>
         <TouchableOpacity
           onPress={() => {
             if (item.isBookingAvailible) {

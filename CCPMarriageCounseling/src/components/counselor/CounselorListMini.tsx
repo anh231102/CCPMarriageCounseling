@@ -18,14 +18,14 @@ const CounselorListMini = ({ data }: Props) => {
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <TouchableOpacity
-  onPress={() =>
-    navigation.navigate("CounselorsTab", {
-      screen: "CounselorDetail",
-      params: { counselor: item },
-    })
-  }
-  className="mr-4 bg-white rounded-lg shadow-sm p-3 w-40"
->
+          onPress={() =>
+            navigation.navigate("CounselorsTab", {
+              screen: "CounselorDetail",
+              params: { counselor: item },
+            })
+          }
+          className="mr-4 bg-white rounded-lg shadow-sm p-3 w-40"
+        >
 
           <Image
             source={{ uri: item.avatar || "https://via.placeholder.com/100" }}
@@ -33,7 +33,10 @@ const CounselorListMini = ({ data }: Props) => {
           />
           <Text className="text-secondary-dark font-bold text-center">{item.fullname}</Text>
           <Text className="text-secondary text-xs text-center">
-            {item.subCategories.map((cat) => cat.name).join(", ")}
+            {item.subCategories.length > 2
+              ? item.subCategories.slice(0, 2).map((cat) => cat.name).join(", ") + "..."
+              : item.subCategories.map((cat) => cat.name).join(", ")}
+
           </Text>
           <View className="flex-row items-center justify-center mt-2">
             <Text className="text-warning font-bold">★</Text>

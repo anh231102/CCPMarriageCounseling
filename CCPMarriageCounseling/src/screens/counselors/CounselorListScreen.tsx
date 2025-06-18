@@ -9,8 +9,8 @@ import {
   ActivityIndicator
 } from "react-native"
 import { useNavigation } from "@react-navigation/native"
-import { Search, Filter } from "lucide-react-native"
-
+import { Search, Filter, ArrowRight } from "lucide-react-native"
+import Loading from "@/src/components/share/Loading";
 import counselorApi from "@/src/config/api/counselor.api"
 import { Counselor } from "@/src/config/types/counselor.type"
 import CounselorListFull from "@/src/components/counselor/CounselorListFull"
@@ -55,14 +55,18 @@ const CounselorListScreen = () => {
 
       <TouchableOpacity
         onPress={() => navigation.navigate("AppointmentHistory")}
-        className="bg-primary/10 rounded-lg p-4 mb-6"
+        className="bg-primary/10 rounded-lg p-4 mb-6 border border-primary"
       >
-        <Text className="text-primary font-bold text-lg mb-2">Lịch sử tư vấn</Text>
-        <Text className="text-secondary-dark">Xem lại các buổi tư vấn đã đặt và đánh giá chuyên gia</Text>
+        <View className="flex-row items-center mb-2">
+          <Text className="text-primary font-bold text-lg ">Lịch sử tư vấn</Text>
+        <ArrowRight size={16} color="#E83E8C" className="ml-1" />
+        </View>
+        
+        <Text className="text-primary font-medium">Xem lại các buổi tư vấn đã đặt và đánh giá chuyên gia</Text>
       </TouchableOpacity>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#4F46E5" className="mt-10" />
+         <Loading size={60}/>
       ) : (
         <CounselorListFull data={counselors} searchQuery={searchQuery} />
       )}

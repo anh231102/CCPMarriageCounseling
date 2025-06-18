@@ -20,3 +20,28 @@ export interface CounselorResponse {
   data: Counselor[]
   error: string | null
 }
+
+export interface TimeSlot {
+  start: string
+  end: string
+}
+
+export interface DailyAvailableSchedule {
+  workDate: string
+  availableSlots: TimeSlot[]
+}
+
+
+
+export interface AvailableScheduleData {
+  counselorId: string
+  counselor: Counselor
+  subCategories: SubCategory[]
+  dailyAvailableSchedules: DailyAvailableSchedule[]
+}
+
+export interface AvailableScheduleResponse {
+  success: boolean
+  data: AvailableScheduleData
+  error: any
+}

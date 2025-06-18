@@ -8,6 +8,7 @@ import CounselorListMini from "@/src/components/counselor/CounselorListMini"
 import { useEffect, useState } from "react"
 import counselorApi from "@/src/config/api/counselor.api"
 import { Counselor } from "@/src/config/types/counselor.type"
+import Loading from "@/src/components/share/Loading"
 
 const HomeScreen = () => {
   const navigation = useNavigation<any>()
@@ -82,7 +83,7 @@ const HomeScreen = () => {
             <Text className="text-xs text-secondary">Khóa học</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Counselors")} className="items-center">
+          <TouchableOpacity onPress={() => navigation.navigate("CounselorsTab")} className="items-center">
             <View className="w-12 h-12 bg-success/20 rounded-full items-center justify-center mb-1">
               <Calendar size={20} color="#28A745" />
             </View>
@@ -106,7 +107,7 @@ const HomeScreen = () => {
         </View>
 
         {loading ? (
-          <ActivityIndicator size="small" color="#4F46E5" />
+          <Loading size={30} />
         ) : (
           <CounselorListMini data={counselors} />
         )}
