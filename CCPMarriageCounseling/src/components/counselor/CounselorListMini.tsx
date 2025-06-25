@@ -40,7 +40,10 @@ const CounselorListMini = ({ data }: Props) => {
           </Text>
           <View className="flex-row items-center justify-center mt-2">
             <Text className="text-warning font-bold">★</Text>
-            <Text className="text-secondary-dark ml-1">{item.rating}</Text>
+            <Text className="text-secondary-dark ml-1 mr-1">
+              {item.rating ? (Math.round(item.rating * 10) / 10).toFixed(1) : "0.0"}
+            </Text>
+
           </View>
         </TouchableOpacity>
       )}

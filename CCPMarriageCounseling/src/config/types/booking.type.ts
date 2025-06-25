@@ -86,3 +86,61 @@ export const getBookingStatusLabel = (status: BookingStatus): string => {
       return "Không xác định"
   }
 }
+
+export interface RoomUrlResponse {
+  success: boolean
+  data: RoomUrlData
+  error: string | null
+}
+
+export interface RoomUrlData {
+  joinUrl: string
+  roomName: string
+  userName: string
+}
+
+export interface CancelBookingResponse {
+  success: boolean
+  data: string
+  error: string | null
+}
+export interface ReportBookingRequest {
+  bookingId: string
+  reportMessage: string
+}
+
+export interface ReportBookingResponse {
+  success: boolean
+  data: string
+  error: string | null
+}
+
+export interface RatingBookingRequest {
+  bookingId: string
+  rating: number
+  feedback: string
+}
+
+export interface RatingBookingResponse {
+  success: boolean
+  data: string
+  error: string | null
+}
+export interface FeedbackForCounselor {
+  rating: number
+  feedback: string
+  timeEnd: string
+  memberFullName: string
+}
+
+export interface FeedbackForCounselorResponse {
+  success: boolean
+  data: FeedbackForCounselor[]
+  error: string | null
+}
+
+export interface BookingDiscountResponse {
+  success: boolean
+  data: number 
+  error: string | null
+}

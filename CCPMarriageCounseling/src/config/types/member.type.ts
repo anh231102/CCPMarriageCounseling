@@ -14,3 +14,23 @@ export interface Member {
   rec2: string | null
   status: number
 }
+
+export interface MemberProfileResponse {
+  success: boolean
+  data: Partial<Member>
+  error: string | null
+}
+
+export interface UpdateMemberProfileRequest {
+  fullname: string
+  avatar: string
+  phone: string
+  dob: string
+  gender: string
+}
+
+export interface UpdateMemberProfileResponse {
+  success: boolean
+  data: string
+  error: string | null
+}

@@ -18,6 +18,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { ArrowLeft, Eye, EyeOff, Mail, User, Lock } from "lucide-react-native"
 import { useAuth } from "../../hooks/useAuth"
 import Logo from "@/src/components/share/Logo" 
+import Loading from "@/src/components/share/Loading"
 
 type AuthStackParamList = {
   Login: undefined
@@ -160,7 +161,7 @@ const RegisterScreen = () => {
             className={`rounded-xl p-4 items-center ${isLoading ? "bg-primary-light" : "bg-primary"}`}
           >
             {isLoading ? (
-              <ActivityIndicator color="white" />
+              <Loading color="#FFFFFF" size={30}/>
             ) : (
               <Text className="text-white font-bold text-lg">Đăng ký</Text>
             )}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   View,
   Text,
@@ -37,15 +37,20 @@ const AppointmentConfirmationScreen = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [confirmModalVisible, setConfirmModalVisible] = useState(false)
   const [selectedSubCategories, setSelectedSubCategories] = useState<SubCategory[]>([])
+  const [discountPercent, setDiscountPercent] = useState<number>(0)
 
   const toggleSubCategory = (sub: SubCategory) => {
-    const exists = selectedSubCategories.find((s) => s.id === sub.id)
-    if (exists) {
-      setSelectedSubCategories((prev) => prev.filter((s) => s.id !== sub.id))
-    } else {
-      setSelectedSubCategories((prev) => [...prev, sub])
-    }
+    setSelectedSubCategories((prev) => {
+      const exists = prev.find((s) => s.id === sub.id)
+      if (exists) {
+        return prev.filter((s) => s.id !== sub.id)
+      } else {
+        return [...prev, sub]
+      }
+    })
   }
+
+
 
   const isSelected = (sub: SubCategory) =>
     selectedSubCategories.some((s) => s.id === sub.id)
@@ -69,6 +74,23 @@ const AppointmentConfirmationScreen = () => {
     const ss = String(date.getSeconds()).padStart(2, "0")
     return `${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}`
   }
+
+  const originalPrice = appointmentInfo.totalPrice
+  const discountAmount = Math.round((originalPrice * discountPercent) / 100)
+  const finalPrice = originalPrice - discountAmount
+
+  useEffect(() => {
+    const fetchDiscount = async () => {
+      try {
+        const percent = await bookingApi.getMyBookingDiscount()
+        setDiscountPercent(percent)
+      } catch (error) {
+        console.error("Không thể lấy mức giảm giá:", error)
+      }
+    }
+
+    fetchDiscount()
+  }, [])
 
   const onConfirmBooking = async () => {
     setIsLoading(true)
@@ -103,8 +125,6 @@ const AppointmentConfirmationScreen = () => {
             })
         }]
       )
-
-
     } catch (error: any) {
       setIsLoading(false)
       setConfirmModalVisible(false)
@@ -208,11 +228,13 @@ const AppointmentConfirmationScreen = () => {
           </TouchableOpacity>
 
           <View className="flex-row flex-wrap">
-            {selectedSubCategories.map((sub) => (
+            {[...new Map(selectedSubCategories.map(sub => [sub.id, sub])).values()].map((sub) => (
               <View key={sub.id} className="bg-primary/10 rounded-full px-3 py-1 mr-2 mb-2">
                 <Text className="text-primary">{sub.name}</Text>
               </View>
             ))}
+
+
           </View>
 
           {/* Modal */}
@@ -255,14 +277,27 @@ const AppointmentConfirmationScreen = () => {
 
         {/* Tổng thanh toán */}
         <View className="bg-white rounded-lg p-4 shadow-sm mb-6">
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-lg font-bold text-secondary-dark">Tổng thanh toán</Text>
-            <Text className="text-primary font-bold text-lg">
-              {Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(appointmentInfo.totalPrice)}
-            </Text>
+          <View className="mb-3">
+            <View className="flex-row justify-between items-center mb-1">
+              <Text className="text-secondary-dark">Giá gốc</Text>
+              <Text className="text-secondary-dark">
+                {Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(originalPrice)}
+              </Text>
+            </View>
+
+            <View className="flex-row justify-between items-center mb-1">
+              <Text className="text-secondary-dark">Giảm giá ({discountPercent}%)</Text>
+              <Text className="text-green-600">
+                -{Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(discountAmount)}
+              </Text>
+            </View>
+
+            <View className="flex-row justify-between items-center mt-2">
+              <Text className="text-lg font-bold text-secondary-dark">Tổng thanh toán</Text>
+              <Text className="text-primary font-bold text-lg">
+                {Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(finalPrice)}
+              </Text>
+            </View>
           </View>
 
           <View className="flex-row items-center mb-3">
@@ -295,11 +330,9 @@ const AppointmentConfirmationScreen = () => {
         animationType="fade"
         onRequestClose={() => setConfirmModalVisible(false)}
       >
-        {/* MÀN MỜ NỀN */}
         <View className="flex-1 bg-black/40 justify-center items-center">
-          {/* BILL */}
           <View className="bg-white w-[90%] rounded-2xl p-6 shadow-2xl border border-white">
-            <Text className="text-2xl font-bold text-center text-pink-700 mb-4"> Xác nhận đặt lịch</Text>
+            <Text className="text-2xl font-bold text-center text-pink-700 mb-4">Xác nhận đặt lịch</Text>
 
             <View className="border-t border-pink-200 mb-4" />
 
@@ -337,30 +370,46 @@ const AppointmentConfirmationScreen = () => {
               <Text className="text-sm text-pink-500 mb-1">💡 Lĩnh vực quan tâm</Text>
               {selectedSubCategories.length > 0 ? (
                 <View className="flex-row flex-wrap">
-                  {selectedSubCategories.map((s) => (
-                    <View key={s.id} className="bg-pink-100 rounded-full px-3 py-1 mr-2 mb-2">
-                      <Text className="text-base text-pink-700">{s.name}</Text>
+                  {[...new Map(selectedSubCategories.map(sub => [sub.id, sub])).values()].map((sub) => (
+                    <View key={sub.id} className="bg-primary/10 rounded-full px-3 py-1 mr-2 mb-2">
+                      <Text className="text-primary">{sub.name}</Text>
                     </View>
                   ))}
+
+
                 </View>
               ) : (
                 <Text className="ml-2 text-base text-gray-400">Không chọn</Text>
               )}
             </View>
 
-            <View className="border-t border-pink-200 mt-4 mb-3" />
+            <View className="border-t border-pink-200 mb-4" />
 
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-lg font-bold text-pink-700"> Tổng thanh toán</Text>
-              <Text className="text-lg font-bold text-pink-600">
-                {Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(appointmentInfo.totalPrice)}
-              </Text>
+            {/* ... Giữ các phần chuyên gia, ngày, giờ, ghi chú như cũ ... */}
+
+            <View className="mb-4">
+              <View className="flex-row justify-between mb-1">
+                <Text className="text-sm text-pink-500">Giá gốc</Text>
+                <Text className="text-sm text-pink-700">
+                  {Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(originalPrice)}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between mb-1">
+                <Text className="text-sm text-pink-500">Giảm giá ({discountPercent}%)</Text>
+                <Text className="text-sm text-green-600">
+                  -{Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(discountAmount)}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between items-center mt-1">
+                <Text className="text-lg font-bold text-pink-700">Tổng thanh toán</Text>
+                <Text className="text-lg font-bold text-pink-600">
+                  {Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(finalPrice)}
+                </Text>
+              </View>
             </View>
 
-            {/* Buttons */}
             <View className="flex-row justify-end">
               <TouchableOpacity
                 className="px-4 py-2 mr-2"
@@ -378,13 +427,9 @@ const AppointmentConfirmationScreen = () => {
                   <Text className="text-white font-semibold">Xác nhận</Text>
                 )}
               </TouchableOpacity>
-
-
-
             </View>
           </View>
         </View>
-
       </Modal>
 
 

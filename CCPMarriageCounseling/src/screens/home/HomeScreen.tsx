@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import counselorApi from "@/src/config/api/counselor.api"
 import { Counselor } from "@/src/config/types/counselor.type"
 import Loading from "@/src/components/share/Loading"
+import MyProfileComponent from "@/src/components/share/MyProfileComponent"
 
 const HomeScreen = () => {
   const navigation = useNavigation<any>()
@@ -54,7 +55,8 @@ const HomeScreen = () => {
         <View className="flex-row justify-between items-center">
           <View>
             <Text className="text-white text-lg font-medium">Xin chào,</Text>
-            <Text className="text-white text-xl font-bold">{user?.name || "Người dùng"}</Text>
+            <MyProfileComponent name />
+
           </View>
           <TouchableOpacity
             onPress={() => navigation.navigate("ProfileTab", { screen: "Notifications" })}

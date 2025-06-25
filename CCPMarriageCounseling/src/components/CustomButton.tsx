@@ -1,6 +1,7 @@
   "use client";
   import { TouchableOpacity, View, Text, ActivityIndicator } from "react-native"
   import { ReactNode } from "react"
+  import Loading from "./share/Loading";
 
   interface CustomButtonProps {
     onPress?: () => void
@@ -33,7 +34,7 @@
         disabled={disabled || isLoading}
         className={`${baseStyles} ${variantStyles[variant]} ${className} ${disabled || isLoading ? "opacity-50" : ""}`}
       >
-        {isLoading ? <ActivityIndicator color="#FFFFFF" /> : children}
+        {isLoading ? <Loading  size={30} color="#FFFFFF" /> : <Text className="text-white font-bold text-lg">{children}</Text>}
       </TouchableOpacity>
     )
   }

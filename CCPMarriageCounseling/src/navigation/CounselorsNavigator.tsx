@@ -5,6 +5,8 @@ import BookAppointmentScreen from "../screens/counselors/BookAppointmentScreen"
 import AppointmentConfirmationScreen from "../screens/counselors/AppointmentConfirmationScreen"
 import AppointmentHistoryScreen from "../screens/counselors/AppointmentHistoryScreen"
 import RateAppointmentScreen from "../screens/counselors/RateAppointmentScreen"
+import VideoCallScreen from "../screens/counselors/VideoCallScreen"
+import ReportAppointmentScreen from "../screens/counselors/ReportAppointmentScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -33,6 +35,14 @@ const CounselorsNavigator = () => {
         component={RateAppointmentScreen}
         options={{ title: "Đánh giá buổi tư vấn" }}
       />
+      <Stack.Screen
+        name="VideoCall"
+        component={VideoCallScreen}
+        options={{ title: "Gọi tư vấn" }}
+      />
+      <Stack.Screen name="ReportAppointment" component={ReportAppointmentScreen} />
+
+
     </Stack.Navigator>
   )
 }

@@ -17,9 +17,9 @@ export const AuthContext = createContext<IAuthContext>({
   isAuth: false,
   isLoading: false,
   user: null,
-  login: async () => {},
-  register: async () => {},
-  logout: () => {},
+  login: async () => { },
+  register: async () => { },
+  logout: () => { },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -35,6 +35,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           const decoded: DecodedToken = jwtDecode(token);
+
+          const now = Date.now() / 1000; // Giờ hiện tại (đơn vị giây)
+          if (decoded.exp && decoded.exp < now) {
+            // Token hết hạn
+            console.log("Token đã hết hạn");
+            await AsyncStorage.removeItem("access-token");
+            logout(); // <- Tự động logout
+            return;
+          }
+
           const userData: User = {
             id: decoded.memberId,
             name: decoded.sub,
@@ -44,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(userData);
           setIsAuth(true);
         } catch (e) {
-          console.error("Token lỗi", e);
+          console.error("Token lỗi:", e);
           await AsyncStorage.removeItem("access-token");
           logout();
         }
@@ -53,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     checkToken();
   }, []);
+
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -70,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData);
       setIsAuth(true);
 
-      console.log("Đăng nhập thành công. Token:", token);
+
     } catch (err) {
       console.error("Lỗi đăng nhập:", err);
       logout();
@@ -102,6 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await AsyncStorage.removeItem("access-token");
     setUser(null);
     setIsAuth(false);
+    setIsLoading(false); 
   };
 
   return (

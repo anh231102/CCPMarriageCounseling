@@ -37,7 +37,10 @@ const CounselorListFull = ({ data, searchQuery }: Props) => {
 
           <View className="flex-row items-center">
             <Star size={14} color="#FFC107" fill="#FFC107" />
-            <Text className="text-secondary-dark ml-1 mr-1">{item.rating}</Text>
+            <Text className="text-secondary-dark ml-1 mr-1">
+              {item.rating ? (Math.round(item.rating * 10) / 10).toFixed(1) : "0.0"}
+            </Text>
+
             <Text className="text-secondary text-xs">({item.reviews} đánh giá)</Text>
           </View>
         </View>

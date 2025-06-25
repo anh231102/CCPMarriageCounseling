@@ -20,11 +20,17 @@
     },
     "web": {
       "bundler": "metro",
-      
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Cho phép ứng dụng CCP truy cập vào máy ảnh của bạn",
+          "microphonePermission": "Cho phép ứng dụng CCP truy cập vào micrô của bạn",
+          "recordAudioAndroid": true
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -33,7 +39,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

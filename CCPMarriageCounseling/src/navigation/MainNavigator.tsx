@@ -8,7 +8,7 @@ import HomeScreen from "@/src/screens/home/HomeScreen";
 import CounselorsNavigator from "./CounselorsNavigator"
  import ProfileNavigator from "./ProfileNavigator"
 // import HomeScreen from "../screens/Home"
-// import SurveyNavigator from "./SurveyNavigator"
+ import SurveyNavigator from "./SurveyNavigator"
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
@@ -34,7 +34,7 @@ const MainNavigator = () => {
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
-      {/* <Tab.Screen
+       <Tab.Screen
         name="SurveyTab"
         component={SurveyNavigator}
         options={{
@@ -42,7 +42,7 @@ const MainNavigator = () => {
           tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
         }}
       />
-      <Tab.Screen
+      {/*<Tab.Screen
         name="CoursesTab"
         component={CoursesNavigator}
         options={{

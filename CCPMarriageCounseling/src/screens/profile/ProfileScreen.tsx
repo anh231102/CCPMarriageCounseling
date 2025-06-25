@@ -15,6 +15,7 @@ import {
   BookOpen,
 } from "lucide-react-native"
 import { useAuth } from "../../hooks/useAuth"
+import MyProfileComponent from "@/src/components/share/MyProfileComponent"
 
 const ProfileScreen = () => {
   const navigation = useNavigation<any>()
@@ -31,26 +32,10 @@ const ProfileScreen = () => {
   return (
     <ScrollView className="flex-1 bg-gray-50">
       {/* Header */}
-      <View className="p-6 items-center">
-        <View className="relative">
-          <Image
-            source={{ uri: user?.avatar || "https://placeholder.svg?height=100&width=100" }}
-            className="w-24 h-24 rounded-full"
-          />
-          <TouchableOpacity
-            onPress={() => navigation.navigate("EditProfile")}
-            className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-sm"
-          >
-            <Edit size={16} color="#E83E8C" />
-          </TouchableOpacity>
-        </View>
-        <Text className="text-black text-xl font-bold mt-3">{user?.name || "Người dùng"}</Text>
-        <Text className="text-black opacity-80">{user?.email || "email@example.com"}</Text>
+      <View className="p-6">
+  <MyProfileComponent image name touchProfile />
+</View>
 
-        <View className="bg-white/20 px-3 py-1 rounded-full mt-2">
-          <Text className="text-black text-sm">Gói {user?.membershipType || "Cơ bản"}</Text>
-        </View>
-      </View>
 
       {/* Menu */}
       <View className="p-4">
@@ -69,6 +54,19 @@ const ProfileScreen = () => {
             <ChevronRight size={20} color="#6C757D" />
           </TouchableOpacity>
 
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Wallet")}
+            className="flex-row items-center p-4 border-b border-gray-100"
+          >
+            <View className="w-10 h-10 bg-info/10 rounded-full items-center justify-center mr-3">
+              <CreditCard size={20} color="#17A2B8" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-secondary-dark font-medium">Ví của tôi</Text>
+              <Text className="text-secondary text-sm">Quản lý ví của bạn</Text>
+            </View>
+            <ChevronRight size={20} color="#6C757D" />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("Membership")}
             className="flex-row items-center p-4 border-b border-gray-100"

@@ -5,6 +5,7 @@ import MembershipScreen from "../screens/profile/MembershipScreen"
 import CoupleConnectionScreen from "../screens/profile/CoupleConnectionScreen"
 import NotificationsScreen from "../screens/profile/NotificationsScreen"
 import SettingsScreen from "../screens/profile/SettingsScreen"
+import MyWalletScreen from "../screens/profile/MyWalletScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -17,6 +18,7 @@ const ProfileNavigator = () => {
       <Stack.Screen name="CoupleConnection" component={CoupleConnectionScreen} options={{ title: "Kết nối cặp đôi" }} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: "Thông báo" }} />
       <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: "Cài đặt" }} />
+      <Stack.Screen name="Wallet" component={MyWalletScreen} options={{ title: "Ví" }} />
     </Stack.Navigator>
   )
 }

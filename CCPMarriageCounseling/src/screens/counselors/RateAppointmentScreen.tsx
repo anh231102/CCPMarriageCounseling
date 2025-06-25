@@ -4,6 +4,8 @@ import { useState } from "react"
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, Image } from "react-native"
 import { useNavigation, useRoute } from "@react-navigation/native"
 import { Star } from "lucide-react-native"
+import bookingApi from "@/src/config/api/booking.api"
+
 
 const RateAppointmentScreen = () => {
   const navigation = useNavigation<any>()
@@ -14,34 +16,57 @@ const RateAppointmentScreen = () => {
   const [comment, setComment] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = () => {
-    if (rating === 0) {
-      Alert.alert("Thông báo", "Vui lòng chọn số sao đánh giá")
-      return
-    }
-
-    setIsLoading(true)
-
-    // Giả lập API call
-    setTimeout(() => {
-      setIsLoading(false)
-      Alert.alert("Thành công", "Cảm ơn bạn đã đánh giá buổi tư vấn!", [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.navigate("AppointmentHistory")
-          },
-        },
-      ])
-    }, 1500)
+  const handleSubmit = async () => {
+  if (rating === 0) {
+    Alert.alert("Thông báo", "Vui lòng chọn số sao đánh giá")
+    return
   }
+
+  Alert.alert(
+    "Xác nhận gửi đánh giá",
+    `Bạn đánh giá ${rating} sao với nhận xét:\n\n"${comment}"`,
+    [
+      {
+        text: "Hủy",
+        style: "cancel",
+      },
+      {
+        text: "Xác nhận",
+        onPress: async () => {
+          setIsLoading(true)
+          try {
+            await bookingApi.rateBooking({
+              bookingId: appointmentId,
+              rating: rating,
+              feedback: comment.trim(),
+            })
+
+            setIsLoading(false)
+            Alert.alert("Thành công", "Cảm ơn bạn đã đánh giá buổi tư vấn!", [
+              {
+                text: "OK",
+                onPress: () => {
+                  navigation.navigate("AppointmentHistory")
+                },
+              },
+            ])
+          } catch (error: any) {
+            setIsLoading(false)
+            Alert.alert("Lỗi", error.message || "Không thể gửi đánh giá.")
+          }
+        },
+      },
+    ]
+  )
+}
+
 
   return (
     <ScrollView className="flex-1 bg-gray-50">
       <View className="p-4">
         <View className="bg-white rounded-lg p-4 shadow-sm mb-4 items-center">
-          <Image source={{ uri: counselor.image }} className="w-20 h-20 rounded-full mb-2" />
-          <Text className="text-secondary-dark font-bold text-lg">{counselor.name}</Text>
+          <Image source={{ uri: counselor.avatar }} className="w-20 h-20 rounded-full mb-2" />
+          <Text className="text-secondary-dark font-bold text-lg">{counselor.fullname}</Text>
           <Text className="text-secondary">{counselor.specialty}</Text>
         </View>
 
