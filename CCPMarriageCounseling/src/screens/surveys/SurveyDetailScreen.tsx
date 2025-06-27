@@ -1,50 +1,43 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { View, Text, ScrollView, TouchableOpacity } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import { Clock, HelpCircle, Award, ArrowRight, ArrowLeft, Heart } from "lucide-react-native"
 
 import CustomButton from "../../components/CustomButton"
 import { useAuth } from "../../hooks/useAuth"
+import surveyApi from "@/src/config/api/survey.api"
+import type { Survey } from "@/src/config/types/survey.type"
 
 const SurveyDetailScreen = () => {
   const navigation = useNavigation<any>()
- 
+  const route = useRoute()
+  const { isAuth } = useAuth()
 
-  const surveyDetails = {
-    title: "Bộ khảo sát tổng hợp tính cách & mối quan hệ",
-    totalQuestions: 76,
-    totalTime: "30-40 phút",
-    sections: [
-      {
-        name: "MBTI - Myers-Briggs",
-        questions: 20,
-        time: "8-10 phút",
-        description: "Xác định loại tính cách Myers-Briggs của bạn và đối tác",
-      },
-      {
-        name: "DISC - Phong cách hành vi",
-        questions: 16,
-        time: "6-8 phút",
-        description: "Phân tích phong cách làm việc và giao tiếp",
-      },
-      {
-        name: "Love Languages - Ngôn ngữ tình yêu",
-        questions: 15,
-        time: "5-7 phút",
-        description: "Khám phá cách thể hiện và cảm nhận tình yêu",
-      },
-      {
-        name: "Big Five - Năm yếu tố tính cách",
-        questions: 25,
-        time: "10-12 phút",
-        description: "Đánh giá 5 khía cạnh chính của tính cách",
-      },
-    ],
-  }
+  const { selectedSurveyIds } = route.params as { selectedSurveyIds: string[] }
+
+  const [selectedSurveys, setSelectedSurveys] = useState<Survey[]>([])
+
+  useEffect(() => {
+    const fetchSelectedSurveys = async () => {
+      try {
+        const allSurveys = await surveyApi.getSurveys()
+        const filtered = allSurveys.filter((s) => selectedSurveyIds.includes(s.id))
+        setSelectedSurveys(filtered)
+      } catch (error) {
+        console.error("Không thể tải dữ liệu khảo sát", error)
+      }
+    }
+
+    fetchSelectedSurveys()
+  }, [selectedSurveyIds])
+
+  const totalQuestions = selectedSurveys.length * 25 // hoặc s.questions nếu có từ API
+  const totalTimeEstimate = "10 phút/ 1 bộ khảo sát" // bạn có thể tính động nếu cần
 
   const handleStartSurvey = () => {
-    navigation.navigate("SurveyOptions")
+    navigation.navigate("SurveyOptions", { selectedSurveyIds })
   }
 
   return (
@@ -58,51 +51,51 @@ const SurveyDetailScreen = () => {
             <View className="bg-white/20 rounded-full p-4 mb-3">
               <Heart size={32} color="#FFFFFF" />
             </View>
-            <Text className="text-white text-2xl font-bold text-center">{surveyDetails.title}</Text>
+            <Text className="text-white text-2xl font-bold text-center">Bộ khảo sát tổng hợp</Text>
             <Text className="text-white/90 text-center mt-2">
-              Đánh giá toàn diện tính cách và mối quan hệ qua 4 bài test chuẩn quốc tế
+              Đánh giá toàn diện tính cách và mối quan hệ qua {selectedSurveys.length} bài test
             </Text>
           </View>
         </View>
 
         <View className="p-6 -mt-6 bg-gray-50 rounded-t-3xl">
-          {/* Overview */}
+          {/* Tổng quan */}
           <View className="bg-white rounded-xl p-5 shadow-sm mb-6">
             <Text className="text-lg font-bold text-secondary-dark mb-4">Tổng quan</Text>
             <View className="flex-row justify-between items-center mb-4">
               <View className="flex-row items-center">
                 <Clock size={16} color="#6C757D" />
-                <Text className="text-secondary ml-1">{surveyDetails.totalTime}</Text>
+                <Text className="text-secondary ml-1">{totalTimeEstimate}</Text>
               </View>
               <View className="flex-row items-center">
                 <HelpCircle size={16} color="#6C757D" />
-                <Text className="text-secondary ml-1">{surveyDetails.totalQuestions} câu hỏi</Text>
+                <Text className="text-secondary ml-1">{totalQuestions} câu hỏi</Text>
               </View>
             </View>
             <Text className="text-secondary">
-              Bộ khảo sát này sẽ đánh giá toàn diện mối quan hệ của bạn qua 4 khía cạnh quan trọng. Kết quả sẽ được tổng
-              hợp thành một bản đồ tình yêu chi tiết với điểm tương thích tổng hợp.
+              Bộ khảo sát này sẽ đánh giá toàn diện mối quan hệ của bạn. Kết quả sẽ tổng hợp thành một bản đồ tình yêu
+              với phân tích và lời khuyên chi tiết.
             </Text>
           </View>
 
-          {/* Sections */}
+          {/* Các phần khảo sát */}
           <View className="bg-white rounded-xl p-5 shadow-sm mb-6">
             <Text className="text-lg font-bold text-secondary-dark mb-4">Các phần đánh giá</Text>
             <View className="space-y-4">
-              {surveyDetails.sections.map((section, index) => (
-                <View key={index} className="border-l-4 border-primary pl-4">
+              {selectedSurveys.map((section, index) => (
+                <View key={section.id} className="border-l-4 border-primary pl-4">
                   <View className="flex-row justify-between items-start mb-1">
                     <Text className="text-secondary-dark font-medium flex-1">{section.name}</Text>
-                    <Text className="text-secondary text-sm">{section.time}</Text>
+                    <Text className="text-secondary text-sm">~10 phút</Text>
                   </View>
-                  <Text className="text-secondary text-sm mb-1">{section.description}</Text>
-                  <Text className="text-secondary text-xs">{section.questions} câu hỏi</Text>
+                  <Text className="text-secondary text-sm mb-1">{section.descriptione}</Text>
+                  <Text className="text-secondary text-xs">25 câu hỏi</Text>
                 </View>
               ))}
             </View>
           </View>
 
-          {/* Benefits */}
+          {/* Kết quả bạn sẽ nhận được */}
           <View className="bg-white rounded-xl p-5 shadow-sm mb-6">
             <Text className="text-lg font-bold text-secondary-dark mb-4">Kết quả bạn sẽ nhận được</Text>
 
@@ -143,17 +136,17 @@ const SurveyDetailScreen = () => {
             </View>
           </View>
 
-          {/* Instructions */}
+          {/* Hướng dẫn */}
           <View className="bg-white rounded-xl p-5 shadow-sm mb-6">
             <Text className="text-lg font-bold text-secondary-dark mb-3">Hướng dẫn</Text>
             <View className="space-y-2">
               <View className="flex-row">
                 <Text className="text-secondary">•</Text>
-                <Text className="text-secondary ml-2">Bạn sẽ trả lời 4 phần khảo sát liên tiếp</Text>
+                <Text className="text-secondary ml-2">Bạn sẽ trả lời các phần khảo sát đã chọn</Text>
               </View>
               <View className="flex-row">
                 <Text className="text-secondary">•</Text>
-                <Text className="text-secondary ml-2">Hãy trả lời một cách trung thực và tự nhiên nhất</Text>
+                <Text className="text-secondary ml-2">Hãy trả lời một cách trung thực và tự nhiên</Text>
               </View>
               <View className="flex-row">
                 <Text className="text-secondary">•</Text>
@@ -162,16 +155,18 @@ const SurveyDetailScreen = () => {
               <View className="flex-row">
                 <Text className="text-secondary">•</Text>
                 <Text className="text-secondary ml-2">
-                  Chỉ khi hoàn thành cả 4 phần mới có bản đồ tình yêu cuối cùng
+                  Chỉ khi hoàn thành hết các phần mới có bản đồ tình yêu đầy đủ
                 </Text>
               </View>
             </View>
           </View>
 
+          {/* Bắt đầu khảo sát */}
           <CustomButton onPress={handleStartSurvey} variant="solid" className="rounded-xl mb-4">
             <Text className="text-white font-bold">Bắt đầu khảo sát tổng hợp</Text>
           </CustomButton>
 
+          {/* Xem ví dụ */}
           <TouchableOpacity
             onPress={() => navigation.navigate("LoveMap")}
             className="flex-row items-center justify-center"

@@ -1,68 +1,54 @@
 "use client"
 
-import { View, Text, ScrollView } from "react-native"
+import { useEffect, useState } from "react"
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { UserPlus, Heart, CheckCircle } from "lucide-react-native"
 
 import CustomButton from "../../components/CustomButton"
 import { useAuth } from "../../hooks/useAuth"
+import surveyApi from "@/src/config/api/survey.api"
+import type { Survey } from "@/src/config/types/survey.type"
 
 const SurveyListScreen = () => {
   const navigation = useNavigation<any>()
   const { isAuth } = useAuth()
+  const [surveys, setSurveys] = useState<Survey[]>([])
+  const [loading, setLoading] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
 
-  // Giả lập tiến trình khảo sát của người dùng
-  const userProgress = {
-    isCompleted: false, // Đã hoàn thành cả 4 phần chưa
-    completedSections: 0, // Số phần đã hoàn thành (0-4)
-    lastCompletedDate: null,
-  }
+  useEffect(() => {
+    fetchSurveys()
+  }, [])
 
-  const surveySections = [
-    {
-      id: "mbti",
-      title: "MBTI - Myers-Briggs",
-      description: "Khám phá 16 loại tính cách và cách bạn tương tác với thế giới",
-      icon: "🧠",
-      questions: 20,
-      time: "8-10 phút",
-    },
-    {
-      id: "disc",
-      title: "DISC - Phong cách hành vi",
-      description: "Phân tích phong cách làm việc và giao tiếp của bạn",
-      icon: "⚡",
-      questions: 16,
-      time: "6-8 phút",
-    },
-    {
-      id: "love-language",
-      title: "Love Languages - Ngôn ngữ tình yêu",
-      description: "Hiểu cách bạn và đối tác thể hiện và cảm nhận tình yêu",
-      icon: "💕",
-      questions: 15,
-      time: "5-7 phút",
-    },
-    {
-      id: "big-five",
-      title: "Big Five - Năm yếu tố tính cách",
-      description: "Đánh giá 5 khía cạnh chính của tính cách con người",
-      icon: "🌟",
-      questions: 25,
-      time: "10-12 phút",
-    },
-  ]
-
-  const handleStartAssessment = () => {
-    if (isAuth) {
-      navigation.navigate("SurveyDetail")
-    } else {
-      navigation.navigate("Auth", { screen: "Login" })
+  const fetchSurveys = async () => {
+    try {
+      setLoading(true)
+      const data = await surveyApi.getSurveys()
+      setSurveys(data)
+    } catch (error) {
+      Alert.alert("Lỗi", "Không thể tải danh sách khảo sát")
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleViewLoveMap = () => {
-    navigation.navigate("LoveMap")
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
+    )
+  }
+
+  const handleStartAssessment = () => {
+    if (isAuth) {
+      if (selectedIds.length === 0) {
+        Alert.alert("Thông báo", "Vui lòng chọn ít nhất một khảo sát để bắt đầu")
+        return
+      }
+      navigation.navigate("SurveyDetail", { selectedSurveyIds: selectedIds })
+    } else {
+      navigation.navigate("Auth", { screen: "Login" })
+    }
   }
 
   return (
@@ -88,7 +74,6 @@ const SurveyListScreen = () => {
           </View>
         )}
 
-        {/* Main Assessment Card */}
         <View className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <View className="items-center mb-6">
             <View className="bg-primary/10 rounded-full p-4 mb-3">
@@ -96,74 +81,43 @@ const SurveyListScreen = () => {
             </View>
             <Text className="text-2xl font-bold text-secondary-dark text-center">Bộ khảo sát tổng hợp</Text>
             <Text className="text-secondary text-center mt-2">
-              Hoàn thành 4 phần đánh giá để nhận bản đồ tình yêu chi tiết
+              Chọn các phần đánh giá phù hợp để bắt đầu khảo sát
             </Text>
           </View>
 
-          {/* Progress */}
-          {isAuth && (
-            <View className="mb-6">
-              <View className="flex-row justify-between items-center mb-2">
-                <Text className="text-secondary-dark font-medium">Tiến trình</Text>
-                <Text className="text-secondary">{userProgress.completedSections}/4 phần hoàn thành</Text>
-              </View>
-              <View className="h-2 bg-gray-200 rounded-full">
-                <View
-                  className="h-full bg-primary rounded-full"
-                  style={{ width: `${(userProgress.completedSections / 4) * 100}%` }}
-                />
-              </View>
-            </View>
-          )}
-
-          {/* Survey Sections */}
-          <View className="mb-6">
-            <Text className="text-lg font-bold text-secondary-dark mb-4">Các phần đánh giá</Text>
+          {/* Section list từ API */}
+          {loading ? (
+            <ActivityIndicator size="large" color="#E83E8C" className="my-6" />
+          ) : (
             <View className="space-y-3">
-              {surveySections.map((section, index) => (
-                <View key={section.id} className="flex-row items-center p-3 bg-gray-50 rounded-lg">
+              {surveys.map((survey) => (
+                <TouchableOpacity
+                  key={survey.id}
+                  onPress={() => toggleSelect(survey.id)}
+                  className={`flex-row items-center p-3 rounded-lg ${
+                    selectedIds.includes(survey.id) ? "bg-primary/10" : "bg-gray-50"
+                  }`}
+                >
                   <View className="bg-white rounded-full p-2 mr-3">
-                    <Text className="text-lg">{section.icon}</Text>
+                    <Text className="text-lg">📋</Text>
                   </View>
                   <View className="flex-1">
-                    <Text className="font-medium text-secondary-dark">{section.title}</Text>
-                    <Text className="text-secondary text-sm">{section.description}</Text>
-                    <Text className="text-secondary text-xs">
-                      {section.questions} câu hỏi • {section.time}
-                    </Text>
+                    <Text className="font-medium text-secondary-dark">{survey.name}</Text>
+                    <Text className="text-secondary text-sm">{survey.descriptione}</Text>
                   </View>
-                  {userProgress.completedSections > index && <CheckCircle size={20} color="#28A745" />}
-                </View>
+                  {selectedIds.includes(survey.id) && <CheckCircle size={20} color="#28A745" />}
+                </TouchableOpacity>
               ))}
             </View>
-          </View>
-
-          {/* Total Time */}
-          <View className="bg-primary/5 rounded-lg p-4 mb-6">
-            <View className="flex-row justify-between items-center">
-              <View>
-                <Text className="text-secondary-dark font-medium">Tổng thời gian</Text>
-                <Text className="text-secondary text-sm">Ước tính hoàn thành</Text>
-              </View>
-              <Text className="text-primary font-bold text-lg">30-40 phút</Text>
-            </View>
-          </View>
-
-          {/* Action Button */}
-          {userProgress.isCompleted ? (
-            <CustomButton onPress={handleViewLoveMap} className="bg-success">
-              <Text className="text-white font-bold text-center">Xem bản đồ tình yêu</Text>
-            </CustomButton>
-          ) : (
-            <CustomButton onPress={handleStartAssessment} className="bg-primary">
-              <Text className="text-white font-bold text-center">
-                {userProgress.completedSections > 0 ? "Tiếp tục khảo sát" : "Bắt đầu khảo sát"}
-              </Text>
-            </CustomButton>
           )}
-        </View>
 
-        {/* Benefits */}
+          {/* Start button */}
+          <CustomButton onPress={handleStartAssessment} className="bg-primary mt-6">
+            <Text className="text-white font-bold text-center">
+              {selectedIds.length > 0 ? "Tiếp tục khảo sát" : "Chọn khảo sát để bắt đầu"}
+            </Text>
+          </CustomButton>
+        </View>
         <View className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <Text className="text-lg font-bold text-secondary-dark mb-4">Lợi ích khi hoàn thành</Text>
           <View className="space-y-3">
