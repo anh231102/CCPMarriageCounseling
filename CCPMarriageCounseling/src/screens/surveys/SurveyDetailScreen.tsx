@@ -44,9 +44,7 @@ const SurveyDetailScreen = () => {
     <View className="flex-1 bg-gray-50">
       <ScrollView className="flex-1">
         <View className="bg-primary p-6">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
-            <ArrowLeft size={24} color="#FFFFFF" />
-          </TouchableOpacity>
+          
           <View className="items-center">
             <View className="bg-white/20 rounded-full p-4 mb-3">
               <Heart size={32} color="#FFFFFF" />

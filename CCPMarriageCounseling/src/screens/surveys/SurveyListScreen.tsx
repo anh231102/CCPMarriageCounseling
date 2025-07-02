@@ -9,6 +9,7 @@ import CustomButton from "../../components/CustomButton"
 import { useAuth } from "../../hooks/useAuth"
 import surveyApi from "@/src/config/api/survey.api"
 import type { Survey } from "@/src/config/types/survey.type"
+import Loading from "@/src/components/share/Loading"
 
 const SurveyListScreen = () => {
   const navigation = useNavigation<any>()
@@ -87,7 +88,7 @@ const SurveyListScreen = () => {
 
           {/* Section list từ API */}
           {loading ? (
-            <ActivityIndicator size="large" color="#E83E8C" className="my-6" />
+            <Loading size={30} />
           ) : (
             <View className="space-y-3">
               {surveys.map((survey) => (

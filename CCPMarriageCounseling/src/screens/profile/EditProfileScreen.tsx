@@ -17,6 +17,8 @@ import { useAuth } from "../../hooks/useAuth"
 import memberApi from "@/src/config/api/member.api"
 import { UpdateMemberProfileRequest } from "@/src/config/types/member.type"
 import * as ImagePicker from "expo-image-picker"
+import Loading from "@/src/components/share/Loading"
+import MyProfileComponent from "@/src/components/share/MyProfileComponent"
 
 
 const formatDateLocal = (date: Date): string => {
@@ -130,12 +132,7 @@ const EditProfileScreen = () => {
       <View className="p-4">
         <View className="items-center mb-6">
           <View className="relative">
-            <Image
-              source={{
-                uri: avatar || "https://hoseiki.vn/wp-content/uploads/2025/03/avatar-mac-dinh-4.jpg",
-              }}
-              className="w-24 h-24 rounded-full"
-            />
+            <MyProfileComponent image  />
             <TouchableOpacity
               onPress={handlePickAvatar}
               className="absolute bottom-0 right-0 bg-primary rounded-full p-2 shadow-sm"
@@ -213,7 +210,7 @@ const EditProfileScreen = () => {
           className={`rounded-lg p-4 items-center mb-6 ${isLoading ? "bg-primary-light" : "bg-primary"}`}
         >
           {isLoading ? (
-            <ActivityIndicator color="white" />
+            <Loading size={20} color="white"/>
           ) : (
             <Text className="text-white font-bold text-lg">Lưu thay đổi</Text>
           )}

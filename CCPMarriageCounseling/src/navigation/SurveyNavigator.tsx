@@ -8,6 +8,7 @@ import SurveyResultsScreen from "../screens/surveys/SurveyResultsScreen"
 import LoveMapScreen from "../screens/surveys/LoveMapScreen"
 import SurveySectionCompleteScreen from "@/src/components/survey/SurveySectionCompleteScreen"
 
+
 const Stack = createNativeStackNavigator()
 
 const SurveyNavigator = () => {
@@ -39,6 +40,7 @@ const SurveyNavigator = () => {
         component={SurveySectionCompleteScreen}
         options={{ title: "Hoàn thành khảo sát" }}
       />
+      
       <Stack.Screen name="SurveyResults" component={SurveyResultsScreen} options={{ title: "Kết quả khảo sát" }} />
       <Stack.Screen name="LoveMap" component={LoveMapScreen} options={{ title: "Bản đồ tình yêu" }} />
     </Stack.Navigator>

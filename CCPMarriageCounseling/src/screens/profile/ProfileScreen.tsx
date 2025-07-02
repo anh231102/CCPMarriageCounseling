@@ -41,7 +41,7 @@ const ProfileScreen = () => {
       <View className="p-4">
         <View className="bg-white rounded-lg shadow-sm mb-4">
           <TouchableOpacity
-            onPress={() => navigation.navigate("EditProfile")}
+            onPress={() => navigation.navigate("ViewProfile")}
             className="flex-row items-center p-4 border-b border-gray-100"
           >
             <View className="w-10 h-10 bg-primary/10 rounded-full items-center justify-center mr-3">
@@ -121,6 +121,20 @@ const ProfileScreen = () => {
             <View className="flex-1">
               <Text className="text-secondary-dark font-medium">Lịch sử tư vấn</Text>
               <Text className="text-secondary text-sm">Xem lịch sử các buổi tư vấn</Text>
+            </View>
+            <ChevronRight size={20} color="#6C757D" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate("PersonTypeHistory" )}
+            className="flex-row items-center p-4 border-b border-gray-100"
+          >
+            <View className="w-10 h-10 bg-info/10 rounded-full items-center justify-center mr-3">
+              <Calendar size={20} color="#17A2B8" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-secondary-dark font-medium">Lịch sử khảo sát</Text>
+              <Text className="text-secondary text-sm">Xem lịch sử các bài khảo sát</Text>
             </View>
             <ChevronRight size={20} color="#6C757D" />
           </TouchableOpacity>

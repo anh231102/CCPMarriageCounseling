@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity } from "react-native"
+// SurveySectionCompleteScreen.tsx
+import { View, Text, TouchableOpacity, Alert } from "react-native"
 import { useNavigation, useRoute } from "@react-navigation/native"
 
 const SurveySectionCompleteScreen = () => {
@@ -9,12 +10,13 @@ const SurveySectionCompleteScreen = () => {
     currentSurveyIndex,
     nextSurveyIndex,
     currentSurveyTitle,
-    answers,
+    resultText,
     userType,
     userData,
     isAuth,
   } = route.params
 
+  const completedSurveyIds = selectedSurveyIds.slice(0, currentSurveyIndex + 1)
   const nextSurveyExists = nextSurveyIndex < selectedSurveyIds.length
 
   const handleNext = () => {
@@ -23,17 +25,24 @@ const SurveySectionCompleteScreen = () => {
       currentSurveyIndex: nextSurveyIndex,
       userType,
       userData,
-      answers,
+      isAuth,
     })
   }
 
   const handleSubmit = () => {
+    if (completedSurveyIds.length === 0) {
+      Alert.alert("Thông báo", "Bạn chưa hoàn thành phần khảo sát nào.")
+      return
+    }
+
     navigation.navigate("SurveyResults", {
-      selectedSurveyIds,
-      userType,
-      userData,
-      answers,
-      isAuth,
+      results: {
+        surveyType: "all",
+        resultText,
+        userData: userData || { name: "Bạn", partnerName: "Đối tác" },
+        surveyIds: completedSurveyIds,
+      },
+      isAuthenticated: isAuth,
     })
   }
 
@@ -61,4 +70,4 @@ const SurveySectionCompleteScreen = () => {
   )
 }
 
-export default SurveySectionCompleteScreen
+export default SurveySectionCompleteScreen;

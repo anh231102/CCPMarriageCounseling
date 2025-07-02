@@ -1,3 +1,4 @@
+// SurveyQuestionsScreen.tsx
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -9,18 +10,14 @@ import {
   ScrollView,
   Alert,
   Animated,
-  ActivityIndicator,
 } from "react-native"
 import { ArrowLeft } from "lucide-react-native"
 import { useAuth } from "../../hooks/useAuth"
 import surveyApi from "@/src/config/api/survey.api"
 import type { Question, Survey } from "@/src/config/types/survey.type"
+import Loading from "@/src/components/share/Loading"
 
 const SurveyQuestionsScreen = () => {
-  // Nếu dùng createNativeStackNavigator thì khai báo ở nơi khác, hoặc import đúng
-  // import { createNativeStackNavigator } from '@react-navigation/native-stack'
-  // const Stack = createNativeStackNavigator()
-
   const navigation = useNavigation<any>()
   const route = useRoute<any>()
   const {
@@ -28,7 +25,6 @@ const SurveyQuestionsScreen = () => {
     userType,
     userData,
     currentSurveyIndex = 0,
-    answers: previousAnswers = {},
     isAuth,
   } = route.params
 
@@ -38,7 +34,7 @@ const SurveyQuestionsScreen = () => {
   const [questions, setQuestions] = useState<Question[]>([])
   const [surveyTitle, setSurveyTitle] = useState<string>("")
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, any>>(previousAnswers)
+  const [answers, setAnswers] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -74,7 +70,6 @@ const SurveyQuestionsScreen = () => {
     }).start()
   }, [currentQuestionIndex, totalQuestions])
 
-  // Hàm handleAnswer đã bổ sung gọi api giả lập khi hoàn thành survey hiện tại
   const handleAnswer = async (answerValue: any) => {
     const questionId = currentQuestion.id
     const updatedAnswers = {
@@ -86,31 +81,46 @@ const SurveyQuestionsScreen = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
     } else {
-      // Khi hoàn thành phần khảo sát hiện tại, gọi API giả lập (chỉ console.log)
       setLoading(true)
       try {
+        const groupedAnswers: Record<string, number> = {}
 
-        // Sau này bạn sẽ gọi API thật ở đây, ví dụ:
-        // await surveyApi.submitSurveyAnswers(currentSurveyId, updatedAnswers)
+        Object.values(updatedAnswers).forEach((ans: any) => {
+          if (ans.tag && typeof ans.score === "number") {
+            groupedAnswers[ans.tag] = (groupedAnswers[ans.tag] || 0) + ans.score
+          }
+        })
+
+        const formattedResult = {
+          surveyId: currentSurveyId,
+          answers: Object.entries(groupedAnswers).map(([tag, score]) => ({
+            tag,
+            score,
+          })),
+        }
+
+        const resultText = await surveyApi.postSurveyResult(formattedResult)
 
         const isLastSurvey = currentSurveyIndex >= selectedSurveyIds.length - 1
+
         if (isLastSurvey) {
           navigation.navigate("SurveyResults", {
             results: {
               surveyType: "all",
               answers: updatedAnswers,
+              resultText,
               userData: userData || { name: "Bạn", partnerName: "Đối tác" },
+              surveyIds: selectedSurveyIds,
             },
             isAuthenticated: isAuth ?? authState,
           })
-
         } else {
           navigation.replace("SurveySectionComplete", {
             selectedSurveyIds,
             currentSurveyIndex,
             nextSurveyIndex: currentSurveyIndex + 1,
             currentSurveyTitle: surveyTitle,
-            answers: updatedAnswers,
+            resultText,
             userType,
             userData,
             isAuth: isAuth ?? authState,
@@ -120,13 +130,15 @@ const SurveyQuestionsScreen = () => {
         Alert.alert("Lỗi", "Không thể lưu kết quả khảo sát. Vui lòng thử lại.")
       } finally {
         setLoading(false)
+        setAnswers({}) // ❌ Clear sau khi lưu kết quả
+        setCurrentQuestionIndex(0) // ❌ Reset index
       }
     }
   }
 
   const handleExit = () => {
-    Alert.alert("Thoát khảo sát", "Bạn có chắc chắn muốn thoát? Tiến trình sẽ không được lưu.", [
-      { text: "Hủy", style: "cancel" },
+    Alert.alert("Thoát khảo sát", "Bạn có chắc chắn muốn thoát?", [
+      { text: "Huỷ", style: "cancel" },
       {
         text: "Thoát",
         style: "destructive",
@@ -138,7 +150,7 @@ const SurveyQuestionsScreen = () => {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#E83E8C" />
+        <Loading size={50} />
         <Text className="text-secondary mt-3">Đang tải câu hỏi...</Text>
       </View>
     )
