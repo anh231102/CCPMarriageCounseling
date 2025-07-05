@@ -14,6 +14,12 @@ export interface Counselor {
   isBookingAvailible: boolean
   subCategories: SubCategory[]
 }
+export interface RecommendedCounselorResponse {
+  success: boolean
+  data: Counselor[]
+  error: string | null
+}
+
 
 export interface CounselorResponse {
   success: boolean

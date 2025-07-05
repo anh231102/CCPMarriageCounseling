@@ -1,10 +1,20 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, Image } from "react-native"
+import { useState, useEffect } from "react"
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  Image,
+} from "react-native"
 import { useNavigation } from "@react-navigation/native"
-import { Heart, Mail, Copy, RefreshCw, X } from "lucide-react-native"
+import { Heart, Mail, Copy, RefreshCw, X, Users } from "lucide-react-native"
 import { useAuth } from "../../hooks/useAuth"
+import coupleApi from "@/src/config/api/couple.api"
 
 const CoupleConnectionScreen = () => {
   const navigation = useNavigation<any>()
@@ -13,6 +23,7 @@ const CoupleConnectionScreen = () => {
   const [partnerEmail, setPartnerEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isConnected, setIsConnected] = useState(!!user?.partnerId)
+  const [inviteCode, setInviteCode] = useState<string | null>(null)
 
   // Giả lập dữ liệu đối tác
   const partnerData = user?.partnerId
@@ -25,6 +36,21 @@ const CoupleConnectionScreen = () => {
       }
     : null
 
+  useEffect(() => {
+    const fetchInviteCode = async () => {
+      try {
+        const result = await coupleApi.createCouple()
+        setInviteCode(result)
+      } catch (error) {
+        console.error("Lỗi khi tạo couple:", error)
+      }
+    }
+
+    if (!user?.partnerId) {
+      fetchInviteCode()
+    }
+  }, [user?.partnerId])
+
   const handleConnect = () => {
     if (!partnerEmail.trim()) {
       Alert.alert("Thông báo", "Vui lòng nhập email của đối tác")
@@ -36,7 +62,8 @@ const CoupleConnectionScreen = () => {
     // Giả lập API call
     setTimeout(() => {
       setIsLoading(false)
-      Alert.alert("Thành công", "Đã gửi lời mời kết nối đến đối tác của bạn")
+      setIsConnected(true)
+      Alert.alert("Thành công", "Đã kết nối với đối tác thành công!")
     }, 1500)
   }
 
@@ -63,6 +90,13 @@ const CoupleConnectionScreen = () => {
 
   const copyInviteCode = () => {
     Alert.alert("Thành công", "Đã sao chép mã mời vào bộ nhớ tạm")
+  }
+
+  const handleCreateSurveyRoom = () => {
+    navigation.navigate("CoupleSurveyRoom", {
+      partnerId: partnerData?.id,
+      partnerName: partnerData?.name,
+    })
   }
 
   return (
@@ -102,6 +136,19 @@ const CoupleConnectionScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
+              onPress={handleCreateSurveyRoom}
+              className="bg-gradient-to-r from-primary to-pink-500 rounded-lg p-4 items-center mb-3"
+            >
+              <View className="flex-row items-center mb-1">
+                <Users size={20} color="#FFFFFF" />
+                <Text className="text-white font-bold ml-2">Tạo phòng khảo sát cặp đôi</Text>
+              </View>
+              <Text className="text-white/80 text-sm text-center">
+                Cùng nhau làm khảo sát và tạo bản đồ tình yêu chi tiết
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               onPress={handleDisconnect}
               disabled={isLoading}
               className="flex-row items-center justify-center p-3"
@@ -134,7 +181,9 @@ const CoupleConnectionScreen = () => {
                   onPress={handleConnect}
                   disabled={isLoading || !user?.membershipType?.includes("Premium")}
                   className={`ml-2 rounded-lg p-3 items-center justify-center ${
-                    isLoading || !user?.membershipType?.includes("Premium") ? "bg-primary-light" : "bg-primary"
+                    isLoading || !user?.membershipType?.includes("Premium")
+                      ? "bg-primary-light"
+                      : "bg-primary"
                   }`}
                   style={{ width: 50 }}
                 >
@@ -147,7 +196,7 @@ const CoupleConnectionScreen = () => {
               <Text className="text-secondary-dark font-medium mb-2">Hoặc chia sẻ mã mời</Text>
               <View className="flex-row items-center">
                 <View className="flex-1 bg-white border border-gray-200 rounded-lg p-3">
-                  <Text className="text-secondary-dark text-center">COUPLE123456</Text>
+                  <Text className="text-secondary-dark text-center">{inviteCode ?? "Đang tạo mã..."}</Text>
                 </View>
                 <TouchableOpacity
                   onPress={copyInviteCode}

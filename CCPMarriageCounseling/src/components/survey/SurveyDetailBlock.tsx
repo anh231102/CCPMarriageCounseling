@@ -5,7 +5,9 @@ import personTypeApi from "@/src/config/api/persontype.api"
 import type { PersonType } from "@/src/config/types/persontype.type"
 import RenderHTML from "react-native-render-html"
 import Loading from "../share/Loading"
-import SurveyScores from "./SurveyScores" // Đường dẫn đến component bạn vừa tách
+import SurveyScores from "./SurveyScores" 
+import HTMLViewer from "../share/HTMLViewer"
+
 
 const SURVEY_META: Record<
   string,
@@ -68,35 +70,39 @@ const SurveyDetailBlock = ({ id }: { id: string }) => {
   if (!data) return null
 
   return (
-    <View className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-      {/* Header */}
-      <View className="flex-row items-center mb-4">
-        <View
-          className="bg-primary/10 rounded-full p-3 mr-3"
-          style={{ backgroundColor: `${meta.color}20` }}
-        >
-          {meta.icon}
-        </View>
-        <Text className="text-xl font-bold text-secondary-dark">{meta.title}</Text>
-      </View>
-
-      {/* Name + Description */}
-      <View className="mb-3">
-        <Text className="text-lg font-semibold text-primary">{data.name}</Text>
-        <Text className="text-secondary-dark mb-2">{data.description}</Text>
-
-        {/* Scores */}
-        <View className="mt-4">
-          <SurveyScores scores={data.scores} surveyId={id} />
+    <View>
+      <View className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+        {/* Header */}
+        <View className="flex-row items-center mb-4">
+          <View
+            className="bg-primary/10 rounded-full p-3 mr-3"
+            style={{ backgroundColor: `${meta.color}20` }}
+          >
+            {meta.icon}
+          </View>
+          <Text className="text-xl font-bold text-secondary-dark">{meta.title}</Text>
         </View>
 
-        {/* Detail HTML */}
-        <RenderHTML
-          contentWidth={width}
-          source={{ html: `<div>${data.detail}</div>` }}
-          baseStyle={{ color: "#343a40", fontSize: 14 }}
-        />
+        {/* Name + Description */}
+        <View className="mb-3">
+          <Text className="text-lg font-semibold text-primary">{data.name}</Text>
+          <Text className="text-secondary-dark mb-2">{data.description}</Text>
+
+          {/* Scores */}
+          <View className="mt-4">
+            <SurveyScores scores={data.scores} surveyId={id} />
+          </View>
+
+          {/* Detail HTML */}
+          {/* <RenderHTML
+            contentWidth={width}
+            source={{ html: `<div>${data.detail}</div>` }}
+            baseStyle={{ color: "#343a40", fontSize: 14 }}
+          /> */}
+           <HTMLViewer htmlContent={data.detail} />
+        </View>
       </View>
+      
     </View>
   )
 }

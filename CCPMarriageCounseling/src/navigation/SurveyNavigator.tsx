@@ -7,6 +7,8 @@ import SurveyQuestionsScreen from "../screens/surveys/SurveyQuestionsScreen"
 import SurveyResultsScreen from "../screens/surveys/SurveyResultsScreen"
 import LoveMapScreen from "../screens/surveys/LoveMapScreen"
 import SurveySectionCompleteScreen from "@/src/components/survey/SurveySectionCompleteScreen"
+import CoupleConnectionScreen from "../screens/profile/CoupleConnectionScreen"
+import CoupleSurveyRoomScreen from "../screens/profile/CoupleSurveyRoomScreen"
 
 
 const Stack = createNativeStackNavigator()
@@ -43,6 +45,8 @@ const SurveyNavigator = () => {
       
       <Stack.Screen name="SurveyResults" component={SurveyResultsScreen} options={{ title: "Kết quả khảo sát" }} />
       <Stack.Screen name="LoveMap" component={LoveMapScreen} options={{ title: "Bản đồ tình yêu" }} />
+      <Stack.Screen name="CoupleConnection" component={CoupleConnectionScreen} options={{ title: "Kết nối cặp đôi" }} />
+      <Stack.Screen name="CoupleSurveyRoom" component={CoupleSurveyRoomScreen} options={{ title: "Phòng khảo sát cặp đôi" }} />
     </Stack.Navigator>
   )
 }
