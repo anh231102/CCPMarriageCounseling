@@ -55,8 +55,8 @@ const SurveyOptionsScreen = () => {
     })
   }
 
-  const handleConnectPartner = () => {
-    navigation.navigate("CoupleSurveyRoom")
+    const handleConnectPartner = () => {
+    navigation.navigate("CoupleConnection", { selectedSurveyIds })
   }
 
   return (

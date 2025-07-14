@@ -7,8 +7,8 @@ import SurveyQuestionsScreen from "../screens/surveys/SurveyQuestionsScreen"
 import SurveyResultsScreen from "../screens/surveys/SurveyResultsScreen"
 import LoveMapScreen from "../screens/surveys/LoveMapScreen"
 import SurveySectionCompleteScreen from "@/src/components/survey/SurveySectionCompleteScreen"
-import CoupleConnectionScreen from "../screens/profile/CoupleConnectionScreen"
-import CoupleSurveyRoomScreen from "../screens/profile/CoupleSurveyRoomScreen"
+import CoupleConnectionScreen from "../screens/couple/CoupleConnectionScreen"
+import CoupleSurveyRoomScreen from "../screens/couple/CoupleSurveyRoomScreen"
 
 
 const Stack = createNativeStackNavigator()

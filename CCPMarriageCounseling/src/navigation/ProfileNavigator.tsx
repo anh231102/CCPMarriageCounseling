@@ -3,13 +3,21 @@ import ProfileScreen from "../screens/profile/ProfileScreen"
 import EditProfileScreen from "../screens/profile/EditProfileScreen"
 import ProfileViewScreen from "../screens/profile/ProfileViewScreen"
 import MembershipScreen from "../screens/profile/MembershipScreen"
-import CoupleConnectionScreen from "../screens/profile/CoupleConnectionScreen"
+import CoupleConnectionScreen from "../screens/couple/CoupleConnectionScreen"
 import NotificationsScreen from "../screens/profile/NotificationsScreen"
 import SettingsScreen from "../screens/profile/SettingsScreen"
 import MyWalletScreen from "../screens/profile/MyWalletScreen"
 import PersonTypeResultDetailScreen from "@/src/screens/profile/PersonTypeResultDetailScreen"
 import PersonTypeHistoryScreen from "../screens/profile/PersonTypeHistoryScreen"
 import PersonTypeHistoryDetailScreen from "../screens/profile/PersonTypeHistoryDetailScreen"
+import CoupleRoomSelectionScreen from "../screens/couple/CoupleRoomSelectionScreen"
+import JoinCoupleRoomScreen from "../screens/couple/JoinCoupleRoomScreen"
+import CoupleSurveyRoomScreen from "../screens/couple/CoupleSurveyRoomScreen"
+import QRScannerScreen from "@/src/components/share/QRScannerScreen"
+import CoupleSurveySelectionScreen from "../screens/couple/CoupleSurveySelectionScreen"
+import LoveMapScreen from "../screens/surveys/LoveMapScreen"
+import AppointmentHistoryScreen from "../screens/counselors/AppointmentHistoryScreen"
+
 
 const Stack = createNativeStackNavigator()
 
@@ -38,6 +46,25 @@ const ProfileNavigator = () => {
         name="PersonTypeHistoryDetail"
         component={PersonTypeHistoryDetailScreen}
         options={{ title: "Lịch sử khảo sát" }}
+      />
+       <Stack.Screen
+        name="CoupleRoomSelection"
+        component={CoupleRoomSelectionScreen}
+        options={{ title: "Tùy chọn phương thức" }}
+      />
+       <Stack.Screen
+        name="JoinCoupleRoom"
+        component={JoinCoupleRoomScreen}
+        options={{ title: "Nhập mã phòng" }}
+      />
+      <Stack.Screen name="CoupleSurveyRoom" component={CoupleSurveyRoomScreen} options={{ title: "Phòng khảo sát cặp đôi" }} />
+      <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ title: "Phòng khảo sát cặp đôi" }} />
+       <Stack.Screen name="CoupleSurveySelection" component={CoupleSurveySelectionScreen} options={{ title: "Kết nối cặp đôi" }} />
+       <Stack.Screen name="LoveMap" component={LoveMapScreen} options={{ title: "Bản đồ tình yêu" }} />
+       <Stack.Screen
+        name="AppointmentHistory"
+        component={AppointmentHistoryScreen}
+        options={{ title: "Lịch sử tư vấn" }}
       />
     </Stack.Navigator>
   )

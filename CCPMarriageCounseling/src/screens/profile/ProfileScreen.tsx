@@ -13,6 +13,9 @@ import {
   ChevronRight,
   Calendar,
   BookOpen,
+  HeartHandshakeIcon,
+  HeartPulseIcon,
+  BookUserIcon
 } from "lucide-react-native"
 import { useAuth } from "../../hooks/useAuth"
 import MyProfileComponent from "@/src/components/share/MyProfileComponent"
@@ -71,8 +74,8 @@ const ProfileScreen = () => {
             onPress={() => navigation.navigate("Membership")}
             className="flex-row items-center p-4 border-b border-gray-100"
           >
-            <View className="w-10 h-10 bg-info/10 rounded-full items-center justify-center mr-3">
-              <CreditCard size={20} color="#17A2B8" />
+            <View className="w-10 h-10 bg-warning/10 rounded-full items-center justify-center mr-3">
+              <HeartHandshakeIcon size={20} color="#FFC107" />
             </View>
             <View className="flex-1">
               <Text className="text-secondary-dark font-medium">Gói thành viên</Text>
@@ -82,7 +85,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("CoupleConnection")}
+            onPress={() => navigation.navigate("CoupleRoomSelection")}
             className="flex-row items-center p-4"
           >
             <View className="w-10 h-10 bg-success/10 rounded-full items-center justify-center mr-3">
@@ -98,11 +101,11 @@ const ProfileScreen = () => {
 
         <View className="bg-white rounded-lg shadow-sm mb-4">
           <TouchableOpacity
-            onPress={() => navigation.navigate("SurveyTab", { screen: "LoveMap" })}
+            onPress={() => navigation.navigate("LoveMap")}
             className="flex-row items-center p-4 border-b border-gray-100"
           >
             <View className="w-10 h-10 bg-primary/10 rounded-full items-center justify-center mr-3">
-              <Heart size={20} color="#E83E8C" />
+              <HeartPulseIcon size={20} color="#E83E8C" />
             </View>
             <View className="flex-1">
               <Text className="text-secondary-dark font-medium">Bản đồ tình yêu</Text>
@@ -112,7 +115,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("CounselorsTab", { screen: "AppointmentHistory" })}
+            onPress={() => navigation.navigate("AppointmentHistory")}
             className="flex-row items-center p-4 border-b border-gray-100"
           >
             <View className="w-10 h-10 bg-info/10 rounded-full items-center justify-center mr-3">
@@ -129,8 +132,8 @@ const ProfileScreen = () => {
             onPress={() => navigation.navigate("PersonTypeHistory" )}
             className="flex-row items-center p-4 border-b border-gray-100"
           >
-            <View className="w-10 h-10 bg-info/10 rounded-full items-center justify-center mr-3">
-              <Calendar size={20} color="#17A2B8" />
+            <View className="w-10 h-10 bg-warning/10 rounded-full items-center justify-center mr-3">
+              <BookUserIcon size={20} color="#FFC107" />
             </View>
             <View className="flex-1">
               <Text className="text-secondary-dark font-medium">Lịch sử khảo sát</Text>
@@ -170,7 +173,7 @@ const ProfileScreen = () => {
             <View className="w-10 h-10 bg-secondary/10 rounded-full items-center justify-center mr-3">
               <Settings size={20} color="#6C757D" />
             </View>
-            <View className="flex-1">
+            <View className="flex-1">                                                                                             
               <Text className="text-secondary-dark font-medium">Cài đặt</Text>
               <Text className="text-secondary text-sm">Quản lý cài đặt ứng dụng</Text>
             </View>
