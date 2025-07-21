@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
     } catch (err) {
-      console.error("Lỗi đăng nhập:", err);
+      
       logout();
       throw err;
     } finally {
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Đăng ký không thành công");
       }
     } catch (err) {
-      console.error("Lỗi đăng ký:", err);
+      
       throw err;
     } finally {
       setIsLoading(false);

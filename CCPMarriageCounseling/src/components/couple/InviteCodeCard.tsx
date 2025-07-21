@@ -25,7 +25,7 @@ const InviteCodeCard = ({ inviteCode }: Props) => {
     }
 
     try {
-      const message = `Mã mời kết nối của bạn là: ${inviteCode}`
+      const message = `${inviteCode}`
       await RNShare.share({
         message,
         title: "Mời bạn kết nối cặp đôi",

@@ -1,6 +1,6 @@
 import { Member } from "./member.type"
 import { Counselor } from "./counselor.type"
-import { SubCategory } from "./categories.type"
+import { SubCategory } from "./category.type"
 
 export interface BookingRequest {
   counselorId: string

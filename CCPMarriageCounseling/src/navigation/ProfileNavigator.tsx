@@ -17,6 +17,11 @@ import QRScannerScreen from "@/src/components/share/QRScannerScreen"
 import CoupleSurveySelectionScreen from "../screens/couple/CoupleSurveySelectionScreen"
 import LoveMapScreen from "../screens/surveys/LoveMapScreen"
 import AppointmentHistoryScreen from "../screens/counselors/AppointmentHistoryScreen"
+import CoupleSurveyQuestionsScreen from "../screens/couple/CoupleSurveyQuestionsScreen"
+import SurveySectionCompleteScreen from "@/src/components/survey/SurveySectionCompleteScreen"
+import LoadingBeforeSaveScreen from "@/src/components/couple/LoadingBeforeSaveScreen"
+import LoveMapHistoryScreen from "../screens/profile/LoveMapHistoryScreen"
+
 
 
 const Stack = createNativeStackNavigator()
@@ -65,6 +70,26 @@ const ProfileNavigator = () => {
         name="AppointmentHistory"
         component={AppointmentHistoryScreen}
         options={{ title: "Lịch sử tư vấn" }}
+      />
+      <Stack.Screen
+        name="CoupleSurveyQuestions"
+        component={CoupleSurveyQuestionsScreen}
+        options={{ title: "Làm khảo sát" }}
+      />
+      <Stack.Screen
+        name="SurveySectionComplete"
+        component={SurveySectionCompleteScreen}
+        options={{ title: "Hoàn thành khảo sát" }}
+      />
+      <Stack.Screen
+        name="LoadingBeforeSave"
+        component={LoadingBeforeSaveScreen}
+        options={{ title: "Hoàn thành khảo sát" }}
+      />
+      <Stack.Screen
+        name="LoveMapHistory"
+        component={LoveMapHistoryScreen}
+        options={{ title: "Lịch sử bản đồ tình yêu" }}
       />
     </Stack.Navigator>
   )

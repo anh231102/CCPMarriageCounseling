@@ -1,4 +1,4 @@
-import { SubCategory } from "./categories.type"
+import { SubCategory } from "./category.type"
 
 export interface Counselor {
   id: string

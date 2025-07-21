@@ -17,6 +17,7 @@ import { useAuth } from "../../hooks/useAuth"
 import coupleApi from "@/src/config/api/couple.api"
 import ActiveCoupleRoomCard from "@/src/components/couple/ActiveCoupleRoomCard"
 
+
 const JoinCoupleRoomScreen = () => {
   const navigation = useNavigation<any>()
   const { user } = useAuth()

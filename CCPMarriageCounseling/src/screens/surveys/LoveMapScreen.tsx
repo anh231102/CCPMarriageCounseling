@@ -1,168 +1,184 @@
 "use client"
 
-import { View, Text, ScrollView, TouchableOpacity } from "react-native"
-import { useNavigation } from "@react-navigation/native"
-import { Heart, Award, TrendingUp, Star, Brain, Zap, Share2, Download } from "lucide-react-native"
+import { useState, useEffect } from "react"
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native"
+import { useNavigation, useRoute } from "@react-navigation/native"
+import {
+  Heart,
+  Brain,
+  Zap,
+  Star,
+  Share2,
+  Download,
+} from "lucide-react-native"
 
-import ComparisonChart from "@/src/components/survey/ComparisonChart"
+import CompatibilityScore from "../../components/lovemap/CompatibilityScore"
+import AssessmentBlock from "../../components/lovemap/AssessmentBlock"
+import StrengthBlock from "../../components/lovemap/StrengthBlock"
+import WeaknessBlock from "../../components/lovemap/WeaknessBlock"
+import CounselorRecommendation from "../../components/lovemap/CounselorRecommendation"
+import LoveMapPersonModal from "../../components/lovemap/LoveMapPersonModal"
 import { useAuth } from "../../hooks/useAuth"
+import coupleApi from "../../config/api/couple.api"
+import type { Couple } from "../../config/types/couple.type"
+import Loading from "@/src/components/share/Loading"
+
+interface RouteParams {
+  coupleId: string
+}
 
 const LoveMapScreen = () => {
   const navigation = useNavigation<any>()
-  const { isAuth, user } = useAuth()
+  const route = useRoute()
+  const { coupleId } = route.params as RouteParams
+  const { user } = useAuth()
 
-  // Giả lập dữ liệu kết quả từ khảo sát tổng hợp
-  const loveMapData = {
-    isCompleted: true, // Đã hoàn thành cả 4 bài test
-    completedDate: "2024-01-15",
-    userData: {
-      name: "Nguyễn Văn A",
-      partnerName: "Nguyễn Thị B",
-    },
-    overallCompatibility: 78, // Điểm tương thích tổng hợp từ 4 bài test
+  const [coupleData, setCoupleData] = useState<Couple | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [showPersonDetail, setShowPersonDetail] = useState(false)
+  const [selectedPerson, setSelectedPerson] = useState<"member" | "member1" | null>(null)
 
-    // Kết quả MBTI
-    mbti: {
-      userType: "ENFJ",
-      partnerType: "ISTP",
-      compatibility: 65,
-      analysis:
-        "Sự kết hợp giữa ENFJ và ISTP tạo ra những thách thức thú vị. ENFJ hướng ngoại và tập trung vào cảm xúc, trong khi ISTP hướng nội và logic. Điều này có thể tạo ra sự cân bằng tốt nếu cả hai hiểu và tôn trọng lẫn nhau.",
-    },
+  // Expanded sections state
+  const [expandedSectionsDetail, setExpandedSectionsDetail] = useState({
+    mbti: false,
+    disc: false,
+    loveLanguage: false,
+    bigFive: false,
+  })
+  const [expandedSectionsStrong, setExpandedSectionsStrong] = useState({
+    mbti: false,
+    disc: false,
+    loveLanguage: false,
+    bigFive: false,
+  })
+  const [expandedSectionsWeak, setExpandedSectionsWeak] = useState({
+    mbti: false,
+    disc: false,
+    loveLanguage: false,
+    bigFive: false,
+  })
 
-    // Kết quả DISC
-    disc: {
-      userStyle: "I", // Influence
-      partnerStyle: "S", // Steadiness
-      compatibility: 82,
-      analysis:
-        "Phong cách Influence (I) và Steadiness (S) bổ sung rất tốt cho nhau. Người I mang lại năng lượng và sự nhiệt tình, trong khi người S cung cấp sự ổn định và hỗ trợ.",
-    },
+  useEffect(() => {
+    if (coupleId) {
+      loadCoupleResult()
+    }
+  }, [coupleId])
 
-    // Kết quả Love Languages
-    loveLanguages: {
-      userPrimary: "Lời nói khẳng định",
-      partnerPrimary: "Hành động phục vụ",
-      compatibility: 70,
-      scores: {
-        user: [4, 5, 2, 3, 3], // [time, words, gifts, acts, touch]
-        partner: [3, 2, 3, 5, 4],
-      },
-    },
-
-    // Kết quả Big Five
-    bigFive: {
-      compatibility: 85,
-      factors: [
-        { name: "Openness", user: 4, partner: 3, compatibility: 75 },
-        { name: "Conscientiousness", user: 3, partner: 4, compatibility: 85 },
-        { name: "Extraversion", user: 5, partner: 2, compatibility: 60 },
-        { name: "Agreeableness", user: 4, partner: 4, compatibility: 95 },
-        { name: "Neuroticism", user: 2, partner: 3, compatibility: 80 },
-      ],
-    },
-
-    // Điểm mạnh của mối quan hệ
-    strengths: [
-      {
-        title: "Giao tiếp cảm xúc",
-        score: 85,
-        description: "Cả hai đều có khả năng chia sẻ cảm xúc và lắng nghe nhau một cách hiệu quả.",
-      },
-      {
-        title: "Hỗ trợ lẫn nhau",
-        score: 90,
-        description: "Sự kết hợp giữa tính nhiệt tình và ổn định tạo ra môi trường hỗ trợ tuyệt vời.",
-      },
-      {
-        title: "Tôn trọng khác biệt",
-        score: 75,
-        description: "Cả hai đều thể hiện sự tôn trọng và chấp nhận những khác biệt của nhau.",
-      },
-    ],
-
-    // Khu vực cần cải thiện
-    improvements: [
-      {
-        title: "Cân bằng năng lượng xã hội",
-        priority: "Cao",
-        description: "Cần tìm cách cân bằng giữa nhu cầu giao tiếp xã hội và thời gian riêng tư.",
-        suggestions: [
-          "Lên kế hoạch hoạt động xã hội phù hợp với cả hai",
-          "Tôn trọng nhu cầu thời gian riêng của nhau",
-          "Thảo luận trước về các sự kiện xã hội",
-        ],
-      },
-      {
-        title: "Thể hiện tình yêu",
-        priority: "Trung bình",
-        description: "Học cách thể hiện tình yêu theo ngôn ngữ tình yêu của đối tác.",
-        suggestions: [
-          "Thường xuyên khen ngợi và khẳng định đối tác",
-          "Thể hiện tình yêu qua hành động cụ thể",
-          "Dành thời gian chất lượng cho nhau",
-        ],
-      },
-    ],
-
-    // Lời khuyên cá nhân hóa
-    recommendations: [
-      {
-        category: "Giao tiếp",
-        advice: "Hãy tận dụng khả năng giao tiếp tự nhiên của ENFJ để tạo không gian an toàn cho ISTP chia sẻ.",
-      },
-      {
-        category: "Xung đột",
-        advice: "Khi có xung đột, hãy cho nhau thời gian suy nghĩ trước khi thảo luận giải pháp.",
-      },
-      {
-        category: "Tình yêu",
-        advice: "Thể hiện tình yêu qua hành động cụ thể và lời nói khẳng định để cả hai đều cảm thấy được yêu thương.",
-      },
-    ],
+  const loadCoupleResult = async () => {
+    try {
+      setLoading(true)
+      const result = await coupleApi.getCoupleResult(coupleId)
+      setCoupleData(result)
+    } catch (error: any) {
+      Alert.alert("Lỗi", error.message || "Không thể tải kết quả bản đồ tình yêu")
+      navigation.goBack()
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const getCompatibilityColor = (score: number) => {
-    if (score >= 80) return "text-success"
-    if (score >= 60) return "text-primary"
-    if (score >= 40) return "text-warning"
-    return "text-danger"
+  const parseScores = (description: string | null | undefined): Record<string, number> => {
+    if (!description) return {}
+    const scores: Record<string, number> = {}
+    const pairs = description.split(",")
+    pairs.forEach((pair) => {
+      const [key, value] = pair.split(":")
+      if (key && value) {
+        scores[key.trim()] = Number.parseInt(value.trim()) || 0
+      }
+    })
+    return scores
   }
 
-  const getCompatibilityBg = (score: number) => {
-    if (score >= 80) return "bg-success"
-    if (score >= 60) return "bg-primary"
-    if (score >= 40) return "bg-warning"
-    return "bg-danger"
+  const calculateOverallCompatibility = (couple: Couple): number => {
+    let totalScore = 0
+    let count = 0
+    if (couple.mbti && couple.mbti1) {
+      totalScore += 75
+      count++
+    }
+    if (couple.disc && couple.disc1) {
+      totalScore += 80
+      count++
+    }
+    if (couple.loveLanguage && couple.loveLanguage1) {
+      totalScore += 70
+      count++
+    }
+    if (couple.bigFive && couple.bigFive1) {
+      totalScore += 85
+      count++
+    }
+    return count > 0 ? Math.round(totalScore / count) : 0
   }
 
   const handleShare = () => {
-    // Logic chia sẻ kết quả
+    Alert.alert("Chia sẻ", "Tính năng chia sẻ sẽ được cập nhật sớm")
   }
 
   const handleDownload = () => {
-    // Logic tải xuống báo cáo
+    Alert.alert("Tải xuống", "Tính năng tải xuống sẽ được cập nhật sớm")
   }
 
-  if (!loveMapData.isCompleted) {
+  const handlePersonDetail = (person: "member" | "member1") => {
+    setSelectedPerson(person)
+    setShowPersonDetail(true)
+  }
+
+  const toggleSectionDetail = (section: keyof typeof expandedSectionsDetail) => {
+    setExpandedSectionsDetail((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }))
+  }
+  const toggleSectionStrong = (section: keyof typeof expandedSectionsStrong) => {
+    setExpandedSectionsStrong((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }))
+  }
+  const toggleSectionWeak = (section: keyof typeof expandedSectionsWeak) => {
+    setExpandedSectionsWeak((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }))
+  }
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-gray-50 justify-center items-center">
+        <Loading size={60} />
+        <Text className="text-secondary mt-4">Đang tải bản đồ tình yêu...</Text>
+      </View>
+    )
+  }
+
+  if (!coupleData) {
     return (
       <View className="flex-1 bg-gray-50 justify-center items-center p-6">
         <View className="bg-white rounded-xl p-8 items-center shadow-sm">
           <Heart size={64} color="#E83E8C" className="mb-4" />
-          <Text className="text-2xl font-bold text-secondary-dark mb-2 text-center">Chưa có bản đồ tình yêu</Text>
+          <Text className="text-2xl font-bold text-secondary-dark mb-2 text-center">Không tìm thấy dữ liệu</Text>
           <Text className="text-secondary text-center mb-6">
-            Bạn cần hoàn thành bộ khảo sát tổng hợp để xem bản đồ tình yêu chi tiết.
+            Không thể tải thông tin bản đồ tình yêu. Vui lòng thử lại sau.
           </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("SurveyList")}
-            className="bg-primary rounded-xl px-6 py-3"
-          >
-            <Text className="text-white font-bold">Bắt đầu khảo sát</Text>
+          <TouchableOpacity onPress={() => navigation.goBack()} className="bg-primary rounded-xl px-6 py-3">
+            <Text className="text-white font-bold">Quay lại</Text>
           </TouchableOpacity>
         </View>
       </View>
     )
   }
+
+  const partner1 = coupleData.member
+  const partner2Name = coupleData.isVirtual
+    ? (coupleData.virtualName ?? "Đối tác ảo")
+    : (coupleData.member1?.fullname ?? "Đối tác ảo")
+  const partner2Avatar = coupleData.isVirtual
+    ? undefined
+    : (coupleData.member1?.avatar ?? undefined)
+
+  const overallCompatibility = calculateOverallCompatibility(coupleData)
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -186,256 +202,250 @@ const LoveMapScreen = () => {
 
       <ScrollView className="flex-1 px-4 -mt-4" showsVerticalScrollIndicator={false}>
         {/* Overall Compatibility */}
-        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <View className="items-center mb-6">
-            <View className="bg-primary/10 rounded-full p-4 mb-3">
-              <Award size={32} color="#E83E8C" />
-            </View>
-            <Text className="text-2xl font-bold text-secondary-dark text-center">Điểm tương thích tổng hợp</Text>
-            <Text className="text-secondary text-center">Dựa trên 4 bài đánh giá tính cách</Text>
-          </View>
-
-          <View className="items-center mb-6">
-            <View className="relative w-32 h-32 items-center justify-center">
-              <View className="absolute w-full h-full rounded-full border-8 border-gray-200" />
-              <View
-                className={`absolute w-full h-full rounded-full border-8 ${getCompatibilityBg(loveMapData.overallCompatibility)}`}
-                style={{
-                  transform: [{ rotate: `${(loveMapData.overallCompatibility / 100) * 360}deg` }],
-                }}
-              />
-              <Text className={`text-3xl font-bold ${getCompatibilityColor(loveMapData.overallCompatibility)}`}>
-                {loveMapData.overallCompatibility}%
-              </Text>
-            </View>
-            <Text className="text-secondary-dark font-medium mt-2">
-              {loveMapData.overallCompatibility >= 80
-                ? "Rất tương thích"
-                : loveMapData.overallCompatibility >= 60
-                  ? "Tương thích tốt"
-                  : loveMapData.overallCompatibility >= 40
-                    ? "Tương thích trung bình"
-                    : "Cần cải thiện"}
-            </Text>
-          </View>
-
-          <View className="flex-row justify-between">
-            <View className="items-center flex-1">
-              <Text className="text-secondary text-sm">{loveMapData.userData.name}</Text>
-              <View className="bg-primary/10 rounded-lg px-3 py-2 mt-1">
-                <Text className="text-primary font-bold">{loveMapData.mbti.userType}</Text>
-              </View>
-            </View>
-            <View className="items-center mx-4">
-              <Heart size={24} color="#E83E8C" />
-            </View>
-            <View className="items-center flex-1">
-              <Text className="text-secondary text-sm">{loveMapData.userData.partnerName}</Text>
-              <View className="bg-secondary/10 rounded-lg px-3 py-2 mt-1">
-                <Text className="text-secondary font-bold">{loveMapData.mbti.partnerType}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
+        <CompatibilityScore
+          score={overallCompatibility}
+          member1={{
+            fullname: partner1.fullname ?? "Đối tác 1",
+            avatar: partner1.avatar ?? undefined,
+          }}
+          member2={{
+            fullname: partner2Name,
+            avatar: partner2Avatar,
+          }}
+          mbti1={coupleData.mbti ?? ""}
+          mbti2={coupleData.mbti1 ?? ""}
+          onPressPerson={handlePersonDetail}
+        />
 
         {/* Assessment Breakdown */}
         <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
           <Text className="text-xl font-bold text-secondary-dark mb-4">Chi tiết đánh giá</Text>
-
-          {/* MBTI */}
-          <View className="flex-row items-center justify-between p-4 bg-gray-50 rounded-lg mb-3">
-            <View className="flex-row items-center flex-1">
-              <View className="bg-primary/10 rounded-full p-2 mr-3">
-                <Brain size={20} color="#E83E8C" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-secondary-dark font-medium">MBTI - Tính cách</Text>
-                <Text className="text-secondary text-sm">
-                  {loveMapData.mbti.userType} × {loveMapData.mbti.partnerType}
-                </Text>
-              </View>
-            </View>
-            <Text className={`font-bold ${getCompatibilityColor(loveMapData.mbti.compatibility)}`}>
-              {loveMapData.mbti.compatibility}%
-            </Text>
-          </View>
-
-          {/* DISC */}
-          <View className="flex-row items-center justify-between p-4 bg-gray-50 rounded-lg mb-3">
-            <View className="flex-row items-center flex-1">
-              <View className="bg-warning/10 rounded-full p-2 mr-3">
-                <Zap size={20} color="#FFC107" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-secondary-dark font-medium">DISC - Phong cách hành vi</Text>
-                <Text className="text-secondary text-sm">
-                  {loveMapData.disc.userStyle} × {loveMapData.disc.partnerStyle}
-                </Text>
-              </View>
-            </View>
-            <Text className={`font-bold ${getCompatibilityColor(loveMapData.disc.compatibility)}`}>
-              {loveMapData.disc.compatibility}%
-            </Text>
-          </View>
-
-          {/* Love Languages */}
-          <View className="flex-row items-center justify-between p-4 bg-gray-50 rounded-lg mb-3">
-            <View className="flex-row items-center flex-1">
-              <View className="bg-primary/10 rounded-full p-2 mr-3">
-                <Heart size={20} color="#E83E8C" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-secondary-dark font-medium">Love Languages</Text>
-                <Text className="text-secondary text-sm">Ngôn ngữ tình yêu</Text>
-              </View>
-            </View>
-            <Text className={`font-bold ${getCompatibilityColor(loveMapData.loveLanguages.compatibility)}`}>
-              {loveMapData.loveLanguages.compatibility}%
-            </Text>
-          </View>
-
-          {/* Big Five */}
-          <View className="flex-row items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <View className="flex-row items-center flex-1">
-              <View className="bg-success/10 rounded-full p-2 mr-3">
-                <Star size={20} color="#28A745" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-secondary-dark font-medium">Big Five</Text>
-                <Text className="text-secondary text-sm">Năm yếu tố tính cách</Text>
-              </View>
-            </View>
-            <Text className={`font-bold ${getCompatibilityColor(loveMapData.bigFive.compatibility)}`}>
-              {loveMapData.bigFive.compatibility}%
-            </Text>
-          </View>
-        </View>
-
-        {/* Strengths */}
-        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <View className="flex-row items-center mb-4">
-            <View className="bg-success/10 rounded-full p-3 mr-3">
-              <TrendingUp size={24} color="#28A745" />
-            </View>
-            <Text className="text-xl font-bold text-secondary-dark">Điểm mạnh của mối quan hệ</Text>
-          </View>
-
-          {loveMapData.strengths.map((strength, index) => (
-            <View key={index} className="mb-4">
-              <View className="flex-row justify-between items-center mb-2">
-                <Text className="text-secondary-dark font-medium">{strength.title}</Text>
-                <Text className="text-success font-bold">{strength.score}%</Text>
-              </View>
-              <View className="h-2 bg-gray-200 rounded-full mb-2">
-                <View className="h-full bg-success rounded-full" style={{ width: `${strength.score}%` }} />
-              </View>
-              <Text className="text-secondary text-sm">{strength.description}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Areas for Improvement */}
-        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <Text className="text-xl font-bold text-secondary-dark mb-4">Khu vực cần cải thiện</Text>
-
-          {loveMapData.improvements.map((improvement, index) => (
-            <View key={index} className="mb-6 p-4 bg-warning/5 rounded-lg">
-              <View className="flex-row justify-between items-center mb-2">
-                <Text className="text-secondary-dark font-medium">{improvement.title}</Text>
-                <View
-                  className={`px-2 py-1 rounded-full ${
-                    improvement.priority === "Cao"
-                      ? "bg-danger/10"
-                      : improvement.priority === "Trung bình"
-                        ? "bg-warning/10"
-                        : "bg-info/10"
-                  }`}
-                >
-                  <Text
-                    className={`text-xs font-medium ${
-                      improvement.priority === "Cao"
-                        ? "text-danger"
-                        : improvement.priority === "Trung bình"
-                          ? "text-warning"
-                          : "text-info"
-                    }`}
-                  >
-                    {improvement.priority}
-                  </Text>
-                </View>
-              </View>
-              <Text className="text-secondary text-sm mb-3">{improvement.description}</Text>
-              <Text className="text-secondary-dark font-medium text-sm mb-2">Gợi ý cải thiện:</Text>
-              {improvement.suggestions.map((suggestion, idx) => (
-                <Text key={idx} className="text-secondary text-sm ml-2">
-                  • {suggestion}
-                </Text>
-              ))}
-            </View>
-          ))}
-        </View>
-
-        {/* Personalized Recommendations */}
-        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <Text className="text-xl font-bold text-secondary-dark mb-4">Lời khuyên cá nhân hóa</Text>
-
-          {loveMapData.recommendations.map((rec, index) => (
-            <View key={index} className="mb-4 p-4 bg-primary/5 rounded-lg">
-              <Text className="text-primary font-medium mb-2">{rec.category}</Text>
-              <Text className="text-secondary-dark">{rec.advice}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Love Languages Detail */}
-        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <Text className="text-xl font-bold text-secondary-dark mb-4">Chi tiết ngôn ngữ tình yêu</Text>
-
-          <View className="mb-4">
-            <Text className="text-secondary-dark font-medium mb-2">Ngôn ngữ tình yêu chính:</Text>
-            <View className="flex-row justify-between">
-              <View className="flex-1 mr-2">
-                <Text className="text-secondary text-sm">{loveMapData.userData.name}</Text>
-                <View className="bg-primary/10 rounded-lg p-3 mt-1">
-                  <Text className="text-primary font-medium text-center">{loveMapData.loveLanguages.userPrimary}</Text>
-                </View>
-              </View>
-              <View className="flex-1 ml-2">
-                <Text className="text-secondary text-sm">{loveMapData.userData.partnerName}</Text>
-                <View className="bg-secondary/10 rounded-lg p-3 mt-1">
-                  <Text className="text-secondary font-medium text-center">
-                    {loveMapData.loveLanguages.partnerPrimary}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          <Text className="text-secondary-dark font-medium mb-3">So sánh chi tiết:</Text>
-          {["Thời gian chất lượng", "Lời nói khẳng định", "Quà tặng", "Hành động phục vụ", "Tiếp xúc cơ thể"].map(
-            (lang, index) => (
-              <ComparisonChart
-                key={lang}
-                title={lang}
-                userScore={loveMapData.loveLanguages.scores.user[index]}
-                partnerScore={loveMapData.loveLanguages.scores.partner[index]}
-                userName={loveMapData.userData.name}
-                partnerName={loveMapData.userData.partnerName}
-                maxScore={5}
-              />
-            ),
+          {coupleData.mbti && coupleData.mbti1 && (
+            <AssessmentBlock
+              surveyId="SV001"
+              title="MBTI - Tính cách"
+              icon={<Brain size={20} color="#E83E8C" />}
+              scoreLabel="75%"
+              partner1Name={partner1.fullname ?? "Đối tác 1"}
+              partner2Name={partner2Name}
+              partner1Code={coupleData.mbti ?? ""}
+              partner2Code={coupleData.mbti1 ?? ""}
+              partner1Scores={parseScores(coupleData.mbtiDescription ?? "")}
+              partner2Scores={parseScores(coupleData.mbti1Description ?? "")}
+              detail={coupleData.mbtiDetail?.detail ?? ""}
+              expanded={expandedSectionsDetail.mbti}
+              onToggle={() => toggleSectionDetail("mbti")}
+            />
           )}
+          {coupleData.disc && coupleData.disc1 && (
+            <AssessmentBlock
+              surveyId="SV002"
+              title="DISC - Phong cách hành vi"
+              icon={<Zap size={20} color="#FFC107" />}
+              scoreLabel="80%"
+              partner1Name={partner1.fullname ?? "Đối tác 1"}
+              partner2Name={partner2Name}
+              partner1Code={coupleData.disc ?? ""}
+              partner2Code={coupleData.disc1 ?? ""}
+              partner1Scores={parseScores(coupleData.discDescription ?? "")}
+              partner2Scores={parseScores(coupleData.disc1Description ?? "")}
+              detail={coupleData.discDetail?.detail ?? ""}
+              expanded={expandedSectionsDetail.disc}
+              onToggle={() => toggleSectionDetail("disc")}
+            />
+          )}
+          {coupleData.loveLanguage && coupleData.loveLanguage1 && (
+            <AssessmentBlock
+              surveyId="SV003"
+              title="Love Languages"
+              icon={<Heart size={20} color="#E83E8C" />}
+              scoreLabel="70%"
+              partner1Name={partner1.fullname ?? "Đối tác 1"}
+              partner2Name={partner2Name}
+              partner1Code={coupleData.loveLanguage ?? ""}
+              partner2Code={coupleData.loveLanguage1 ?? ""}
+              partner1Scores={parseScores(coupleData.loveLanguageDescription ?? "")}
+              partner2Scores={parseScores(coupleData.loveLanguage1Description ?? "")}
+              detail={coupleData.loveLanguageDetail?.detail ?? ""}
+              expanded={expandedSectionsDetail.loveLanguage}
+              onToggle={() => toggleSectionDetail("loveLanguage")}
+            />
+          )}
+          {coupleData.bigFive && coupleData.bigFive1 && (
+            <AssessmentBlock
+              surveyId="SV004"
+              title="Big Five"
+              icon={<Star size={20} color="#28A745" />}
+              scoreLabel="85%"
+              partner1Name={partner1.fullname ?? "Đối tác 1"}
+              partner2Name={partner2Name}
+              partner1Code={coupleData.bigFive ?? ""}
+              partner2Code={coupleData.bigFive1 ?? ""}
+              partner1Scores={parseScores(coupleData.bigFiveDescription ?? "")}
+              partner2Scores={parseScores(coupleData.bigFive1Description ?? "")}
+              detail={coupleData.bigFiveDetail?.detail ?? ""}
+              expanded={expandedSectionsDetail.bigFive}
+              onToggle={() => toggleSectionDetail("bigFive")}
+            />
+          )}
+        </View>
+
+        {/* Relationship Strengths */}
+        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
+          <Text className="text-xl font-bold text-secondary-dark mb-4">🌟 Điểm mạnh của mối quan hệ</Text>
+          {coupleData.mbti && coupleData.mbti1 && (
+            <StrengthBlock
+              title="MBTI - Điểm mạnh tính cách"
+              icon={<Brain size={20} color="#28A745" />}
+              data1={parseScores(coupleData.mbtiDescription ?? "")}
+              data2={parseScores(coupleData.mbti1Description ?? "")}
+              threshold={8}
+              name1={partner1.fullname ?? "Đối tác 1"}
+              name2={partner2Name}
+              type1={coupleData.mbti ?? ""}
+              type2={coupleData.mbti1 ?? ""}
+              result={coupleData.mbtiResult ?? ""}
+              expanded={expandedSectionsStrong.mbti}
+              onToggle={() => toggleSectionStrong("mbti")}
+            />
+          )}
+          {coupleData.disc && coupleData.disc1 && (
+            <StrengthBlock
+              title="DISC - Điểm mạnh hành vi"
+              icon={<Zap size={20} color="#28A745" />}
+              data1={parseScores(coupleData.discDescription ?? "")}
+              data2={parseScores(coupleData.disc1Description ?? "")}
+              threshold={7}
+              name1={partner1.fullname ?? "Đối tác 1"}
+              name2={partner2Name}
+              type1={coupleData.disc ?? ""}
+              type2={coupleData.disc1 ?? ""}
+              result={coupleData.discResult ?? ""}
+              expanded={expandedSectionsStrong.disc}
+              onToggle={() => toggleSectionStrong("disc")}
+            />
+          )}
+          {coupleData.loveLanguage && coupleData.loveLanguage1 && (
+            <StrengthBlock
+              title="Love Language - Điểm mạnh tình yêu"
+              icon={<Heart size={20} color="#28A745" />}
+              data1={parseScores(coupleData.loveLanguageDescription ?? "")}
+              data2={parseScores(coupleData.loveLanguage1Description ?? "")}
+              threshold={8}
+              name1={partner1.fullname ?? "Đối tác 1"}
+              name2={partner2Name}
+              type1={coupleData.loveLanguage ?? ""}
+              type2={coupleData.loveLanguage1 ?? ""}
+              result={coupleData.loveLanguageResult ?? ""}
+              expanded={expandedSectionsStrong.loveLanguage}
+              onToggle={() => toggleSectionStrong("loveLanguage")}
+            />
+          )}
+          {coupleData.bigFive && coupleData.bigFive1 && (
+            <StrengthBlock
+              title="Big Five - Điểm mạnh tính cách"
+              icon={<Star size={20} color="#28A745" />}
+              data1={parseScores(coupleData.bigFiveDescription ?? "")}
+              data2={parseScores(coupleData.bigFive1Description ?? "")}
+              threshold={7}
+              name1={partner1.fullname ?? "Đối tác 1"}
+              name2={partner2Name}
+              type1={coupleData.bigFive ?? ""}
+              type2={coupleData.bigFive1 ?? ""}
+              result={coupleData.bigFiveResult ?? ""}
+              expanded={expandedSectionsStrong.bigFive}
+              onToggle={() => toggleSectionStrong("bigFive")}
+            />
+          )}
+        </View>
+
+        {/* Relationship Weaknesses */}
+        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
+          <Text className="text-xl font-bold text-secondary-dark mb-4">⚠️ Điểm yếu cần cải thiện</Text>
+          {coupleData.mbti && coupleData.mbti1 && (
+            <WeaknessBlock
+              title="MBTI - Điểm yếu tính cách"
+              icon={<Brain size={20} color="#DC3545" />}
+              data1={parseScores(coupleData.mbtiDescription ?? "")}
+              data2={parseScores(coupleData.mbti1Description ?? "")}
+              threshold={5}
+              name1={partner1.fullname ?? "Đối tác 1"}
+              name2={partner2Name}
+              type1={coupleData.mbti ?? ""}
+              type2={coupleData.mbti1 ?? ""}
+              suggestions="• Tăng cường giao tiếp và thấu hiểu lẫn nhau\n• Học cách chấp nhận và bổ trợ cho nhau\n• Phát triển các kỹ năng còn yếu thông qua thực hành"
+              expanded={expandedSectionsWeak.mbti}
+              onToggle={() => toggleSectionWeak("mbti")}
+            />
+          )}
+          {coupleData.disc && coupleData.disc1 && (
+            <WeaknessBlock
+              title="DISC - Điểm yếu hành vi"
+              icon={<Zap size={20} color="#DC3545" />}
+              data1={parseScores(coupleData.discDescription ?? "")}
+              data2={parseScores(coupleData.disc1Description ?? "")}
+              threshold={4}
+              name1={partner1.fullname ?? "Đối tác 1"}
+              name2={partner2Name}
+              type1={coupleData.disc ?? ""}
+              type2={coupleData.disc1 ?? ""}
+              suggestions="• Nhận biết và điều chỉnh phong cách giao tiếp\n• Học cách thích ứng với phong cách của đối phương\n• Phát triển các kỹ năng hành vi còn thiếu"
+              expanded={expandedSectionsWeak.disc}
+              onToggle={() => toggleSectionWeak("disc")}
+            />
+          )}
+          {coupleData.loveLanguage && coupleData.loveLanguage1 && (
+            <WeaknessBlock
+              title="Love Language - Điểm yếu tình yêu"
+              icon={<Heart size={20} color="#DC3545" />}
+              data1={parseScores(coupleData.loveLanguageDescription ?? "")}
+              data2={parseScores(coupleData.loveLanguage1Description ?? "")}
+              threshold={4}
+              name1={partner1.fullname ?? "Đối tác 1"}
+              name2={partner2Name}
+              type1={coupleData.loveLanguage ?? ""}
+              type2={coupleData.loveLanguage1 ?? ""}
+              suggestions="• Học cách thể hiện tình yêu theo ngôn ngữ của đối phương\n• Phát triển các ngôn ngữ tình yêu còn yếu\n• Tăng cường giao tiếp về nhu cầu tình cảm"
+              expanded={expandedSectionsWeak.loveLanguage}
+              onToggle={() => toggleSectionWeak("loveLanguage")}
+            />
+          )}
+          {coupleData.bigFive && coupleData.bigFive1 && (
+            <WeaknessBlock
+              title="Big Five - Điểm yếu tính cách"
+              icon={<Star size={20} color="#DC3545" />}
+              data1={parseScores(coupleData.bigFiveDescription ?? "")}
+              data2={parseScores(coupleData.bigFive1Description ?? "")}
+              threshold={4}
+              name1={partner1.fullname ?? "Đối tác 1"}
+              name2={partner2Name}
+              type1={coupleData.bigFive ?? ""}
+              type2={coupleData.bigFive1 ?? ""}
+              suggestions="• Nhận thức và phát triển các yếu tố tính cách còn yếu\n• Tạo môi trường hỗ trợ lẫn nhau trong phát triển\n• Thực hành các hoạt động giúp cải thiện tính cách"
+              expanded={expandedSectionsWeak.bigFive}
+              onToggle={() => toggleSectionWeak("bigFive")}
+            />
+          )}
+        </View>
+
+        {/* Counselor Recommendations */}
+        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
+          <Text className="text-xl font-bold text-secondary-dark mb-4">Lời khuyên từ tư vấn viên</Text>
+          <CounselorRecommendation
+            rec1={coupleData.rec1 ?? ""}
+            rec2={coupleData.rec2 ?? ""}
+            onRegister={() => navigation.navigate("CounselorsTab")}
+          />
         </View>
 
         {/* Action Buttons */}
         <View className="mb-6">
           <TouchableOpacity
-            onPress={() => navigation.navigate("SurveyList")}
+            onPress={() => navigation.navigate("SurveyTab", { screen: "SurveyList" })}
             className="bg-primary rounded-xl p-4 mb-3"
           >
-            <Text className="text-white font-bold text-center">Làm lại khảo sát</Text>
+            <Text className="text-white font-bold text-center">Làm khảo sát mới</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             onPress={() => navigation.navigate("CoursesTab")}
             className="bg-white border border-primary rounded-xl p-4"
@@ -444,6 +454,15 @@ const LoveMapScreen = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Person Detail Modal */}
+      <LoveMapPersonModal
+        visible={showPersonDetail}
+        onClose={() => setShowPersonDetail(false)}
+        personKey={selectedPerson || "member"}
+        coupleData={coupleData}
+        parseScores={parseScores}
+      />
     </View>
   )
 }

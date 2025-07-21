@@ -5,21 +5,27 @@ import {
   JoinCoupleRequest,
   JoinCoupleResponse,
   CancelCoupleResponse,
+  CoupleSurveyResultRequest,
+  CoupleSurveyResultResponse,
+  PartnerProgressData,
+  Couple,
+  CoupleResultResponse,
+  CoupleHistoryResponse,
 } from "@/src/config/types/couple.type"
 
 const createCouple = async (surveyIds: string[]): Promise<CreateCoupleResponse> => {
- 
+
   try {
     const response = await axiosInstance.post<CreateCoupleResponse>("/Couple", {
       surveyIds,
     })
-   
+
 
     return response.data
   } catch (error: any) {
     if (error.response) {
- 
-      return error.response.data // trả response lỗi để xử lý ở ngoài
+
+      return error.response.data 
     } else {
 
       return {
@@ -73,11 +79,110 @@ const cancelCoupleRoom = async (): Promise<void> => {
   }
 }
 
+const postCoupleSurveyResult = async (
+  body: CoupleSurveyResultRequest
+): Promise<string> => {
+  const response = await axiosInstance.post<CoupleSurveyResultResponse>(
+    "/Couple/submit",
+    body
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy kết quả khảo sát")
+  }
+
+  return response.data.data
+}
+
+import { PartnerProgressResponse } from "@/src/config/types/couple.type" // nhớ import
+
+const getPartnerProgress = async (): Promise<PartnerProgressData> => {
+  const response = await axiosInstance.get<PartnerProgressResponse>(
+    "/Couple/partner-progress"
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy tiến trình đối phương")
+  }
+
+  return response.data.data
+}
+
+const completeCoupleRoom = async (coupleId: string): Promise<string> => {
+  try {
+    const response = await axiosInstance.put(`/Couple/${coupleId}/complete`, coupleId, {
+  headers: {
+    "Content-Type": "text/plain", 
+  }
+})
+
+    if (!response.data.success) {
+      throw new Error(response.data.error || "Không thể hoàn tất phòng")
+    }
+
+    return response.data.data || "Hoàn tất thành công"
+  } catch (error: any) {
+    if (error.response) {
+      console.error("[completeCoupleRoom] API Error:", error.response.data)
+    } else {
+      console.error("[completeCoupleRoom] Error:", error.message)
+    }
+    throw error
+  }
+}
+
+const getCoupleResult = async (coupleId: string): Promise<Couple> => {
+  try {
+    const response = await axiosInstance.get<CoupleResultResponse>(
+      `/Couple/result/${coupleId}`
+    )
+
+    if (!response.data.success) {
+      throw new Error(response.data.error || "Không thể lấy kết quả Couple")
+    }
+
+    return response.data.data
+  } catch (error: any) {
+    if (error.response) {
+      console.error("[getCoupleResult] API Error Response:", error.response.data)
+    } else {
+      console.error("[getCoupleResult] Error:", error.message)
+    }
+    throw error
+  }
+}
+
+const getCoupleHistory = async (): Promise<Couple[]> => {
+  try {
+    const response = await axiosInstance.get<CoupleHistoryResponse>(
+      "/Couple/my-couples-history"
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.error || "Không thể lấy lịch sử Couple");
+    }
+
+    return response.data.data; // Trả về danh sách Couple
+  } catch (error: any) {
+    if (error.response) {
+      console.error("[getCoupleHistory] API Error Response:", error.response.data);
+    } else {
+      console.error("[getCoupleHistory] Error:", error.message);
+    }
+    throw error;
+  }
+}
+
 const coupleApi = {
   createCouple,
   getLatestCoupleRoom,
   joinCoupleRoom,
   cancelCoupleRoom,
+  postCoupleSurveyResult,
+  getPartnerProgress,
+  completeCoupleRoom,
+  getCoupleResult,
+  getCoupleHistory,
 }
 
 export default coupleApi

@@ -1,10 +1,10 @@
-// SurveySectionCompleteScreen.tsx
 import { View, Text, TouchableOpacity, Alert } from "react-native"
 import { useNavigation, useRoute } from "@react-navigation/native"
 
 const SurveySectionCompleteScreen = () => {
   const navigation = useNavigation<any>()
   const route = useRoute<any>()
+
   const {
     selectedSurveyIds,
     currentSurveyIndex,
@@ -14,18 +14,21 @@ const SurveySectionCompleteScreen = () => {
     userType,
     userData,
     isAuth,
+    couple, // 👈 thêm dòng này
   } = route.params
 
   const completedSurveyIds = selectedSurveyIds.slice(0, currentSurveyIndex + 1)
   const nextSurveyExists = nextSurveyIndex < selectedSurveyIds.length
 
   const handleNext = () => {
-    navigation.replace("SurveyQuestions", {
+    navigation.replace(couple ? "CoupleSurveyQuestions" : "SurveyQuestions", {
       selectedSurveyIds,
       currentSurveyIndex: nextSurveyIndex,
       userType,
       userData,
       isAuth,
+      roomId: route.params?.roomId,
+      isHost: route.params?.isHost,
     })
   }
 
@@ -51,11 +54,14 @@ const SurveySectionCompleteScreen = () => {
       <Text className="text-2xl font-bold text-secondary-dark mb-4">
         Hoàn thành phần {currentSurveyTitle || `#${currentSurveyIndex + 1}`}
       </Text>
-      <Text className="text-secondary mb-8 text-center">
-        {nextSurveyExists
-          ? "Bạn có muốn tiếp tục với phần khảo sát tiếp theo không?"
-          : "Bạn đã hoàn thành tất cả các phần khảo sát."}
-      </Text>
+
+      {!couple && (
+        <Text className="text-secondary mb-8 text-center">
+          {nextSurveyExists
+            ? "Bạn có muốn tiếp tục với phần khảo sát tiếp theo không?"
+            : "Bạn đã hoàn thành tất cả các phần khảo sát."}
+        </Text>
+      )}
 
       {nextSurveyExists && (
         <TouchableOpacity onPress={handleNext} className="bg-primary px-6 py-3 rounded-full mb-4">
@@ -63,11 +69,14 @@ const SurveySectionCompleteScreen = () => {
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity onPress={handleSubmit} className="bg-gray-200 px-6 py-3 rounded-full">
-        <Text className="text-secondary-dark font-medium">Lưu kết quả và kết thúc</Text>
-      </TouchableOpacity>
+      {/* Chỉ hiển thị nút lưu nếu KHÔNG phải couple */}
+      {!couple && (
+        <TouchableOpacity onPress={handleSubmit} className="bg-gray-200 px-6 py-3 rounded-full">
+          <Text className="text-secondary-dark font-medium">Lưu kết quả và kết thúc</Text>
+        </TouchableOpacity>
+      )}
     </View>
   )
 }
 
-export default SurveySectionCompleteScreen;
+export default SurveySectionCompleteScreen

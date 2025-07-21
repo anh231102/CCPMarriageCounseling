@@ -24,7 +24,7 @@ const MyProfileComponent = (props: Props) => {
       const data = await memberApi.getMyProfile()
       setProfile(data)
     } catch (err) {
-      console.error("Lỗi khi lấy thông tin người dùng:", err)
+      
     } finally {
       setLoading(false)
     }

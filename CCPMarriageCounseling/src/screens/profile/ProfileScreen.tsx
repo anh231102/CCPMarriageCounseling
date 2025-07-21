@@ -101,7 +101,7 @@ const ProfileScreen = () => {
 
         <View className="bg-white rounded-lg shadow-sm mb-4">
           <TouchableOpacity
-            onPress={() => navigation.navigate("LoveMap")}
+            onPress={() => navigation.navigate("LoveMapHistory")}
             className="flex-row items-center p-4 border-b border-gray-100"
           >
             <View className="w-10 h-10 bg-primary/10 rounded-full items-center justify-center mr-3">
