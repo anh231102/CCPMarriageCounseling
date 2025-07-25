@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native"
 import RenderHTML from "react-native-render-html"
 import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react-native"
+import { ChevronDown, ChevronUp, BookHeart } from "lucide-react-native"
 
 const LoveMapSurveyDetail = ({
   title,
@@ -20,11 +20,12 @@ const LoveMapSurveyDetail = ({
         onPress={() => setExpanded(!expanded)}
         className="flex-row items-center justify-between mb-2"
       >
-        <Text className="text-secondary-dark font-medium">{title}</Text>
+        <BookHeart size={24} color="#E83E8C" />
+        <Text className="text-primary font-medium">{title}</Text>
         {expanded ? (
-          <ChevronUp size={18} color="#6C757D" />
+          <ChevronUp size={18} color="#E83E8C" />
         ) : (
-          <ChevronDown size={18} color="#6C757D" />
+          <ChevronDown size={18} color="#E83E8C" />
         )}
       </TouchableOpacity>
 

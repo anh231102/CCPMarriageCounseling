@@ -21,11 +21,11 @@ import ActiveCoupleRoomCard from "@/src/components/couple/ActiveCoupleRoomCard"
 
 const CoupleConnectionScreen = () => {
   const navigation = useNavigation<any>()
-  const route = useRoute()
+  const route = useRoute<any>()
   const { user } = useAuth()
 
   const { selectedSurveyIds } = route.params as { selectedSurveyIds: string[] }
-
+  const { isSurvey } = route.params
   const [isLoading, setIsLoading] = useState(false)
   const [isConnected, setIsConnected] = useState(!!user?.partnerId)
   const [inviteCode, setInviteCode] = useState<string | null>(null)
@@ -38,12 +38,12 @@ const CoupleConnectionScreen = () => {
 
   const partnerData = user?.partnerId
     ? {
-        id: "partner123",
-        name: "Nguyễn Thị B",
-        email: "partner@example.com",
-        avatar: "https://placeholder.svg?height=100&width=100",
-        connectionDate: "15/05/2023",
-      }
+      id: "partner123",
+      name: "Nguyễn Thị B",
+      email: "partner@example.com",
+      avatar: "https://placeholder.svg?height=100&width=100",
+      connectionDate: "15/05/2023",
+    }
     : null
 
   useEffect(() => {
@@ -72,9 +72,10 @@ const CoupleConnectionScreen = () => {
                   onPress: async () => {
                     try {
                       const existingRoom = await coupleApi.getLatestCoupleRoom()
-                       setShowActiveRoomCard(true)
+                      setShowActiveRoomCard(true)
                       navigation.navigate("CoupleSurveyRoom", {
                         coupleId: existingRoom.id,
+                        isSurvey: isSurvey ?? false,
                       })
                     } catch (err) {
                       Alert.alert("Lỗi", "Không thể lấy thông tin phòng hiện tại.")
@@ -190,7 +191,7 @@ const CoupleConnectionScreen = () => {
           <Text className="text-secondary-dark mb-2">
             Kết nối với đối tác của bạn để chia sẻ kết quả khảo sát và xem bản đồ tình yêu đôi chi tiết.
           </Text>
-          
+
         </View>
 
         {isConnected && partnerData ? (

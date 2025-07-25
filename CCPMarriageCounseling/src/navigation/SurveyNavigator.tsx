@@ -9,6 +9,9 @@ import LoveMapScreen from "../screens/surveys/LoveMapScreen"
 import SurveySectionCompleteScreen from "@/src/components/survey/SurveySectionCompleteScreen"
 import CoupleConnectionScreen from "../screens/couple/CoupleConnectionScreen"
 import CoupleSurveyRoomScreen from "../screens/couple/CoupleSurveyRoomScreen"
+import VirtualSurveyQuestionsScreen from "../screens/couple/VirtualSurveyQuestionsScreen"
+import CoupleSurveyQuestionsScreen from "../screens/couple/CoupleSurveyQuestionsScreen"
+import LoadingBeforeSaveScreen from "../components/couple/LoadingBeforeSaveScreen"
 
 
 const Stack = createNativeStackNavigator()
@@ -47,6 +50,17 @@ const SurveyNavigator = () => {
       <Stack.Screen name="LoveMap" component={LoveMapScreen} options={{ title: "Bản đồ tình yêu" }} />
       <Stack.Screen name="CoupleConnection" component={CoupleConnectionScreen} options={{ title: "Kết nối cặp đôi" }} />
       <Stack.Screen name="CoupleSurveyRoom" component={CoupleSurveyRoomScreen} options={{ title: "Phòng khảo sát cặp đôi" }} />
+      <Stack.Screen name="VirtualSurveyQuestions" component={VirtualSurveyQuestionsScreen} options={{ title: "Phòng khảo sát " }} />
+       <Stack.Screen
+        name="CoupleSurveyQuestions"
+        component={CoupleSurveyQuestionsScreen}
+        options={{ title: "Làm khảo sát" }}
+      />
+      <Stack.Screen
+        name="LoadingBeforeSave"
+        component={LoadingBeforeSaveScreen}
+        options={{ title: "Hoàn thành khảo sát" }}
+      />
     </Stack.Navigator>
   )
 }

@@ -21,6 +21,7 @@ import CoupleSurveyQuestionsScreen from "../screens/couple/CoupleSurveyQuestions
 import SurveySectionCompleteScreen from "@/src/components/survey/SurveySectionCompleteScreen"
 import LoadingBeforeSaveScreen from "@/src/components/couple/LoadingBeforeSaveScreen"
 import LoveMapHistoryScreen from "../screens/profile/LoveMapHistoryScreen"
+import VirtualSurveyQuestionsScreen from "../screens/couple/VirtualSurveyQuestionsScreen"
 
 
 
@@ -91,6 +92,7 @@ const ProfileNavigator = () => {
         component={LoveMapHistoryScreen}
         options={{ title: "Lịch sử bản đồ tình yêu" }}
       />
+      <Stack.Screen name="VirtualSurveyQuestions" component={VirtualSurveyQuestionsScreen} options={{ title: "Phòng khảo sát " }} />
     </Stack.Navigator>
   )
 }

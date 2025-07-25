@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { useRoute, useNavigation } from "@react-navigation/native"
 import { View, Text, ScrollView, TouchableOpacity, Share as RNShare, Alert } from "react-native"
 import {
@@ -13,6 +14,8 @@ import {
 import SurveyScores from "@/src/components/survey/SurveyScores"
 import { getSurveyMetaById } from "@/src/config/types/survey.type"
 import type { SurveyType } from "@/src/config/types/persontype.type"
+import personTypeApi from "@/src/config/api/persontype.api"
+import LoveMapSurveyDetail from "@/src/components/lovemap/LoveMapSurveyDetail"
 
 interface SurveyResult {
   surveyId: SurveyType
@@ -30,6 +33,21 @@ const SurveyHistoryDetailScreen = () => {
   const meta = getSurveyMetaById(surveyResult.surveyId)!
   const IconComponent = meta.icon
 
+  const [personTypeDetail, setPersonTypeDetail] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchPersonTypeDetail = async () => {
+      try {
+        const personType = await personTypeApi.getPersonTypeByName(surveyResult.result, surveyResult.surveyId)
+        setPersonTypeDetail(personType.detail)
+      } catch (error) {
+        console.error("Lỗi khi lấy chi tiết loại tính cách:", error)
+      }
+    }
+
+    fetchPersonTypeDetail()
+  }, [])
+
   const parseRawScores = (rawScores: string) => {
     const scores: Record<string, number> = {}
     rawScores.split(",").forEach((pair) => {
@@ -38,6 +56,7 @@ const SurveyHistoryDetailScreen = () => {
     })
     return scores
   }
+
   const getTimeAgo = (dateString: string) => {
     const now = new Date()
     const date = new Date(dateString)
@@ -138,7 +157,7 @@ const SurveyHistoryDetailScreen = () => {
           <View className="flex-row justify-between items-center">
             <View>
               <Text className="text-secondary text-sm">Thời gian thực hiện</Text>
-               <Text className="text-secondary-dark font-medium">{getTimeAgo(surveyResult.createAt)}</Text>
+              <Text className="text-secondary-dark font-medium">{getTimeAgo(surveyResult.createAt)}</Text>
             </View>
             <View>
               <Text className="text-secondary text-sm">Ngày hoàn thành</Text>
@@ -158,6 +177,11 @@ const SurveyHistoryDetailScreen = () => {
             <Text className="text-xl font-bold text-secondary-dark">Biểu đồ điểm số</Text>
           </View>
           <SurveyScores scores={parseRawScores(surveyResult.rawScores)} surveyId={surveyResult.surveyId} />
+        </View>
+
+        {/* Chi tiết tính cách */}
+        <View className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+          <LoveMapSurveyDetail title="Chi tiết tính cách" description={personTypeDetail} />
         </View>
 
         {/* Actions */}

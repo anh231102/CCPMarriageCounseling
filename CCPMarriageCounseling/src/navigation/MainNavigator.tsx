@@ -4,7 +4,7 @@ import { Home, BookOpen, Search, Calendar, User } from "lucide-react-native"
 
 
 import HomeScreen from "@/src/screens/home/HomeScreen"; 
-// import CoursesNavigator from "./CoursesNavigator"
+import CoursesNavigator from "./CoursesNavigator"
 import CounselorsNavigator from "./CounselorsNavigator"
  import ProfileNavigator from "./ProfileNavigator"
 // import HomeScreen from "../screens/Home"
@@ -42,14 +42,14 @@ const MainNavigator = () => {
           tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
         }}
       />
-      {/*<Tab.Screen
+      <Tab.Screen
         name="CoursesTab"
         component={CoursesNavigator}
         options={{
           tabBarLabel: "Khóa học",
           tabBarIcon: ({ color, size }) => <Search size={size} color={color} />,
         }}
-      /> */}
+      />
       <Tab.Screen
         name="CounselorsTab"
         component={CounselorsNavigator}
@@ -66,6 +66,7 @@ const MainNavigator = () => {
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
       /> 
+      
     </Tab.Navigator>
   )
 }

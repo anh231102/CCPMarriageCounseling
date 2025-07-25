@@ -50,10 +50,27 @@ const postSurveyResult = async (
     return response.data.data
 }
 
+const postVirtualSurveyResult = async (
+    body: SurveyResultRequest
+): Promise<string> => {
+    const response = await axiosInstance.post<SurveyResultResponse>(
+        "/Couple/submit-virtual",
+        body
+    )
+
+    if (!response.data.success) {
+        throw new Error(response.data.error || "Không thể lấy kết quả khảo sát")
+    }
+
+    return response.data.data
+}
+
+
 const surveyApi = {
     getSurveys,
     getRandomSurveyQuestions,
     postSurveyResult,
+    postVirtualSurveyResult,
 }
 
 export default surveyApi

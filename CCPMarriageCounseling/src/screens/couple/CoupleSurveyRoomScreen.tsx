@@ -1,20 +1,21 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { View, Text, ScrollView, TouchableOpacity, Image, Alert, Animated } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { useState, useEffect, useRef, useCallback } from "react"
+import {
+  View, Text, ScrollView, TouchableOpacity, Image, Alert, Animated,
+} from "react-native"
+import { useNavigation, useFocusEffect, useRoute } from "@react-navigation/native"
 import { Heart, Crown, Clock, CheckCircle, RefreshCw, Sparkles } from "lucide-react-native"
 import { useAuth } from "../../hooks/useAuth"
 import coupleApi from "@/src/config/api/couple.api"
 import { Couple } from "@/src/config/types/couple.type"
 import InviteCodeCard from "@/src/components/couple/InviteCodeCard"
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
-
 
 const CoupleSurveyRoomScreen = () => {
   const navigation = useNavigation<any>()
   const { user } = useAuth()
+  const route = useRoute<any>()
+  const { isSurvey } = route.params || {}
 
   const [roomData, setRoomData] = useState<Couple | null>(null)
   const [userSurveyStatus, setUserSurveyStatus] = useState<"none" | "existing" | "completed">("none")
@@ -24,7 +25,6 @@ const CoupleSurveyRoomScreen = () => {
   const heartScale = useRef(new Animated.Value(1)).current
   const sparkleRotation = useRef(new Animated.Value(0)).current
   const loadingOpacity = useRef(new Animated.Value(0)).current
-
   const hasNavigatedRef = useRef(false)
 
   const host = roomData?.member
@@ -45,63 +45,58 @@ const CoupleSurveyRoomScreen = () => {
     : null
 
   useFocusEffect(
-  useCallback(() => {
-    const fetchRoomData = async () => {
-      try {
-        const data = await coupleApi.getLatestCoupleRoom()
+    useCallback(() => {
+      const fetchRoomData = async () => {
+        try {
+          const data = await coupleApi.getLatestCoupleRoom()
+          if (!data || data.status !== 1) {
+            if (isSurvey) {
+              navigation.reset({ index: 0, routes: [{ name: "HomeTab" }] })
+              return
+            }
 
-        if (!data || data.status !== 1) {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Profile" }],
-          })
-          return
+            navigation.reset({ index: 0, routes: [{ name: "HomeTab" }] })
+            return
+
+          }
+          setRoomData(data)
+        } catch (error) {
+          Alert.alert("Lỗi", "Không thể tải dữ liệu phòng.")
+          navigation.reset({ index: 0, routes: [{ name: "HomeTab" }] })
         }
-
-        setRoomData(data)
-      } catch (error) {
-        Alert.alert("Lỗi", "Không thể tải dữ liệu phòng.")
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Profile" }],
-        })
       }
-    }
-
-    fetchRoomData()
-  }, [])
-)
-
-
+      fetchRoomData()
+    }, [isSurvey])
+  )
 
   useEffect(() => {
     let interval: number
-
 
     const checkStatus = async () => {
       try {
         const latestRoom = await coupleApi.getLatestCoupleRoom()
         if (latestRoom.status === 2 && !hasNavigatedRef.current) {
-          hasNavigatedRef.current = true
-          setRoomData(latestRoom)
-          setIsCreatingLoveMap(true)
-          clearInterval(interval)
+          // Kiểm tra nếu userSurveyStatus và partnerSurveyStatus đã "completed" => tức là người dùng đã bấm tạo
+          if (userSurveyStatus === "completed" && partnerSurveyStatus === "completed") {
+            hasNavigatedRef.current = true
+            setRoomData(latestRoom)
+            setIsCreatingLoveMap(true)
+            clearInterval(interval)
 
-          setTimeout(() => {
-            setIsCreatingLoveMap(false)
-            navigation.navigate("LoveMap", { coupleId: latestRoom.id });
-
-          }, 4000)
+            setTimeout(() => {
+              setIsCreatingLoveMap(false)
+              navigation.navigate("LoveMap", { coupleId: latestRoom.id })
+            }, 4000)
+          }
         }
       } catch (error) {
-        console.error("Lỗi khi kiểm tra trạng thái phòng:", error)
       }
     }
 
     interval = setInterval(checkStatus, 1000)
-
     return () => clearInterval(interval)
-  }, [])
+  }, [userSurveyStatus, partnerSurveyStatus])
+
 
   useEffect(() => {
     const heartBeat = Animated.loop(
@@ -140,29 +135,64 @@ const CoupleSurveyRoomScreen = () => {
         setUserSurveyStatus(progress.isSelfDoneAll ? "completed" : "none")
         setPartnerSurveyStatus(progress.isPartnerDoneAll ? "completed" : "waiting")
       } catch (error) {
-        console.error("Lỗi khi lấy tiến trình đối phương:", error)
       }
     }
 
     fetchProgress()
     interval = setInterval(fetchProgress, 3000)
-
     return () => clearInterval(interval)
   }, [isUserHost])
 
-  const handleUseExistingSurvey = () => {
-    setUserSurveyStatus("existing")
-    Alert.alert("Thành công", "Đã sử dụng kết quả khảo sát có sẵn của bạn")
+  const handleUseExistingSurvey = async () => {
+    if (!roomData) return
+    setIsCreatingLoveMap(true)
+
+    try {
+      const surveyIds: string[] = []
+      if (roomData.mbti === "false") surveyIds.push("SV001")
+      if (roomData.disc === "false") surveyIds.push("SV002")
+      if (roomData.loveLanguage === "false") surveyIds.push("SV003")
+      if (roomData.bigFive === "false") surveyIds.push("SV004")
+
+      if (surveyIds.length === 0) {
+        Alert.alert("Thông báo", "Bạn đã hoàn thành tất cả các bài khảo sát.")
+        setIsCreatingLoveMap(false)
+        return
+      }
+
+      for (const id of surveyIds) {
+        await coupleApi.applyLatestResult(id)
+      }
+
+      const progress = await coupleApi.getPartnerProgress()
+      setUserSurveyStatus(progress.isSelfDoneAll ? "completed" : "existing")
+      setPartnerSurveyStatus(progress.isPartnerDoneAll ? "completed" : "waiting")
+
+      Alert.alert("Thành công", "Đã sử dụng kết quả khảo sát có sẵn của bạn")
+    } catch (error) {
+      Alert.alert("Lỗi", "Không thể sử dụng kết quả có sẵn")
+    } finally {
+      setIsCreatingLoveMap(false)
+    }
   }
 
   const handleTakeNewSurvey = () => {
     if (!roomData) return
-
     const surveyIds: string[] = []
-    if (roomData.mbti === "false") surveyIds.push("SV001")
-    if (roomData.disc === "false") surveyIds.push("SV002")
-    if (roomData.loveLanguage === "false") surveyIds.push("SV003")
-    if (roomData.bigFive === "false") surveyIds.push("SV004")
+
+    if (isUserHost) {
+      // Host: kiểm tra các field không có số 1
+      if (roomData.mbti === "false") surveyIds.push("SV001");
+      if (roomData.disc === "false") surveyIds.push("SV002");
+      if (roomData.loveLanguage === "false") surveyIds.push("SV003");
+      if (roomData.bigFive === "false") surveyIds.push("SV004");
+    } else {
+      // Partner: kiểm tra các field có số 1
+      if (roomData.mbti1 === "false") surveyIds.push("SV001");
+      if (roomData.disc1 === "false") surveyIds.push("SV002");
+      if (roomData.loveLanguage1 === "false") surveyIds.push("SV003");
+      if (roomData.bigFive1 === "false") surveyIds.push("SV004");
+    }
 
     if (surveyIds.length === 0) {
       Alert.alert("Thông báo", "Bạn đã hoàn thành tất cả các bài khảo sát.")
@@ -174,12 +204,40 @@ const CoupleSurveyRoomScreen = () => {
       currentSurveyIndex: 0,
       userData: {
         name: user?.name || "Bạn",
-        partnerName: partner?.fullname || "Đối tác",
+        partnerName: roomData.isVirtual ? roomData.virtualName : partner?.fullname || "Đối tác",
       },
       userType: isUserHost ? "host" : "partner",
       isAuth: true,
       roomId: roomData.accessCode,
       isHost: isUserHost,
+    })
+  }
+
+  const handleTakeNewVirtualSurvey = () => {
+    if (!roomData) return
+    const surveyIds: string[] = []
+    if (roomData.mbti1 === "false") surveyIds.push("SV001")
+    if (roomData.disc1 === "false") surveyIds.push("SV002")
+    if (roomData.loveLanguage1 === "false") surveyIds.push("SV003")
+    if (roomData.bigFive1 === "false") surveyIds.push("SV004")
+
+    if (surveyIds.length === 0) {
+      Alert.alert("Thông báo", "Bạn đã hoàn thành tất cả các bài khảo sát.")
+      return
+    }
+
+    navigation.navigate("VirtualSurveyQuestions", {
+      selectedSurveyIds: surveyIds,
+      currentSurveyIndex: 0,
+      userData: {
+        name: user?.name || "Bạn",
+        partnerName: roomData.isVirtual ? roomData.virtualName : partner?.fullname || "Đối tác",
+      },
+      userType: isUserHost ? "host" : "partner",
+      isAuth: true,
+      roomId: roomData.accessCode,
+      isHost: isUserHost,
+      isSurvey,
     })
   }
 
@@ -243,9 +301,9 @@ const CoupleSurveyRoomScreen = () => {
             </Animated.View>
           </View>
 
-          <Text className="text-xl font-bold text-secondary-dark mb-2">Đang tạo bản đồ tình yêu</Text>
+          <Text className="text-xl font-bold text-secondary-dark mb-2">Đang xử lý</Text>
           <Text className="text-secondary text-center">
-            Chúng tôi đang phân tích kết quả khảo sát{"\n"}và tạo bản đồ tình yêu cho cặp đôi...
+            Chúng tôi đang áp dụng kết quả khảo sát{"\n"}và tạo bản đồ tình yêu cho cặp đôi...
           </Text>
 
           <View className="flex-row items-center mt-4">
@@ -270,7 +328,8 @@ const CoupleSurveyRoomScreen = () => {
               <Heart size={32} color="#E83E8C" />
             </View>
             <Text className="text-lg font-bold text-secondary-dark">Phòng khảo sát</Text>
-            <InviteCodeCard inviteCode={mergedRoomData.id} />
+            {!roomData?.isVirtual && <InviteCodeCard inviteCode={mergedRoomData.id} />}
+
             <Text className="text-secondary text-sm">
               Tạo lúc {new Date(mergedRoomData.createdAt).toLocaleTimeString("vi-VN")}
             </Text>
@@ -281,15 +340,107 @@ const CoupleSurveyRoomScreen = () => {
         <View className="bg-primary/10 rounded-xl p-4 mb-6">
           <Text className="text-primary font-medium mb-2">💡 Hướng dẫn</Text>
           <View className="space-y-1">
-            <Text className="text-secondary-dark text-sm">• Cả hai người cần hoàn thành khảo sát</Text>
-            <Text className="text-secondary-dark text-sm">• Bạn có thể dùng kết quả cũ hoặc làm mới</Text>
-            <Text className="text-secondary-dark text-sm">• Bản đồ tình yêu sẽ được tạo khi cả hai hoàn thành</Text>
-            <Text className="text-secondary-dark text-sm">• Kết quả sẽ hiển thị độ tương thích chi tiết</Text>
+            {roomData?.isVirtual ? (
+              <>
+                <Text className="text-secondary-dark text-sm">
+                  • Bạn cần hoàn thành khảo sát của cả bạn và nhân vật ảo
+                </Text>
+                <Text className="text-secondary-dark text-sm">
+                  • Bạn có thể dùng kết quả cũ hoặc làm mới cho phần kết quả của bản thân, đối với đối tác ảo bạn cần làm mới kết quả
+                </Text>
+                <Text className="text-secondary-dark text-sm">
+                  • Bản đồ tình yêu sẽ được tạo khi cả bạn và đối tác ảo hoàn thành
+                </Text>
+                <Text className="text-secondary-dark text-sm">
+                  • Kết quả sẽ hiển thị độ tương thích chi tiết
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text className="text-secondary-dark text-sm">
+                  • Cả hai người cần hoàn thành khảo sát
+                </Text>
+                <Text className="text-secondary-dark text-sm">
+                  • Bạn có thể dùng kết quả cũ hoặc làm mới
+                </Text>
+                <Text className="text-secondary-dark text-sm">
+                  • Bản đồ tình yêu sẽ được tạo khi cả hai hoàn thành
+                </Text>
+                <Text className="text-secondary-dark text-sm">
+                  • Kết quả sẽ hiển thị độ tương thích chi tiết
+                </Text>
+              </>
+            )}
           </View>
         </View>
 
         {/* Host and Partner Cards */}
         {["host", "partner"].map((role) => {
+          if (role === "partner" && roomData?.isVirtual || null) {
+            return (
+              <View
+                key="virtual-partner"
+                className="bg-white rounded-xl p-6 mb-4 shadow-sm border-l-4 border-secondary"
+              >
+                <View className="flex-row items-center mb-4">
+                  <View className="relative">
+                    <Image
+                      source={require("../../../assets/images/avatar.png")}
+                      className="w-16 h-16 rounded-full"
+                    />
+                  </View>
+                  <View className="ml-4 flex-1">
+                    <View className="flex-row items-center mb-1">
+                      <Text className="text-lg font-bold text-secondary-dark">{roomData?.virtualName}</Text>
+                      <View className="bg-blue-100 rounded-full px-2 py-1 ml-2">
+                        <Text className="text-blue-600 text-xs font-medium">Đối tác ảo</Text>
+                      </View>
+                    </View>
+                    <Text className="text-secondary text-sm">
+                      Ngày sinh:
+                      {roomData?.virtualDob
+                        ? new Date(roomData.virtualDob).toLocaleDateString("vi-VN")
+                        : "Không rõ"}
+                    </Text>
+
+                  </View>
+                </View>
+
+                <View className="bg-gray-50 rounded-xl p-4 mb-4">
+                  {(partnerSurveyStatus === "waiting") && (
+                    <View className="items-center">
+                      <Clock size={24} color="#6C757D" />
+                      <Text className="text-secondary-dark font-medium">Chưa hoàn thành khảo sát</Text>
+                      <Text className="text-secondary text-sm text-center">
+                        Đối tác ảo cần bạn làm khảo sát thay
+                      </Text>
+                    </View>
+                  )}
+                  {partnerSurveyStatus === "completed" && (
+                    <View className="items-center">
+                      <CheckCircle size={24} color="#28A745" />
+                      <Text className="text-success font-medium">Khảo sát ảo đã hoàn thành</Text>
+                      <Text className="text-secondary text-sm text-center">Bạn có thể tạo bản đồ</Text>
+                    </View>
+                  )}
+                </View>
+
+                {partnerSurveyStatus === "waiting" && (
+                  <TouchableOpacity
+                    onPress={handleTakeNewVirtualSurvey}
+                    className="bg-primary rounded-xl p-4 flex-row items-center"
+                  >
+                    <RefreshCw size={20} color="#FFFFFF" />
+                    <View className="ml-3 flex-1">
+                      <Text className="text-white font-medium">Làm bài khảo sát mới cho đối tác ảo</Text>
+                      <Text className="text-white/80 text-sm">Thực hiện bộ khảo sát tổng hợp</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )
+          }
+
           const roleName = role === "host" ? mergedRoomData.hostName : mergedRoomData.partnerName
           const isSelf = roleName === user?.name
           const name = roleName

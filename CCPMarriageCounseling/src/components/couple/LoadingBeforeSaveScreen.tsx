@@ -7,7 +7,7 @@ import surveyApi from "@/src/config/api/survey.api"
 const LoadingBeforeSaveScreen = () => {
   const navigation = useNavigation<any>()
   const route = useRoute<any>()
-  const { selectedSurveyIds, roomId, isHost, answers } = route.params
+  const { selectedSurveyIds, roomId, isHost, answers, isSurvey } = route.params
 
   useEffect(() => {
     const showAlert = () => {
@@ -22,6 +22,7 @@ const LoadingBeforeSaveScreen = () => {
               navigation.navigate("CoupleSurveyRoom", {
                 roomId,
                 isHost,
+                isSurvey,
               })
             },
           },
@@ -68,6 +69,7 @@ const LoadingBeforeSaveScreen = () => {
                 navigation.navigate("CoupleSurveyRoom", {
                   roomId,
                   isHost,
+                  isSurvey,
                 })
               } catch (error: any) {
                 

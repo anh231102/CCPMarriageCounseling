@@ -1,26 +1,51 @@
 "use client"
 
 import { useState } from "react"
-import { View, Text, ScrollView } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import {
+  View,
+  Text,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+  Platform,
+} from "react-native"
+import DateTimePicker from "@react-native-community/datetimepicker"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import { Users, Clock, Heart, User } from "lucide-react-native"
 import InputField from "../../components/InputField"
 import CustomButton from "../../components/CustomButton"
 import { useAuth } from "../../hooks/useAuth"
+import coupleApi from "@/src/config/api/couple.api"
+
+const formatDateLocal = (date: Date): string => {
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, "0")
+  const dd = String(date.getDate()).padStart(2, "0")
+  const hh = String(date.getHours()).padStart(2, "0")
+  const mi = String(date.getMinutes()).padStart(2, "0")
+  const ss = String(date.getSeconds()).padStart(2, "0")
+  return `${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}`
+}
 
 const SelfCheckScreen = () => {
   const navigation = useNavigation<any>()
+  const route = useRoute<any>()
+  const { isSurvey } = route.params
   const { user } = useAuth()
+
+  const { selectedSurveyIds } = route.params || { selectedSurveyIds: [] }
 
   const [formData, setFormData] = useState({
     partnerName: "",
-    partnerAge: "",
+    partnerDob: "",
     partnerGender: "",
     relationshipDuration: "",
     relationshipStatus: "",
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [dobDate, setDobDate] = useState<Date | null>(null)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -36,6 +61,17 @@ const SelfCheckScreen = () => {
     }
   }
 
+  const handleDateChange = (_: any, selectedDate?: Date) => {
+    setShowDatePicker(false)
+    if (selectedDate) {
+      setDobDate(selectedDate)
+      setFormData((prev) => ({
+        ...prev,
+        partnerDob: selectedDate.toISOString().split("T")[0], // Hiển thị đơn giản YYYY-MM-DD
+      }))
+    }
+  }
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
@@ -43,29 +79,117 @@ const SelfCheckScreen = () => {
       newErrors.partnerName = "Vui lòng nhập tên đối tác"
     }
 
-    if (formData.partnerAge && isNaN(Number(formData.partnerAge))) {
-      newErrors.partnerAge = "Tuổi phải là số"
-    }
-
-    if (!formData.relationshipStatus.trim()) {
-      newErrors.relationshipStatus = "Vui lòng chọn trạng thái mối quan hệ"
+    if (!formData.partnerDob) {
+      newErrors.partnerDob = "Vui lòng chọn ngày sinh"
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      navigation.navigate("SurveyQuestions", {
-        userType: "self-check",
-        userData: {
-          name: user?.name || user?.email || "Bạn",
-          ...formData,
-        },
+  const handleSubmit = async () => {
+    if (!validateForm()) return
+
+
+    try {
+      const result = await coupleApi.createVirtualCouple({
+        surveyIds: selectedSurveyIds,
+        virtualName: formData.partnerName,
+        virtualDob: formatDateLocal(dobDate || new Date()),
+
       })
+
+
+
+
+      if (typeof result !== "string" && result.success === false) {
+        const message = result.error || "Không thể tạo phòng ảo"
+        throw new Error(message)
+      }
+
+
+      const coupleId = typeof result === "string" ? result : result?.data
+
+
+      navigation.navigate("CoupleSurveyRoom", {
+        coupleId,
+        isSurvey: isSurvey ?? false,
+      })
+    } catch (error: any) {
+
+
+      const message = error?.message || "Không thể tạo phòng ảo"
+
+      if (message.includes("active room") || message.includes("sẵn phòng")) {
+        Alert.alert(
+          "Bạn đã có phòng",
+          "Bạn đã tạo một phòng ảo trước đó. Bạn muốn làm gì?",
+          [
+            {
+              text: "Hủy",
+              onPress: () => navigation.goBack(),
+              style: "cancel",
+            },
+            {
+              text: "Vào phòng hiện tại",
+              onPress: async () => {
+                try {
+                  const existingRoom = await coupleApi.getLatestCoupleRoom()
+                  console.log("🔵 Đã lấy được phòng hiện tại:", existingRoom)
+
+                  navigation.navigate("CoupleSurveyRoom", {
+                    coupleId: existingRoom.id,
+                    isSurvey: isSurvey ?? false,
+                  })
+                } catch (getRoomError) {
+
+                  Alert.alert("Lỗi", "Không thể lấy thông tin phòng hiện tại.")
+                }
+              },
+            },
+            {
+              text: "Xóa phòng cũ & tạo mới",
+              onPress: async () => {
+                try {
+
+                  await coupleApi.cancelCoupleRoom()
+
+
+                  const newResult = await coupleApi.createVirtualCouple({
+                    surveyIds: selectedSurveyIds,
+                    virtualName: formData.partnerName,
+                    virtualDob: formatDateLocal(dobDate || new Date()),
+                  })
+
+
+
+                  if (typeof newResult !== "string" && newResult.success === false) {
+                    throw new Error(newResult.error || "Không thể tạo lại phòng ảo")
+                  }
+
+                  const coupleId = typeof newResult === "string" ? newResult : newResult?.data
+
+
+                  navigation.navigate("CoupleSurveyRoom", {
+                    coupleId,
+                    isSurvey: isSurvey ?? false,
+                  })
+                } catch (err: any) {
+
+                  Alert.alert("Lỗi", err?.message || "Không thể tạo lại phòng ảo")
+                }
+              },
+              style: "destructive",
+            },
+          ]
+        )
+      } else {
+        Alert.alert("Lỗi", message)
+      }
     }
   }
+
+
 
   return (
     <ScrollView className="flex-1 bg-gray-50">
@@ -115,28 +239,47 @@ const SelfCheckScreen = () => {
             icon={<Heart size={18} color="#E83E8C" />}
           />
 
-          <InputField
-            label="Tuổi đối tác"
-            value={formData.partnerAge}
-            onChangeText={(value) => handleInputChange("partnerAge", value)}
-            placeholder="Nhập tuổi"
-            keyboardType="numeric"
-            error={errors.partnerAge}
-          />
+          <View className="mb-4">
+            <Text className="mb-2 text-sm font-medium text-secondary-dark">
+              Ngày sinh đối tác *
+            </Text>
+
+            <TouchableOpacity
+              className="bg-gray-100 px-4 py-3 rounded-xl flex-row items-center justify-between"
+              onPress={() => setShowDatePicker(true)}
+            >
+              <View className="flex-row items-center space-x-2">
+                <Clock size={20} color="#E83E8C" />
+                <Text
+                  className={`text-sm ml-2 ${formData.partnerDob ? "text-secondary-dark" : "text-gray-400"
+                    }`}
+                >
+                  {formData.partnerDob || "Chọn ngày sinh"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            {errors.partnerDob && (
+              <Text className="text-red-500 text-xs mt-2">{errors.partnerDob}</Text>
+            )}
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={dobDate || new Date(2000, 0, 1)}
+                mode="date"
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={handleDateChange}
+                maximumDate={new Date()}
+              />
+            )}
+          </View>
+
 
           <InputField
             label="Giới tính đối tác"
             value={formData.partnerGender}
             onChangeText={(value) => handleInputChange("partnerGender", value)}
             placeholder="Nam/Nữ/Khác"
-          />
-
-          <InputField
-            label="Trạng thái mối quan hệ *"
-            value={formData.relationshipStatus}
-            onChangeText={(value) => handleInputChange("relationshipStatus", value)}
-            placeholder="Vợ/chồng, Người yêu, Hẹn hò..."
-            error={errors.relationshipStatus}
           />
         </View>
 

@@ -11,6 +11,8 @@ import {
   Couple,
   CoupleResultResponse,
   CoupleHistoryResponse,
+  ApplyLatestResultResponse,
+  CreateVirtualCoupleRequest,
 } from "@/src/config/types/couple.type"
 
 const createCouple = async (surveyIds: string[]): Promise<CreateCoupleResponse> => {
@@ -25,7 +27,7 @@ const createCouple = async (surveyIds: string[]): Promise<CreateCoupleResponse> 
   } catch (error: any) {
     if (error.response) {
 
-      return error.response.data 
+      return error.response.data
     } else {
 
       return {
@@ -111,10 +113,10 @@ const getPartnerProgress = async (): Promise<PartnerProgressData> => {
 const completeCoupleRoom = async (coupleId: string): Promise<string> => {
   try {
     const response = await axiosInstance.put(`/Couple/${coupleId}/complete`, coupleId, {
-  headers: {
-    "Content-Type": "text/plain", 
-  }
-})
+      headers: {
+        "Content-Type": "text/plain",
+      }
+    })
 
     if (!response.data.success) {
       throw new Error(response.data.error || "Không thể hoàn tất phòng")
@@ -173,6 +175,54 @@ const getCoupleHistory = async (): Promise<Couple[]> => {
   }
 }
 
+const applyLatestResult = async (
+  surveyId: string
+): Promise<string> => {
+  try {
+    const response = await axiosInstance.post<ApplyLatestResultResponse>(
+      "/Couple/apply-latest-result",
+      { surveyId }
+    )
+
+    if (!response.data.success) {
+      throw new Error(response.data.error || "Không thể áp dụng kết quả mới nhất")
+    }
+
+    return response.data.data
+  } catch (error: any) {
+    if (error.response) {
+      console.error("[applyLatestResult] API Error Response:", error.response.data)
+    } else {
+      console.error("[applyLatestResult] Error:", error.message)
+    }
+    throw error
+  }
+}
+
+const createVirtualCouple = async (
+  payload: CreateVirtualCoupleRequest
+): Promise<CreateCoupleResponse> => {
+  try {
+    const response = await axiosInstance.post<CreateCoupleResponse>(
+      "/Couple/create-virtual",
+      payload
+    );
+
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response.data as CreateCoupleResponse;
+    } else {
+      return {
+        success: false,
+        data: null,
+        error: error.message,
+      };
+    }
+  }
+};
+
+
 const coupleApi = {
   createCouple,
   getLatestCoupleRoom,
@@ -183,6 +233,8 @@ const coupleApi = {
   completeCoupleRoom,
   getCoupleResult,
   getCoupleHistory,
+  applyLatestResult,
+  createVirtualCouple,
 }
 
 export default coupleApi

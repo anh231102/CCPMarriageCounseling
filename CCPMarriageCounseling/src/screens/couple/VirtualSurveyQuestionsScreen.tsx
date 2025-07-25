@@ -1,3 +1,4 @@
+// SurveyQuestionsScreen.tsx
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -15,9 +16,8 @@ import { useAuth } from "../../hooks/useAuth"
 import surveyApi from "@/src/config/api/survey.api"
 import type { Question, Survey } from "@/src/config/types/survey.type"
 import Loading from "@/src/components/share/Loading"
-import coupleApi from "@/src/config/api/couple.api"
 
-const CoupleSurveyQuestionsScreen = () => {
+const VirtualSurveyQuestionsScreen = () => {
   const navigation = useNavigation<any>()
   const route = useRoute<any>()
   const {
@@ -38,7 +38,6 @@ const CoupleSurveyQuestionsScreen = () => {
   const [surveyTitle, setSurveyTitle] = useState<string>("")
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, any>>({})
-  const [personalAnswers, setPersonalAnswers] = useState<Record<string, any[]>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -78,7 +77,7 @@ const CoupleSurveyQuestionsScreen = () => {
     const questionId = currentQuestion.id
     const updatedAnswers = {
       ...answers,
-      [questionId]: { ...answerValue, surveyId: currentSurveyId },
+      [questionId]: answerValue,
     }
     setAnswers(updatedAnswers)
 
@@ -87,8 +86,8 @@ const CoupleSurveyQuestionsScreen = () => {
     } else {
       setLoading(true)
       try {
-        // ✅ Gom dữ liệu cho Couple API
         const groupedAnswers: Record<string, number> = {}
+
         Object.values(updatedAnswers).forEach((ans: any) => {
           if (ans.tag && typeof ans.score === "number") {
             groupedAnswers[ans.tag] = (groupedAnswers[ans.tag] || 0) + ans.score
@@ -103,54 +102,36 @@ const CoupleSurveyQuestionsScreen = () => {
           })),
         }
 
-        // ✅ Gửi Couple API
-        await coupleApi.postCoupleSurveyResult(formattedResult)
-
-        // ✅ Gộp vào personalAnswers theo surveyId
-        setPersonalAnswers((prev) => ({
-          ...prev,
-          [currentSurveyId]: [
-            ...(prev[currentSurveyId] || []),
-            ...Object.values(updatedAnswers),
-          ],
-        }))
+        const resultText = await surveyApi.postVirtualSurveyResult(formattedResult)
 
         const isLastSurvey = currentSurveyIndex >= selectedSurveyIds.length - 1
 
         if (isLastSurvey) {
-          // ✅ Sang màn LoadingBeforeSave, truyền personalAnswers đã gồm survey hiện tại
-          navigation.replace("LoadingBeforeSave", {
-            selectedSurveyIds,
-            roomId,
-            isHost,
-            isSurvey,
-            answers: {
-              ...personalAnswers,
-              [currentSurveyId]: [
-                ...(personalAnswers[currentSurveyId] || []),
-                ...Object.values(updatedAnswers),
-              ],
-            },
-          })
+          navigation.navigate("CoupleSurveyRoom", {
+                  roomId,
+                  isHost,
+                  isSurvey,
+                })
         } else {
           navigation.replace("SurveySectionComplete", {
             selectedSurveyIds,
             currentSurveyIndex,
             nextSurveyIndex: currentSurveyIndex + 1,
             currentSurveyTitle: surveyTitle,
-            resultText: "",
+            resultText,
             userType,
             userData,
             isAuth: isAuth ?? authState,
             couple: true,
+            isVirtual: true,
           })
         }
       } catch (error) {
         Alert.alert("Lỗi", "Không thể lưu kết quả khảo sát. Vui lòng thử lại.")
       } finally {
         setLoading(false)
-        setAnswers({})
-        setCurrentQuestionIndex(0)
+        setAnswers({}) // ❌ Clear sau khi lưu kết quả
+        setCurrentQuestionIndex(0) // ❌ Reset index
       }
     }
   }
@@ -170,7 +151,7 @@ const CoupleSurveyQuestionsScreen = () => {
     return (
       <View className="flex-1 items-center justify-center bg-white">
         <Loading size={50} />
-        <Text className="text-secondary mt-3">Đang xử lý dữ liệu...</Text>
+        <Text className="text-secondary mt-3">Đang tải câu hỏi...</Text>
       </View>
     )
   }
@@ -252,4 +233,4 @@ const CoupleSurveyQuestionsScreen = () => {
   )
 }
 
-export default CoupleSurveyQuestionsScreen
+export default VirtualSurveyQuestionsScreen

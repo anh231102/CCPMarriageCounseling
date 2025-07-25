@@ -14,14 +14,21 @@ const SurveySectionCompleteScreen = () => {
     userType,
     userData,
     isAuth,
-    couple, // 👈 thêm dòng này
+    couple,
+    isVirtual, // 👈 thêm dòng này
   } = route.params
 
   const completedSurveyIds = selectedSurveyIds.slice(0, currentSurveyIndex + 1)
   const nextSurveyExists = nextSurveyIndex < selectedSurveyIds.length
 
   const handleNext = () => {
-    navigation.replace(couple ? "CoupleSurveyQuestions" : "SurveyQuestions", {
+    let targetScreen = "SurveyQuestions"
+
+    if (couple) {
+      targetScreen = isVirtual ? "VirtualSurveyQuestions" : "CoupleSurveyQuestions"
+    }
+
+    navigation.replace(targetScreen, {
       selectedSurveyIds,
       currentSurveyIndex: nextSurveyIndex,
       userType,
@@ -64,15 +71,22 @@ const SurveySectionCompleteScreen = () => {
       )}
 
       {nextSurveyExists && (
-        <TouchableOpacity onPress={handleNext} className="bg-primary px-6 py-3 rounded-full mb-4">
+        <TouchableOpacity
+          onPress={handleNext}
+          className="bg-primary px-6 py-3 rounded-full mb-4"
+        >
           <Text className="text-white font-medium">Tiếp tục khảo sát</Text>
         </TouchableOpacity>
       )}
 
-      {/* Chỉ hiển thị nút lưu nếu KHÔNG phải couple */}
       {!couple && (
-        <TouchableOpacity onPress={handleSubmit} className="bg-gray-200 px-6 py-3 rounded-full">
-          <Text className="text-secondary-dark font-medium">Lưu kết quả và kết thúc</Text>
+        <TouchableOpacity
+          onPress={handleSubmit}
+          className="bg-gray-200 px-6 py-3 rounded-full"
+        >
+          <Text className="text-secondary-dark font-medium">
+            Lưu kết quả và kết thúc
+          </Text>
         </TouchableOpacity>
       )}
     </View>

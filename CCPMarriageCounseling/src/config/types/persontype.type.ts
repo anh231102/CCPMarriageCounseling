@@ -1,3 +1,5 @@
+import { Category } from "./category.type"
+
 //person.type.ts
 export interface PersonType {
   id: string
@@ -7,6 +9,8 @@ export interface PersonType {
   image: string
   surveyId: string
   scores: Record<string, number>
+  categoryId?: string
+  category?: Category
 }
 
 export interface PersonTypeResponse {

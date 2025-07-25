@@ -27,9 +27,23 @@ const getPersonTypeHistoryBySurveyId = async (surveyId: string) => {
   return response.data.data
 }
 
+const getPersonTypeByName = async (name: string, surveyId: string): Promise<PersonType> => {
+  const response = await axiosInstance.post<PersonTypeResponse>(
+    "/PersonType/get-by-name",
+    { name, surveyId }
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy loại tính cách theo tên")
+  }
+
+  return response.data.data
+}
+
 const personTypeApi = {
   getPersonTypeBySurveyId,
   getPersonTypeHistoryBySurveyId, 
+  getPersonTypeByName,
 }
 
 export default personTypeApi

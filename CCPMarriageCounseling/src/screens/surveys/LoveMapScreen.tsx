@@ -22,6 +22,7 @@ import { useAuth } from "../../hooks/useAuth"
 import coupleApi from "../../config/api/couple.api"
 import type { Couple } from "../../config/types/couple.type"
 import Loading from "@/src/components/share/Loading"
+import CounselorRecommendList from "@/src/components/counselor/CounselorRecommendList"
 
 interface RouteParams {
   coupleId: string
@@ -436,6 +437,7 @@ const LoveMapScreen = () => {
             rec2={coupleData.rec2 ?? ""}
             onRegister={() => navigation.navigate("CounselorsTab")}
           />
+          <CounselorRecommendList />
         </View>
 
         {/* Action Buttons */}

@@ -150,3 +150,16 @@ export interface CoupleHistoryResponse {
   data: Couple[];
   error: string | null;
 }
+
+export interface ApplyLatestResultResponse {
+  success: boolean
+  data: string
+  error: string | null
+}
+
+
+export interface CreateVirtualCoupleRequest {
+  surveyIds: string[]
+  virtualName: string
+  virtualDob: string 
+}

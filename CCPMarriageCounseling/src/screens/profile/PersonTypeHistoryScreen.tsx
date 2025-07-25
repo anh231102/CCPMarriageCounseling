@@ -20,6 +20,7 @@ import {
 import personTypeApi from "@/src/config/api/persontype.api"
 import type { PersonTypeHistoryItem, SurveyType } from "@/src/config/types/persontype.type"
 import { surveyTypes, getSurveyMetaById } from "@/src/config/types/survey.type"
+import Loading from "@/src/components/share/Loading"
 
 const PersonTypeHistoryScreen = () => {
   const navigation = useNavigation<any>()
@@ -117,7 +118,9 @@ const PersonTypeHistoryScreen = () => {
                   {formatDate(item.createAt)}
                 </Text>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                navigation.navigate("PersonTypeHistoryDetail", { surveyResult: item })
+              }}>
                 <Text className="text-primary text-sm font-medium">Xem chi tiết</Text>
               </TouchableOpacity>
             </View>
@@ -151,9 +154,8 @@ const PersonTypeHistoryScreen = () => {
                     setSortOrder(key as "newest" | "oldest")
                     setShowSortMenu(false)
                   }}
-                  className={`p-3 flex-row items-center ${
-                    sortOrder === key ? "bg-primary/5" : ""
-                  }`}
+                  className={`p-3 flex-row items-center ${sortOrder === key ? "bg-primary/5" : ""
+                    }`}
                 >
                   {key === "newest" ? (
                     <TrendingDown
@@ -167,11 +169,10 @@ const PersonTypeHistoryScreen = () => {
                     />
                   )}
                   <Text
-                    className={`ml-2 text-sm ${
-                      sortOrder === key
-                        ? "text-primary font-medium"
-                        : "text-secondary-dark"
-                    }`}
+                    className={`ml-2 text-sm ${sortOrder === key
+                      ? "text-primary font-medium"
+                      : "text-secondary-dark"
+                      }`}
                   >
                     {key === "newest" ? "Mới nhất" : "Cũ nhất"}
                   </Text>
@@ -189,27 +190,27 @@ const PersonTypeHistoryScreen = () => {
             <TouchableOpacity
               key={type.id}
               onPress={() => setSelectedSurveyType(type.id)}
-              className={`items-center mr-4 px-3 py-2 rounded-xl border ${
-                isSelected
-                  ? "bg-pink-50 border-pink-500"
-                  : "bg-gray-100 border-gray-300"
-              }`}
-              style={{ minWidth: 100 }}
-            >
-              <View
-                className={`rounded-full p-2 mb-1 ${
-                  isSelected ? "bg-pink-100" : "bg-gray-200"
+              className={`items-center mr-4 px-3 py-2 rounded-xl border ${isSelected ? currentType.bgColor : "bg-gray-100 border-gray-300"
                 }`}
+              style={{
+                minWidth: 100,
+                borderColor: isSelected ? currentType.color : "#D1D5DB", // gray-300
+              }}
+            >
+
+              <View
+                className={`rounded-full p-2 mb-1 ${isSelected ? `${currentType.bgColor} ` : "bg-gray-200"
+                  }`}
               >
                 <Icon size={20} color={isSelected ? type.color : "#6C757D"} />
               </View>
               <Text
-                className={`text-sm font-medium text-center ${
-                  isSelected ? "text-pink-600" : "text-secondary-dark"
-                }`}
+                className="text-sm font-medium text-center"
+                style={{ color: isSelected ? currentType.color : "#343a40" }} // text-secondary-dark
               >
                 {type.name}
               </Text>
+
             </TouchableOpacity>
           )
         })}
@@ -224,7 +225,7 @@ const PersonTypeHistoryScreen = () => {
       <View className="flex-1 p-4">
         {loading ? (
           <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#E83E8C" />
+            <Loading size={60} />
             <Text className="text-secondary mt-2">Đang tải...</Text>
           </View>
         ) : surveyHistory.length > 0 ? (
