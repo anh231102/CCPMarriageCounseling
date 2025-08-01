@@ -48,10 +48,10 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      
       "expo-web-browser",
       "expo-font",
-      "expo-barcode-scanner"
+      "expo-barcode-scanner",
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true

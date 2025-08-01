@@ -1,22 +1,30 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { Home, BookOpen, Search, Calendar, User } from "lucide-react-native"
+import { Home, BookOpen, Search, Calendar, User, ClipboardPen } from "lucide-react-native"
 
 
-import HomeScreen from "@/src/screens/home/HomeScreen"; 
+import HomeScreen from "@/src/screens/home/HomeScreen";
 import CoursesNavigator from "./CoursesNavigator"
 import CounselorsNavigator from "./CounselorsNavigator"
- import ProfileNavigator from "./ProfileNavigator"
+import ProfileNavigator from "./ProfileNavigator"
 // import HomeScreen from "../screens/Home"
- import SurveyNavigator from "./SurveyNavigator"
+import SurveyNavigator from "./SurveyNavigator"
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
 
 const MainNavigator = () => {
   return (
+
     <Tab.Navigator
       screenOptions={{
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 10,
+          
+          position: "absolute",
+          transform: [{ translateY: 0 }], // sẽ thay đổi sau
+        },
         tabBarActiveTintColor: "#E83E8C",
         tabBarInactiveTintColor: "#6C757D",
         tabBarLabelStyle: {
@@ -26,6 +34,7 @@ const MainNavigator = () => {
         headerShown: false,
       }}
     >
+
       <Tab.Screen
         name="HomeTab"
         component={HomeScreen}
@@ -34,12 +43,12 @@ const MainNavigator = () => {
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
-       <Tab.Screen
+      <Tab.Screen
         name="SurveyTab"
         component={SurveyNavigator}
         options={{
           tabBarLabel: "Khảo sát",
-          tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <ClipboardPen size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -47,7 +56,7 @@ const MainNavigator = () => {
         component={CoursesNavigator}
         options={{
           tabBarLabel: "Khóa học",
-          tabBarIcon: ({ color, size }) => <Search size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -58,15 +67,15 @@ const MainNavigator = () => {
           tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
         }}
       />
-       <Tab.Screen
-       name="ProfileTab"
+      <Tab.Screen
+        name="ProfileTab"
         component={ProfileNavigator}
         options={{
           tabBarLabel: "Cá nhân",
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
-      /> 
-      
+      />
+
     </Tab.Navigator>
   )
 }

@@ -142,7 +142,7 @@ const ProfileScreen = () => {
             <ChevronRight size={20} color="#6C757D" />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate("CoursesTab")} className="flex-row items-center p-4">
+          <TouchableOpacity onPress={() => navigation.navigate("MyCourseList")} className="flex-row items-center p-4">
             <View className="w-10 h-10 bg-success/10 rounded-full items-center justify-center mr-3">
               <BookOpen size={20} color="#28A745" />
             </View>

@@ -3,6 +3,7 @@ import CourseListScreen from "../screens/courses/CourseListScreen"
 import CourseDetailScreen from "../screens/courses/CourseDetailScreen"
 import CourseContentScreen from "../screens/courses/CourseContentScreen"
 import CourseRecommendationScreen from "../screens/courses/CourseRecommendationScreen"
+import MyCourseListScreen from "../screens/courses/MyCourseListScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -24,6 +25,11 @@ const CoursesNavigator = () => {
         name="CourseRecommendation"
         component={CourseRecommendationScreen}
         options={{ title: "Khóa học đề xuất" }}
+      />
+      <Stack.Screen
+        name="MyCourseList"
+        component={MyCourseListScreen}
+        options={{ title: "Khóa học của tôi" }}
       />
     </Stack.Navigator>
   )

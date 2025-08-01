@@ -22,6 +22,9 @@ import SurveySectionCompleteScreen from "@/src/components/survey/SurveySectionCo
 import LoadingBeforeSaveScreen from "@/src/components/couple/LoadingBeforeSaveScreen"
 import LoveMapHistoryScreen from "../screens/profile/LoveMapHistoryScreen"
 import VirtualSurveyQuestionsScreen from "../screens/couple/VirtualSurveyQuestionsScreen"
+import { MyCourseListScreen } from "../screens/courses/MyCourseListScreen"
+import { CourseDetailScreen } from "../screens/courses/CourseDetailScreen"
+import CourseContentScreen from "../screens/courses/CourseContentScreen"
 
 
 
@@ -48,26 +51,26 @@ const ProfileNavigator = () => {
         component={PersonTypeHistoryScreen}
         options={{ title: "Lịch sử khảo sát" }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="PersonTypeHistoryDetail"
         component={PersonTypeHistoryDetailScreen}
         options={{ title: "Lịch sử khảo sát" }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="CoupleRoomSelection"
         component={CoupleRoomSelectionScreen}
         options={{ title: "Tùy chọn phương thức" }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="JoinCoupleRoom"
         component={JoinCoupleRoomScreen}
         options={{ title: "Nhập mã phòng" }}
       />
       <Stack.Screen name="CoupleSurveyRoom" component={CoupleSurveyRoomScreen} options={{ title: "Phòng khảo sát cặp đôi" }} />
       <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ title: "Phòng khảo sát cặp đôi" }} />
-       <Stack.Screen name="CoupleSurveySelection" component={CoupleSurveySelectionScreen} options={{ title: "Kết nối cặp đôi" }} />
-       <Stack.Screen name="LoveMap" component={LoveMapScreen} options={{ title: "Bản đồ tình yêu" }} />
-       <Stack.Screen
+      <Stack.Screen name="CoupleSurveySelection" component={CoupleSurveySelectionScreen} options={{ title: "Kết nối cặp đôi" }} />
+      <Stack.Screen name="LoveMap" component={LoveMapScreen} options={{ title: "Bản đồ tình yêu" }} />
+      <Stack.Screen
         name="AppointmentHistory"
         component={AppointmentHistoryScreen}
         options={{ title: "Lịch sử tư vấn" }}
@@ -91,6 +94,21 @@ const ProfileNavigator = () => {
         name="LoveMapHistory"
         component={LoveMapHistoryScreen}
         options={{ title: "Lịch sử bản đồ tình yêu" }}
+      />
+      <Stack.Screen
+        name="MyCourseList"
+        component={MyCourseListScreen}
+        options={{ title: "Khóa học của tôi" }}
+      />
+      <Stack.Screen
+        name="CourseDetail"
+        component={CourseDetailScreen}
+        options={({ route }: any) => ({ title: route.params?.title || "Chi tiết khóa học" })}
+      />
+      <Stack.Screen
+        name="CourseContent"
+        component={CourseContentScreen}
+        options={({ route }: any) => ({ title: route.params?.title || "Nội dung khóa học" })}
       />
       <Stack.Screen name="VirtualSurveyQuestions" component={VirtualSurveyQuestionsScreen} options={{ title: "Phòng khảo sát " }} />
     </Stack.Navigator>

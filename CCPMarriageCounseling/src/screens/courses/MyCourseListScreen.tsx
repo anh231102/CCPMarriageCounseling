@@ -21,7 +21,7 @@ type CourseListScreenNavigationProp = NativeStackNavigationProp<CoursesStackPara
 
 const ITEMS_PER_PAGE = 6 // Number of courses to display per page
 
-export const CourseListScreen = () => {
+export const MyCourseListScreen = () => {
   const navigation = useNavigation<CourseListScreenNavigationProp>()
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
@@ -34,7 +34,7 @@ export const CourseListScreen = () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await courseApi.getAllCoursesForUser()
+      const data = await courseApi.getMyCourses()
       setCourses(data)
     } catch (err: any) {
       setError(err.message || "Không thể tải danh sách khóa học.")
@@ -55,7 +55,7 @@ export const CourseListScreen = () => {
 
   const filteredCourses = courses.filter(
   (course) =>
-    !course.isEnrolled && !course.isBuy &&
+    !course.isEnrolled &&
     course.name.toLowerCase().includes(searchText.toLowerCase())
 )
 
@@ -95,7 +95,7 @@ export const CourseListScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
       <View className="p-4 bg-white shadow-sm">
-        <Text className="text-2xl font-bold text-secondary-dark mb-4">Khóa học</Text>
+        
         <View className="flex-row items-center border border-gray-300 rounded-lg px-3 py-2 bg-white">
           <Search size={20} color="#6C757D" />
           <TextInput
@@ -117,7 +117,7 @@ export const CourseListScreen = () => {
         <FlatList
           data={paginatedCourses}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <CourseCard course={item} onPress={handleCoursePress} />}
+          renderItem={({ item }) => <CourseCard course={item} onPress={handleCoursePress} onEnrollSuccess={fetchCourses} ofMyCourses="mycourses" />}
           contentContainerStyle={{ paddingVertical: 16 }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
@@ -129,4 +129,4 @@ export const CourseListScreen = () => {
     </SafeAreaView>
   )
 }
-export default CourseListScreen
+export default MyCourseListScreen
