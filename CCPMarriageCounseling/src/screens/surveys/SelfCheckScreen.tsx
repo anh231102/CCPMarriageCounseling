@@ -8,6 +8,7 @@ import {
   Alert,
   TouchableOpacity,
   Platform,
+  KeyboardAvoidingView,
 } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { useNavigation, useRoute } from "@react-navigation/native"
@@ -192,129 +193,135 @@ const SelfCheckScreen = () => {
 
 
   return (
-    <ScrollView className="flex-1 bg-gray-50">
-      <View className="p-6">
-        {/* Header */}
-        <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-          <View className="items-center mb-4">
-            <View className="bg-primary/10 rounded-full p-4 mb-3">
-              <Heart size={32} color="#E83E8C" />
-            </View>
-            <Text className="text-xl font-bold text-secondary-dark text-center">Bộ khảo sát tổng hợp</Text>
-            <Text className="text-secondary text-center mt-2">
-              Vui lòng điền thông tin của đối tác để bắt đầu khảo sát
-            </Text>
-          </View>
-        </View>
-
-        {/* User Info Display */}
-        <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm border-l-4 border-success">
-          <View className="flex-row items-center mb-3">
-            <View className="bg-success/10 rounded-full p-3 mr-3">
-              <User size={24} color="#28A745" />
-            </View>
-            <Text className="text-lg font-bold text-secondary-dark">Thông tin của bạn</Text>
-          </View>
-          <View className="bg-success/5 rounded-xl p-4">
-            <Text className="text-secondary-dark font-medium">{user?.name || user?.email || "Người dùng"}</Text>
-            <Text className="text-secondary text-sm">Đã đăng nhập</Text>
-          </View>
-        </View>
-
-        {/* Partner Information */}
-        <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-          <View className="flex-row items-center mb-6">
-            <View className="bg-primary/10 rounded-full p-3 mr-3">
-              <Users size={24} color="#E83E8C" />
-            </View>
-            <Text className="text-lg font-bold text-secondary-dark">Thông tin đối tác</Text>
-          </View>
-
-          <InputField
-            label="Tên đối tác *"
-            value={formData.partnerName}
-            onChangeText={(value) => handleInputChange("partnerName", value)}
-            placeholder="Nhập tên đối tác"
-            error={errors.partnerName}
-            icon={<Heart size={18} color="#E83E8C" />}
-          />
-
-          <View className="mb-4">
-            <Text className="mb-2 text-sm font-medium text-secondary-dark">
-              Ngày sinh đối tác *
-            </Text>
-
-            <TouchableOpacity
-              className="bg-gray-100 px-4 py-3 rounded-xl flex-row items-center justify-between"
-              onPress={() => setShowDatePicker(true)}
-            >
-              <View className="flex-row items-center space-x-2">
-                <Clock size={20} color="#E83E8C" />
-                <Text
-                  className={`text-sm ml-2 ${formData.partnerDob ? "text-secondary-dark" : "text-gray-400"
-                    }`}
-                >
-                  {formData.partnerDob || "Chọn ngày sinh"}
-                </Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }} // Sử dụng style thay vì className
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Có thể điều chỉnh offset nếu cần
+    >
+      <ScrollView className="flex-1 bg-gray-50">
+        <View className="p-6">
+          {/* Header */}
+          <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+            <View className="items-center mb-4">
+              <View className="bg-primary/10 rounded-full p-4 mb-3">
+                <Heart size={32} color="#E83E8C" />
               </View>
-            </TouchableOpacity>
-
-            {errors.partnerDob && (
-              <Text className="text-red-500 text-xs mt-2">{errors.partnerDob}</Text>
-            )}
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={dobDate || new Date(2000, 0, 1)}
-                mode="date"
-                display={Platform.OS === "ios" ? "spinner" : "default"}
-                onChange={handleDateChange}
-                maximumDate={new Date()}
-              />
-            )}
-          </View>
-
-
-          <InputField
-            label="Giới tính đối tác"
-            value={formData.partnerGender}
-            onChangeText={(value) => handleInputChange("partnerGender", value)}
-            placeholder="Nam/Nữ/Khác"
-          />
-        </View>
-
-        {/* Relationship Information */}
-        <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-          <View className="flex-row items-center mb-6">
-            <View className="bg-primary/10 rounded-full p-3 mr-3">
-              <Clock size={24} color="#E83E8C" />
+              <Text className="text-xl font-bold text-secondary-dark text-center">Bộ khảo sát tổng hợp</Text>
+              <Text className="text-secondary text-center mt-2">
+                Vui lòng điền thông tin của đối tác để bắt đầu khảo sát
+              </Text>
             </View>
-            <Text className="text-lg font-bold text-secondary-dark">Thông tin mối quan hệ</Text>
           </View>
 
-          <InputField
-            label="Thời gian yêu nhau/kết hôn"
-            value={formData.relationshipDuration}
-            onChangeText={(value) => handleInputChange("relationshipDuration", value)}
-            placeholder="Ví dụ: 2 năm, 6 tháng..."
-            icon={<Clock size={18} color="#E83E8C" />}
-          />
-        </View>
+          {/* User Info Display */}
+          <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm border-l-4 border-success">
+            <View className="flex-row items-center mb-3">
+              <View className="bg-success/10 rounded-full p-3 mr-3">
+                <User size={24} color="#28A745" />
+              </View>
+              <Text className="text-lg font-bold text-secondary-dark">Thông tin của bạn</Text>
+            </View>
+            <View className="bg-success/5 rounded-xl p-4">
+              <Text className="text-secondary-dark font-medium">{user?.name || user?.email || "Người dùng"}</Text>
+              <Text className="text-secondary text-sm">Đã đăng nhập</Text>
+            </View>
+          </View>
 
-        {/* Action Button */}
-        <CustomButton onPress={handleSubmit} className="mb-6">
-          <Text className="text-white font-bold text-center">Bắt đầu khảo sát</Text>
-        </CustomButton>
+          {/* Partner Information */}
+          <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+            <View className="flex-row items-center mb-6">
+              <View className="bg-primary/10 rounded-full p-3 mr-3">
+                <Users size={24} color="#E83E8C" />
+              </View>
+              <Text className="text-lg font-bold text-secondary-dark">Thông tin đối tác</Text>
+            </View>
 
-        {/* Privacy Notice */}
-        <View className="bg-info/5 rounded-xl p-4">
-          <Text className="text-xs text-secondary-dark text-center">
-            🔒 Thông tin của bạn được bảo mật tuyệt đối và chỉ được sử dụng để phân tích kết quả khảo sát. Chúng tôi
-            không chia sẻ thông tin với bất kỳ bên thứ ba nào.
-          </Text>
+            <InputField
+              label="Tên đối tác *"
+              value={formData.partnerName}
+              onChangeText={(value) => handleInputChange("partnerName", value)}
+              placeholder="Nhập tên đối tác"
+              error={errors.partnerName}
+              icon={<Heart size={18} color="#E83E8C" />}
+            />
+
+            <View className="mb-4">
+              <Text className="mb-2 text-sm font-medium text-secondary-dark">
+                Ngày sinh đối tác *
+              </Text>
+
+              <TouchableOpacity
+                className="bg-gray-100 px-4 py-3 rounded-xl flex-row items-center justify-between"
+                onPress={() => setShowDatePicker(true)}
+              >
+                <View className="flex-row items-center space-x-2">
+                  <Clock size={20} color="#E83E8C" />
+                  <Text
+                    className={`text-sm ml-2 ${formData.partnerDob ? "text-secondary-dark" : "text-gray-400"
+                      }`}
+                  >
+                    {formData.partnerDob || "Chọn ngày sinh"}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              {errors.partnerDob && (
+                <Text className="text-red-500 text-xs mt-2">{errors.partnerDob}</Text>
+              )}
+
+              {showDatePicker && (
+                <DateTimePicker
+                  value={dobDate || new Date(2000, 0, 1)}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={handleDateChange}
+                  maximumDate={new Date()}
+                />
+              )}
+            </View>
+
+
+            <InputField
+              label="Giới tính đối tác"
+              value={formData.partnerGender}
+              onChangeText={(value) => handleInputChange("partnerGender", value)}
+              placeholder="Nam/Nữ/Khác"
+            />
+          </View>
+
+          {/* Relationship Information */}
+          <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+            <View className="flex-row items-center mb-6">
+              <View className="bg-primary/10 rounded-full p-3 mr-3">
+                <Clock size={24} color="#E83E8C" />
+              </View>
+              <Text className="text-lg font-bold text-secondary-dark">Thông tin mối quan hệ</Text>
+            </View>
+
+            <InputField
+              label="Thời gian yêu nhau/kết hôn"
+              value={formData.relationshipDuration}
+              onChangeText={(value) => handleInputChange("relationshipDuration", value)}
+              placeholder="Ví dụ: 2 năm, 6 tháng..."
+              icon={<Clock size={18} color="#E83E8C" />}
+            />
+          </View>
+
+          {/* Action Button */}
+          <CustomButton onPress={handleSubmit} className="mb-6">
+            <Text className="text-white font-bold text-center">Bắt đầu khảo sát</Text>
+          </CustomButton>
+
+          {/* Privacy Notice */}
+          <View className="bg-info/5 rounded-xl p-4">
+            <Text className="text-xs text-secondary-dark text-center">
+              🔒 Thông tin của bạn được bảo mật tuyệt đối và chỉ được sử dụng để phân tích kết quả khảo sát. Chúng tôi
+              không chia sẻ thông tin với bất kỳ bên thứ ba nào.
+            </Text>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 

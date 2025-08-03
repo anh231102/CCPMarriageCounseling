@@ -141,3 +141,26 @@ export interface EnrollCourseResponse {
   data: string // "Đã mở khóa học thành công."
   error: string | null
 }
+
+export interface CourseReview {
+  rating: number
+  feedback: string
+  memberName: string
+}
+
+export interface CourseReviewResponse {
+  success: boolean
+  data: CourseReview[]
+  error: string | null
+}
+
+export interface PostCourseRatingRequest {
+  rating: number
+  feedback: string
+}
+
+export interface PostCourseRatingResponse {
+  success: boolean
+  data: string // "Course rated successfully."
+  error: string | null
+}

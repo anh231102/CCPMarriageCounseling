@@ -28,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
+    
     try {
       const token = await authApi.loginMember(email, password);
       await AsyncStorage.setItem("access-token", token);
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
     } catch (err) {
-      
+
       logout();
       throw err;
     } finally {
@@ -95,14 +96,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const res = await authApi.registerMember({ email, password, fullName });
-
-      if (res === 1) {
-        await login(email, password);
-      } else {
-        throw new Error("Đăng ký không thành công");
-      }
+      // if (res !== 1) {
+      //   throw new Error("Đăng ký không thành công");
+      // }
+      // if (res === 1) {
+      //   await login(email, password);
+      // } else {
+      //   throw new Error("Đăng ký không thành công");
+      // }
     } catch (err) {
-      
+
       throw err;
     } finally {
       setIsLoading(false);
@@ -113,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await AsyncStorage.removeItem("access-token");
     setUser(null);
     setIsAuth(false);
-    setIsLoading(false); 
+    setIsLoading(false);
   };
 
   return (

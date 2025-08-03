@@ -22,11 +22,11 @@ export interface MemberProfileResponse {
 }
 
 export interface UpdateMemberProfileRequest {
-  fullname: string
-  avatar: string
-  phone: string
-  dob: string
-  gender: string
+  fullname?: string
+  avatar?: string
+  phone?: string
+  dob?: string
+  gender?: string
 }
 
 export interface UpdateMemberProfileResponse {

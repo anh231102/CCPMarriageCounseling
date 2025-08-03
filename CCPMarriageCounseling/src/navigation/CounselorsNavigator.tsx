@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator()
 
 const CounselorsNavigator = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="CounselorList">
       <Stack.Screen name="CounselorList" component={CounselorListScreen} options={{ title: "Tìm chuyên gia tư vấn" }} />
       <Stack.Screen
         name="CounselorDetail"

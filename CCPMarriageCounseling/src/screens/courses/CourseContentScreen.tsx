@@ -8,7 +8,7 @@ import {
 } from "lucide-react-native"
 import { Video, ResizeMode } from "expo-av"
 import courseApi from "@/src/config/api/course.api"
-import type { ChapterDetail, Chapter, QuizQuestion, QuizAnswer, } from "@/src/config/types/course.type";
+import type { ChapterDetail, Chapter, QuizQuestion, QuizAnswer, CourseDetail, } from "@/src/config/types/course.type";
 import HTMLViewer from "@/src/components/share/HTMLViewer"
 import { WebView } from 'react-native-webview';
 import { LinearGradient } from "expo-linear-gradient"
@@ -24,6 +24,8 @@ const CourseContentScreen = ({ route, navigation }: any) => {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({})
   const [quizSubmitted, setQuizSubmitted] = useState(false)
   const [quizResult, setQuizResult] = useState<string | null>(null)
+  const [courseDetail, setCourseDetail] = useState<CourseDetail | null>(null)
+
 
   const fetchChapterContent = useCallback(async () => {
     if (!chapterId || !courseId) {
@@ -36,6 +38,7 @@ const CourseContentScreen = ({ route, navigation }: any) => {
       const chapter = await courseApi.getChapterDetail(chapterId)
       setChapterData(chapter)
       const course = await courseApi.getCourseDetailById(courseId)
+      setCourseDetail(course)
       const sortedChapters = (course.chapters || []).sort((a, b) => a.chapNum - b.chapNum)
       setLessons(sortedChapters)
       setSelectedAnswers({})
@@ -82,30 +85,30 @@ const CourseContentScreen = ({ route, navigation }: any) => {
   }
 
   const handleNavigateChapter = async (direction: "prev" | "next") => {
-  if (!chapterData || lessons.length === 0) return
-  const currentIndex = lessons.findIndex((chap: Chapter) => chap.id === chapterData.id)
-  let nextChapter: Chapter | undefined
-  if (direction === "next" && currentIndex < lessons.length - 1) {
-    try {
-      await courseApi.markChapterAsDone(chapterData.id)
-      // Sau khi đánh dấu, cập nhật lại dữ liệu
-      await fetchChapterContent()
-    } catch (err) {
-      console.error("Lỗi đánh dấu hoàn thành chương:", err)
-      Alert.alert("Lỗi", "Không thể đánh dấu hoàn thành chương.")
+    if (!chapterData || lessons.length === 0) return
+    const currentIndex = lessons.findIndex((chap: Chapter) => chap.id === chapterData.id)
+    let nextChapter: Chapter | undefined
+    if (direction === "next" && currentIndex < lessons.length - 1) {
+      try {
+        await courseApi.markChapterAsDone(chapterData.id)
+        // Sau khi đánh dấu, cập nhật lại dữ liệu
+        await fetchChapterContent()
+      } catch (err) {
+        console.error("Lỗi đánh dấu hoàn thành chương:", err)
+        Alert.alert("Lỗi", "Không thể đánh dấu hoàn thành chương.")
+      }
+      nextChapter = lessons[currentIndex + 1]
+    } else if (direction === "prev" && currentIndex > 0) {
+      nextChapter = lessons[currentIndex - 1]
     }
-    nextChapter = lessons[currentIndex + 1]
-  } else if (direction === "prev" && currentIndex > 0) {
-    nextChapter = lessons[currentIndex - 1]
+    if (nextChapter) {
+      navigation.navigate("CourseContent", {
+        courseId,
+        chapterId: nextChapter.id,
+        isEnrolled,
+      })
+    }
   }
-  if (nextChapter) {
-    navigation.navigate("CourseContent", {
-      courseId,
-      chapterId: nextChapter.id,
-      isEnrolled,
-    })
-  }
-}
 
   const handleAnswerSelect = (questionId: string, answerId: string) => {
     setSelectedAnswers((prev) => ({
@@ -160,7 +163,10 @@ const CourseContentScreen = ({ route, navigation }: any) => {
       </View>
     )
   }
-
+  // Giả sử bạn đã có biến courseDetail từ API
+  const chapterCount = courseDetail?.chapterCount ?? lessons.length
+  const processingCount = courseDetail?.processingCount ?? lessons.filter((chap) => chap.isDone).length
+  const canFinishCourse = isLastChapter && chapterCount > 0 && chapterCount - processingCount === 1
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -213,16 +219,16 @@ const CourseContentScreen = ({ route, navigation }: any) => {
                         <Text className="text-gray-500 text-sm mt-1 capitalize">{lesson.chapterType || "Lecture"}</Text>
                       </View>
 
-                      
+
 
                       <ChevronRight size={20} color={isActive ? "#6366F1" : "#9CA3AF"} />
                     </View>
                     {lesson.isDone && (
-                        <View className="bg-green-100 px-3 py-1 mt-2 rounded-full flex-row items-center w-32">
-                          <CheckCircle size={16} color="#22C55E" />
-                          <Text className="text-green-600 text-xs ml-1 font-medium">Hoàn thành</Text>
-                        </View>
-                      )}
+                      <View className="bg-green-100 px-3 py-1 mt-2 rounded-full flex-row items-center w-32">
+                        <CheckCircle size={16} color="#22C55E" />
+                        <Text className="text-green-600 text-xs ml-1 font-medium">Hoàn thành</Text>
+                      </View>
+                    )}
                   </View>
                 </TouchableOpacity>
               )
@@ -416,15 +422,44 @@ const CourseContentScreen = ({ route, navigation }: any) => {
                 <ArrowLeft size={20} color={isFirstChapter ? "#9CA3AF" : "#6C757D"} />
                 <Text className="ml-2 text-secondary font-medium">Bài trước</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                disabled={isLastChapter}
-                onPress={() => handleNavigateChapter("next")}
-                className={`p-4 rounded-full flex-row items-center shadow-sm ${isLastChapter ? "bg-gray-200 opacity-50" : "bg-primary active:bg-pink-600"
-                  }`}
-              >
-                <Text className="mr-2 text-white font-medium">Bài tiếp theo</Text>
-                <ArrowLeft size={20} color="white" style={{ transform: [{ rotate: "180deg" }] }} />
-              </TouchableOpacity>
+              {!isLastChapter ? (
+                <TouchableOpacity
+                  disabled={isLastChapter}
+                  onPress={() => handleNavigateChapter("next")}
+                  className={`p-4 rounded-full flex-row items-center shadow-sm ${isLastChapter ? "bg-gray-200 opacity-50" : "bg-primary active:bg-pink-600"
+                    }`}
+                >
+                  <Text className="mr-2 text-white font-medium">Bài tiếp theo</Text>
+                  <ArrowLeft size={20} color="white" style={{ transform: [{ rotate: "180deg" }] }} />
+                </TouchableOpacity>
+              ) : (
+                <View style={{ flex: 1, alignItems: "flex-end" }}>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      if (!canFinishCourse) return
+                      try {
+                        if (!chapterData?.isDone) {
+                          await courseApi.markChapterAsDone(chapterData.id)
+                          await fetchChapterContent()
+                        }
+                        Alert.alert("Chúc mừng!", "Bạn đã hoàn thành toàn bộ khóa học!")
+                      } catch (err) {
+                        Alert.alert("Lỗi", "Không thể đánh dấu hoàn thành chương cuối.")
+                      }
+                    }}
+                    disabled={!canFinishCourse || chapterData?.isDone}
+                    className={`p-4 rounded-full flex-row items-center shadow-sm ml-2 ${canFinishCourse && !chapterData?.isDone ? "bg-green-500" : "bg-gray-200 opacity-50"}`}
+                  >
+                    <Text className="text-white font-bold">Hoàn thành khóa học</Text>
+                    <CheckCircle size={20} color="#fff" style={{ marginLeft: 8 }} />
+                  </TouchableOpacity>
+                  {!canFinishCourse && (
+                    <Text style={{ color: "#EF4444", marginTop: 8, fontWeight: "bold", textAlign: "right" }}>
+                      Bạn cần hoàn thành tất cả bài giảng trước đó để có thể ấn hoàn thành
+                    </Text>
+                  )}
+                </View>
+              )}
             </View>
           )}
         </>

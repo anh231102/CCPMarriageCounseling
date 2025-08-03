@@ -74,67 +74,79 @@ const VirtualSurveyQuestionsScreen = () => {
   }, [currentQuestionIndex, totalQuestions])
 
   const handleAnswer = async (answerValue: any) => {
-    const questionId = currentQuestion.id
-    const updatedAnswers = {
-      ...answers,
-      [questionId]: answerValue,
-    }
-    setAnswers(updatedAnswers)
+  let isLastSurvey = false;
+  const questionId = currentQuestion.id
+  const updatedAnswers = {
+    ...answers,
+    [questionId]: answerValue,
+  }
+  setAnswers(updatedAnswers)
 
-    if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
-    } else {
-      setLoading(true)
-      try {
-        const groupedAnswers: Record<string, number> = {}
+  if (currentQuestionIndex < totalQuestions - 1) {
+    setCurrentQuestionIndex(currentQuestionIndex + 1)
+  } else {
+    setLoading(true)
+    try {
+      const groupedAnswers: Record<string, number> = {}
 
-        Object.values(updatedAnswers).forEach((ans: any) => {
-          if (ans.tag && typeof ans.score === "number") {
-            groupedAnswers[ans.tag] = (groupedAnswers[ans.tag] || 0) + ans.score
-          }
+      Object.values(updatedAnswers).forEach((ans: any) => {
+        if (ans.tag && typeof ans.score === "number") {
+          groupedAnswers[ans.tag] = (groupedAnswers[ans.tag] || 0) + ans.score
+        }
+      })
+
+      const formattedResult = {
+        surveyId: currentSurveyId,
+        answers: Object.entries(groupedAnswers).map(([tag, score]) => ({
+          tag,
+          score,
+        })),
+      }
+
+      // Log dữ liệu gửi lên API
+      console.log("Gửi kết quả khảo sát ảo:", formattedResult)
+
+      const resultText = await surveyApi.postVirtualSurveyResult(formattedResult)
+
+      // Log kết quả trả về từ API
+      console.log("Kết quả trả về từ API:", resultText)
+
+      isLastSurvey = currentSurveyIndex >= selectedSurveyIds.length - 1
+
+      if (isLastSurvey) {
+        console.log("Đây là survey cuối cùng của nhân vật ảo, chuyển về CoupleSurveyRoom")
+        navigation.navigate("CoupleSurveyRoom", {
+          roomId,
+          isHost,
+          isSurvey,
         })
-
-        const formattedResult = {
-          surveyId: currentSurveyId,
-          answers: Object.entries(groupedAnswers).map(([tag, score]) => ({
-            tag,
-            score,
-          })),
-        }
-
-        const resultText = await surveyApi.postVirtualSurveyResult(formattedResult)
-
-        const isLastSurvey = currentSurveyIndex >= selectedSurveyIds.length - 1
-
-        if (isLastSurvey) {
-          navigation.navigate("CoupleSurveyRoom", {
-                  roomId,
-                  isHost,
-                  isSurvey,
-                })
-        } else {
-          navigation.replace("SurveySectionComplete", {
-            selectedSurveyIds,
-            currentSurveyIndex,
-            nextSurveyIndex: currentSurveyIndex + 1,
-            currentSurveyTitle: surveyTitle,
-            resultText,
-            userType,
-            userData,
-            isAuth: isAuth ?? authState,
-            couple: true,
-            isVirtual: true,
-          })
-        }
-      } catch (error) {
-        Alert.alert("Lỗi", "Không thể lưu kết quả khảo sát. Vui lòng thử lại.")
-      } finally {
-        setLoading(false)
-        setAnswers({}) // ❌ Clear sau khi lưu kết quả
-        setCurrentQuestionIndex(0) // ❌ Reset index
+      } else {
+        navigation.replace("SurveySectionComplete", {
+          selectedSurveyIds,
+          currentSurveyIndex,
+          nextSurveyIndex: currentSurveyIndex + 1,
+          currentSurveyTitle: surveyTitle,
+          resultText,
+          userType,
+          userData,
+          isAuth: isAuth ?? authState,
+          couple: true,
+          isVirtual: true,
+        })
+      }
+    } catch (error) {
+      // Log lỗi chi tiết
+      console.log("Lỗi khi lưu kết quả khảo sát ảo:", error)
+      Alert.alert("Lỗi", "Không thể lưu kết quả khảo sát. Vui lòng thử lại.")
+    } finally {
+      setLoading(false)
+      if (!isLastSurvey) {
+        setAnswers({})
+        setCurrentQuestionIndex(0)
       }
     }
   }
+}
 
   const handleExit = () => {
     Alert.alert("Thoát khảo sát", "Bạn có chắc chắn muốn thoát?", [
@@ -196,9 +208,7 @@ const VirtualSurveyQuestionsScreen = () => {
           <Text className="text-xs text-secondary">
             Câu hỏi {currentQuestionIndex + 1}/{totalQuestions}
           </Text>
-          <Text className="text-xs text-secondary font-medium">
-            {userData?.name || "Người dùng"}
-          </Text>
+
         </View>
       </View>
 

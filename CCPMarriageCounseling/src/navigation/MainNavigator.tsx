@@ -9,6 +9,7 @@ import CounselorsNavigator from "./CounselorsNavigator"
 import ProfileNavigator from "./ProfileNavigator"
 // import HomeScreen from "../screens/Home"
 import SurveyNavigator from "./SurveyNavigator"
+import HomeNavigator from "./HomeNavigator";
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
@@ -22,7 +23,7 @@ const MainNavigator = () => {
           height: 60,
           paddingBottom: 10,
           
-          position: "absolute",
+          
           transform: [{ translateY: 0 }], // sẽ thay đổi sau
         },
         tabBarActiveTintColor: "#E83E8C",
@@ -37,7 +38,7 @@ const MainNavigator = () => {
 
       <Tab.Screen
         name="HomeTab"
-        component={HomeScreen}
+        component={HomeNavigator}
         options={{
           tabBarLabel: "Trang chủ",
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,

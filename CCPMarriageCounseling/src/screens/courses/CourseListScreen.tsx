@@ -54,16 +54,25 @@ export const CourseListScreen = () => {
   }, [fetchCourses])
 
   const filteredCourses = courses.filter(
-  (course) =>
-    !course.isEnrolled && !course.isBuy &&
-    course.name.toLowerCase().includes(searchText.toLowerCase())
-)
+    (course) =>
+      !course.isEnrolled && !course.isBuy &&
+      course.name.toLowerCase().includes(searchText.toLowerCase())
+  )
 
+  const getChapterCount = (course: Course) => {
+    if (!course.chapters || course.chapters.length === 0) return 0
+    // Chỉ lấy những chapter có status === 1
+    const validChapters = course.chapters.filter(chap => chap.status === 1)
+    const nums = validChapters.map(chap => chap.chapNum)
+    const maxNum = nums.length > 0 ? Math.max(...nums) : 0
+    return maxNum
+  }
 
-  const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE)
+  const validCourses = filteredCourses.filter(course => getChapterCount(course) > 0)
+  const totalPages = Math.ceil(validCourses.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const paginatedCourses = filteredCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE)
-
+  const paginatedCourses = validCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+ 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page)
@@ -71,7 +80,7 @@ export const CourseListScreen = () => {
   }
 
   const handleCoursePress = (course: Course) => {
-    navigation.navigate("CourseDetail", { courseId: course.id, initialCourse: course,  })
+    navigation.navigate("CourseDetail", { courseId: course.id, initialCourse: course, })
   }
 
   if (loading && !refreshing) {
@@ -117,7 +126,7 @@ export const CourseListScreen = () => {
         <FlatList
           data={paginatedCourses}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <CourseCard course={item} onPress={handleCoursePress} />}
+          renderItem={({ item }) => <CourseCard course={item} onPress={handleCoursePress} ofMyCourses="" />}
           contentContainerStyle={{ paddingVertical: 16 }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />

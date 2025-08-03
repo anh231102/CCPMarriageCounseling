@@ -6,6 +6,10 @@ import type {
   MarkChapterDoneResponse,
   BuyCourseResponse,
   EnrollCourseResponse,
+  CourseReview,
+  CourseReviewResponse,
+  PostCourseRatingRequest,
+  PostCourseRatingResponse,
 } from "@/src/config/types/course.type"
 
 const getAllCoursesForUser = async () => {
@@ -92,6 +96,37 @@ const putEnrollCourse = async (courseId: string): Promise<string> => {
   return response.data.data
 }
 
+const getCourseReviews = async (courseId: string): Promise<CourseReview[]> => {
+  const response = await axiosInstance.get<CourseReviewResponse>(
+    `/Course/reviews/${courseId}`
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy đánh giá khóa học")
+  }
+
+  return response.data.data
+}
+
+const postCourseRating = async (
+  courseId: string,
+  rating: number,
+  feedback: string
+): Promise<string> => {
+  const payload: PostCourseRatingRequest = { rating, feedback }
+
+  const response = await axiosInstance.post<PostCourseRatingResponse>(
+    `/Course/rate/${courseId}`,
+    payload
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể gửi đánh giá khóa học")
+  }
+
+  return response.data.data
+}
+
 const courseApi = {
   getAllCoursesForUser,
   getCourseById,
@@ -101,6 +136,8 @@ const courseApi = {
   markChapterAsDone,
   postBuyCourse,
   putEnrollCourse,
+  getCourseReviews,
+  postCourseRating
 }
 
 export default courseApi

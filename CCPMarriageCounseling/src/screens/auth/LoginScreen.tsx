@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TouchableOpacity,
 } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
@@ -17,43 +18,44 @@ import { useAuth } from "@/src/contexts/AuthContext"
 import CustomButton from "@/src/components/CustomButton"
 import InputField from "@/src/components/InputField"
 import type { AuthStackParamList } from "@/src/navigation/AuthNavigator"
-import Logo from "@/src/components/share/Logo" 
+import Logo from "@/src/components/share/Logo"
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">
 
 const LoginScreen = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const { login, isLoading } = useAuth()
-
+  const [errors, setErrors] = useState<{ email?: string; password?: string; api?: string }>({})
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  
+
 
   const handleLogin = async () => {
-    if (!email.trim()) {
-      Alert.alert("Thông báo", "Vui lòng nhập email")
-      return
-    }
+    const newErrors: typeof errors = {};
+    if (!email.trim()) newErrors.email = "Vui lòng nhập email";
+    if (!password) newErrors.password = "Vui lòng nhập mật khẩu";
+    setErrors(newErrors);
 
-    if (!password) {
-      Alert.alert("Thông báo", "Vui lòng nhập mật khẩu")
-      return
-    }
+    if (Object.keys(newErrors).length > 0) return;
 
     try {
-      await login(email.trim(), password)
-      
-      
-    } catch (error) {
-      Alert.alert("Lỗi đăng nhập", "Email hoặc mật khẩu không đúng")
+      await login(email.trim(), password);
+      setErrors({});
+    } catch (error: any) {
+      let apiError = "Email hoặc mật khẩu không đúng";
+      if (error.response && (error.response.data?.error || error.response.data?.message)) {
+        apiError = error.response.data.error || error.response.data.message;
+      }
+      setErrors((prev) => ({ ...prev, api: apiError }));
     }
-  }
+  };
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-background"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }} // Sử dụng style thay vì className
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Có thể điều chỉnh offset nếu cần
     >
       <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
         <View className="p-6 pt-32">
@@ -67,46 +69,60 @@ const LoginScreen = () => {
 
           <Text className="text-2xl font-bold text-foreground mb-6">Đăng nhập</Text>
 
-          <View className="space-y-4 mb-6">
-            <InputField
-              label="Email"
-              icon={<Mail size={20} color="#6C757D" />}
-              placeholder="Nhập email của bạn"
-              keyboardType="email-address"
-              
-              value={email}
-              onChangeText={setEmail}
-            />
+          <View className=" mb-9">
+            <View>
+              <Text className="text-sm font-medium text-secondary-dark mb-1">Email</Text>
+              <View className="flex-row items-center border border-gray-300 rounded-xl p-3 bg-gray-50">
+                <Mail size={20} color="#6C757D" />
+                <TextInput
+                  className="flex-1 ml-2 text-secondary-dark"
+                  placeholder="Nhập email của bạn"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
+              {errors.email && <Text style={{ color: "red", marginTop: 4 }}>{errors.email}</Text>}
+            </View>
 
-            <InputField
-              label="Mật khẩu"
-              icon={<Lock size={20} color="#6C757D" />}
-              placeholder="Nhập mật khẩu của bạn"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-              rightIcon={
+            <View className="mt-6">
+              <Text className="text-sm font-medium text-secondary-dark mb-1">Mật khẩu</Text>
+              <View className="flex-row items-center border border-gray-300 rounded-xl p-3 bg-gray-50">
+                <Lock size={20} color="#6C757D" />
+                <TextInput
+                  className="flex-1 ml-2 text-secondary-dark"
+                  placeholder="Nhập mật khẩu"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <EyeOff size={20} color="#6C757D" /> : <Eye size={20} color="#6C757D" />}
+                </TouchableOpacity>
+              </View>
+              {errors.password && <Text style={{ color: "red", marginTop: 4 }}>{errors.password}</Text>}
+            </View>
+
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }} className="mt-4">
+
+              {/* Lỗi API nếu có */}
+              <View>
+                {errors.api && (
+                  <Text style={{ color: "red", marginLeft: 8,  }}>{errors.api}</Text>
+                )}
+              </View>
+
+              {/* Nút Quên mật khẩu luôn bên phải */}
+              <View style={{ alignSelf: "flex-end",  }}>
                 <CustomButton
-                  onPress={() => setShowPassword(!showPassword)}
-                  variant="ghost"
-                  className="p-0"
+                  onPress={() => navigation.navigate("ForgotPassword")}
+                  variant="link"
                 >
-                  {showPassword ? (
-                    <EyeOff size={20} color="#6C757D" />
-                  ) : (
-                    <Eye size={20} color="#6C757D" />
-                  )}
+                  <Text className="text-primary font-medium">Quên mật khẩu?</Text>
                 </CustomButton>
-              }
-            />
-
-            <CustomButton
-              onPress={() => navigation.navigate("ForgotPassword")}
-              variant="link"
-              className="self-end"
-            >
-              <Text className="text-primary font-medium">Quên mật khẩu?</Text>
-            </CustomButton>
+              </View>
+            </View>
           </View>
 
           <CustomButton

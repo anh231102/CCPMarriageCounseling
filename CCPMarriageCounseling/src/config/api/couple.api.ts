@@ -190,12 +190,14 @@ const applyLatestResult = async (
 
     return response.data.data
   } catch (error: any) {
-    if (error.response) {
-      console.error("[applyLatestResult] API Error Response:", error.response.data)
-    } else {
-      console.error("[applyLatestResult] Error:", error.message)
+    let message = "Không thể sử dụng kết quả có sẵn."
+    if (error.response && error.response.data && error.response.data.error) {
+      message = error.response.data.error
+    } else if (typeof error === "object" && error !== null && "message" in error) {
+      message = error.message
     }
-    throw error
+    // Sửa lỗi thiếu return: ném lại lỗi để hàm luôn trả về Promise<string>
+    throw new Error(message)
   }
 }
 

@@ -1,8 +1,8 @@
 "use client"
 
-import { View, Text, ScrollView, Image, TouchableOpacity, Button, ActivityIndicator } from "react-native"
+import { View, Text, ScrollView, Image, TouchableOpacity, Button, ActivityIndicator, RefreshControl } from "react-native"
 import { useNavigation } from "@react-navigation/native"
-import { Bell, Heart, BookOpen, Calendar, ArrowRight } from "lucide-react-native"
+import { Bell, Heart, BookOpen, Calendar, ArrowRight, LayoutList } from "lucide-react-native"
 import { useAuth } from "@/src/hooks/useAuth"
 import CounselorListMini from "@/src/components/counselor/CounselorListMini"
 import { useEffect, useState } from "react"
@@ -10,6 +10,8 @@ import counselorApi from "@/src/config/api/counselor.api"
 import { Counselor } from "@/src/config/types/counselor.type"
 import Loading from "@/src/components/share/Loading"
 import MyProfileComponent from "@/src/components/share/MyProfileComponent"
+import ListPost from "@/src/components/post/ListPost"
+import CourseListMini from "@/src/components/courses/CourseListMini"
 
 const HomeScreen = () => {
   const navigation = useNavigation<any>()
@@ -17,41 +19,38 @@ const HomeScreen = () => {
 
   const [counselors, setCounselors] = useState<Counselor[]>([])
   const [loading, setLoading] = useState(true)
+   const [refreshing, setRefreshing] = useState(false)
+
+  const fetchCounselors = async () => {
+    try {
+      setLoading(true)
+      const data: Counselor[] = await counselorApi.getCounselorWithSub()
+      setCounselors(data)
+    } catch (err) {
+      console.error("Lỗi khi lấy danh sách chuyên gia:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchCounselors = async () => {
-      try {
-        const data: Counselor[] = await counselorApi.getCounselorWithSub()
-        setCounselors(data)
-      } catch (err) {
-        console.error("Lỗi khi lấy danh sách chuyên gia:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchCounselors()
   }, [])
 
-  const blogs = [
-    {
-      id: "1",
-      title: "5 cách giao tiếp hiệu quả trong hôn nhân",
-      excerpt: "Giao tiếp là chìa khóa để xây dựng mối quan hệ bền vững...",
-      image: "https://placeholder.svg?height=200&width=300",
-    },
-    {
-      id: "2",
-      title: "Làm thế nào để vượt qua khủng hoảng hôn nhân",
-      excerpt: "Mọi cuộc hôn nhân đều có thể gặp khó khăn, nhưng...",
-      image: "https://placeholder.svg?height=200&width=300",
-    },
-  ]
+const onRefresh = async () => {
+    setRefreshing(true)
+    await fetchCounselors()
+    setRefreshing(false)
+  }
+
 
   return (
-    <ScrollView className="flex-1 bg-gray-50">
+    <ScrollView className="flex-1 bg-gray-50"
+    refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#E83E8C"]} />
+      }>
       {/* Header */}
-      <View className="bg-primary p-4 pt-12 pb-6">
+      <View className="bg-primary px-4 pt-2 pb-6">
         <View className="flex-row justify-between items-center">
           <View>
             <Text className="text-white text-lg font-medium">Xin chào,</Text>
@@ -72,10 +71,17 @@ const HomeScreen = () => {
         <Text className="text-secondary-dark font-medium mb-4">Truy cập nhanh</Text>
         <View className="flex-row justify-between">
           <TouchableOpacity onPress={() => navigation.navigate("SurveyTab")} className="items-center">
-            <View className="w-12 h-12 bg-primary-light/20 rounded-full items-center justify-center mb-1">
+            <View className="w-12 h-12 bg-primary/20 rounded-full items-center justify-center mb-1">
               <Heart size={20} color="#E83E8C" />
             </View>
             <Text className="text-xs text-secondary">Khảo sát</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate("ListAllPostScreen")} className="items-center">
+            <View className="w-12 h-12 bg-orange-500/20 rounded-full items-center justify-center mb-1">
+              <LayoutList size={20} color="#FF6600" />
+            </View>
+            <Text className="text-xs text-secondary">Bài viết</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate("CoursesTab")} className="items-center">
@@ -100,7 +106,7 @@ const HomeScreen = () => {
           <Text className="text-lg font-bold text-secondary-dark">Chuyên gia nổi bật</Text>
           <TouchableOpacity onPress={() =>
             navigation.navigate("CounselorsTab", {
-              screen: "CounselorList", 
+              screen: "CounselorList",
             })
           } className="flex-row items-center">
             <Text className="text-primary mr-1">Xem tất cả</Text>
@@ -115,26 +121,29 @@ const HomeScreen = () => {
         )}
       </View>
 
-      {/* Blog Posts */}
-      <View className="mt-6 px-4 mb-8">
+      <View className="mt-6 px-4">
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-lg font-bold text-secondary-dark">Bài viết hữu ích</Text>
-          <TouchableOpacity className="flex-row items-center">
+          <Text className="text-lg font-bold text-secondary-dark">Khóa học nổi bật</Text>
+          <TouchableOpacity onPress={() =>
+            navigation.navigate("CoursesTab", {
+              screen: "CourseList",
+            })
+          } className="flex-row items-center">
             <Text className="text-primary mr-1">Xem tất cả</Text>
             <ArrowRight size={16} color="#E83E8C" />
           </TouchableOpacity>
         </View>
 
-        {blogs.map((blog) => (
-          <TouchableOpacity key={blog.id} className="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
-            <Image source={{ uri: blog.image }} className="w-full h-40" />
-            <View className="p-3">
-              <Text className="text-secondary-dark font-bold text-base mb-1">{blog.title}</Text>
-              <Text className="text-secondary text-sm">{blog.excerpt}</Text>
-              <Text className="text-primary mt-2">Đọc thêm</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+        {loading ? (
+          <Loading size={30} />
+        ) : (
+          <CourseListMini />
+        )}
+      </View>
+
+      {/* Blog Posts */}
+      <View className="mt-6  mb-8">
+        <ListPost />
       </View>
 
       <View className="w-3/5 self-center mb-6">

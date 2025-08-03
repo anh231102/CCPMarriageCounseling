@@ -25,6 +25,7 @@ import VirtualSurveyQuestionsScreen from "../screens/couple/VirtualSurveyQuestio
 import { MyCourseListScreen } from "../screens/courses/MyCourseListScreen"
 import { CourseDetailScreen } from "../screens/courses/CourseDetailScreen"
 import CourseContentScreen from "../screens/courses/CourseContentScreen"
+import CourseReviewScreen from "../screens/courses/CourseReviewScreen"
 
 
 
@@ -32,7 +33,7 @@ const Stack = createNativeStackNavigator()
 
 const ProfileNavigator = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Profile">
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: "Hồ sơ cá nhân" }} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: "Chỉnh sửa hồ sơ" }} />
       <Stack.Screen name="ViewProfile" component={ProfileViewScreen} options={{ title: "Xem hồ sơ" }} />
@@ -109,6 +110,11 @@ const ProfileNavigator = () => {
         name="CourseContent"
         component={CourseContentScreen}
         options={({ route }: any) => ({ title: route.params?.title || "Nội dung khóa học" })}
+      />
+      <Stack.Screen
+        name="CourseReview"
+        component={CourseReviewScreen}
+        options={{ title: "Đánh giá khóa học" }}
       />
       <Stack.Screen name="VirtualSurveyQuestions" component={VirtualSurveyQuestionsScreen} options={{ title: "Phòng khảo sát " }} />
     </Stack.Navigator>

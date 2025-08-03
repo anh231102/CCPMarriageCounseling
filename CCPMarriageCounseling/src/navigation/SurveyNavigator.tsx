@@ -18,7 +18,7 @@ const Stack = createNativeStackNavigator()
 
 const SurveyNavigator = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="SurveyList">
       <Stack.Screen name="SurveyList" component={SurveyListScreen} options={{ title: "Khảo sát hôn nhân" }} />
       <Stack.Screen
         name="SurveyDetail"

@@ -170,7 +170,11 @@ const CoupleSurveyRoomScreen = () => {
 
       Alert.alert("Thành công", "Đã sử dụng kết quả khảo sát có sẵn của bạn")
     } catch (error) {
-      Alert.alert("Lỗi", "Không thể sử dụng kết quả có sẵn")
+      const message =
+        typeof error === "object" && error !== null && "message" in error
+          ? (error as any).message
+          : "Không thể sử dụng kết quả có sẵn."
+      Alert.alert("Thông báo", message)
     } finally {
       setIsCreatingLoveMap(false)
     }
@@ -229,10 +233,7 @@ const CoupleSurveyRoomScreen = () => {
     navigation.navigate("VirtualSurveyQuestions", {
       selectedSurveyIds: surveyIds,
       currentSurveyIndex: 0,
-      userData: {
-        name: user?.name || "Bạn",
-        partnerName: roomData.isVirtual ? roomData.virtualName : partner?.fullname || "Đối tác",
-      },
+      
       userType: isUserHost ? "host" : "partner",
       isAuth: true,
       roomId: roomData.accessCode,

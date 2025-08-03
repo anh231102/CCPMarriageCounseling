@@ -10,6 +10,8 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { Camera } from "lucide-react-native"
@@ -19,6 +21,7 @@ import { UpdateMemberProfileRequest } from "@/src/config/types/member.type"
 import * as ImagePicker from "expo-image-picker"
 import Loading from "@/src/components/share/Loading"
 import MyProfileComponent from "@/src/components/share/MyProfileComponent"
+import DateTimePicker from "@react-native-community/datetimepicker"
 
 
 const formatDateLocal = (date: Date): string => {
@@ -45,6 +48,7 @@ const convertDateToInput = (isoDate: string): string => {
 }
 
 const EditProfileScreen = () => {
+  const [showDatePicker, setShowDatePicker] = useState(false)
   const navigation = useNavigation<any>()
   const { user } = useAuth()
 
@@ -128,11 +132,16 @@ const EditProfileScreen = () => {
 
 
   return (
+     <KeyboardAvoidingView
+           behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }} // Sử dụng style thay vì className
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Có thể điều chỉnh offset nếu cần
+      >
     <ScrollView className="flex-1 bg-gray-50">
       <View className="p-4">
         <View className="items-center mb-6">
           <View className="relative">
-            <MyProfileComponent image  />
+            <MyProfileComponent image />
             <TouchableOpacity
               onPress={handlePickAvatar}
               className="absolute bottom-0 right-0 bg-primary rounded-full p-2 shadow-sm"
@@ -156,7 +165,7 @@ const EditProfileScreen = () => {
             />
           </View>
 
-          
+
 
           <View className="mb-4">
             <Text className="text-secondary-dark font-medium mb-1">Số điện thoại</Text>
@@ -171,12 +180,32 @@ const EditProfileScreen = () => {
 
           <View className="mb-4">
             <Text className="text-secondary-dark font-medium mb-1">Ngày sinh</Text>
-            <TextInput
-              className="border border-gray-200 rounded-lg p-3 text-secondary-dark"
-              placeholder="DD/MM/YYYY"
-              value={birthdate}
-              onChangeText={setBirthdate}
-            />
+            <TouchableOpacity
+              onPress={() => setShowDatePicker(true)}
+              className="border border-gray-200 rounded-lg p-3"
+              activeOpacity={0.7}
+            >
+              <Text className="text-secondary-dark">
+                {birthdate || "Chọn ngày sinh"}
+              </Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={birthdate ? convertInputToDate(birthdate) : new Date()}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false)
+                  if (selectedDate) {
+                    const dd = String(selectedDate.getDate()).padStart(2, "0")
+                    const mm = String(selectedDate.getMonth() + 1).padStart(2, "0")
+                    const yyyy = selectedDate.getFullYear()
+                    setBirthdate(`${dd}/${mm}/${yyyy}`)
+                  }
+                }}
+                maximumDate={new Date()}
+              />
+            )}
           </View>
 
           <View className="mb-4">
@@ -210,13 +239,14 @@ const EditProfileScreen = () => {
           className={`rounded-lg p-4 items-center mb-6 ${isLoading ? "bg-primary-light" : "bg-primary"}`}
         >
           {isLoading ? (
-            <Loading size={20} color="white"/>
+            <Loading size={20} color="white" />
           ) : (
             <Text className="text-white font-bold text-lg">Lưu thay đổi</Text>
           )}
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
