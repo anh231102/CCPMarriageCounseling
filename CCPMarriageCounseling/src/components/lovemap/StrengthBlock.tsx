@@ -15,6 +15,7 @@ interface Props {
   result: string
   expanded: boolean
   onToggle: () => void
+  strongPoints?: string
 }
 
 const StrengthBlock = ({
@@ -30,6 +31,7 @@ const StrengthBlock = ({
   result,
   expanded,
   onToggle,
+  strongPoints,
 }: Props) => {
   const filterStrength = (data: Record<string, number>) =>
     Object.entries(data).filter(([_, val]) => val >= threshold)
@@ -53,31 +55,35 @@ const StrengthBlock = ({
         <View className="mt-3 p-4 bg-success/5 rounded-lg">
           <Text className="text-secondary-dark font-medium mb-3">Điểm mạnh {title}:</Text>
 
-          {[{ name: name1, code: type1, data: data1 }, { name: name2, code: type2, data: data2 }].map((person) => (
-            <View key={person.name} className="mb-4">
-              <Text className="text-success font-medium mb-2">
-                {person.name} ({person.code}) - Điểm mạnh:
-              </Text>
-              {filterStrength(person.data).map(([key, value]) => (
-                <View key={key} className="flex-row justify-between items-center mb-1">
-                  <Text className="text-secondary-dark text-sm">✓ {key}</Text>
-                  <View className="flex-row items-center">
-                    <Text className="text-success font-bold text-sm mr-2">{value}</Text>
-                    <View className="w-16 h-1 bg-gray-200 rounded-full">
-                      <View className="h-full bg-success rounded-full" style={{ width: `${(value / 15) * 100}%` }} />
+          {[{ name: name1, code: type1, data: data1 }, { name: name2, code: type2, data: data2 }].map((person) => {
+            const strengthsArr = filterStrength(person.data);
+            if (strengthsArr.length === 0) return null;
+            return (
+              <View key={person.name} className="mb-4">
+                <Text className="text-success font-medium mb-2">
+                  {person.name} ({person.code}) - Điểm mạnh:
+                </Text>
+                {strengthsArr.map(([key, value]) => (
+                  <View key={key} className="flex-row justify-between items-center mb-1">
+                    <Text className="text-secondary-dark text-sm">✓ {key}</Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-success font-bold text-sm mr-2">{value}</Text>
+                      <View className="w-16 h-1 bg-gray-200 rounded-full">
+                        <View className="h-full bg-success rounded-full" style={{ width: `${(value / 30) * 100}%` }} />
+                      </View>
                     </View>
                   </View>
-                </View>
-              ))}
-            </View>
-          ))}
+                ))}
+              </View>
+            );
+          })}
 
-          {/* {result && (
-            <View className="p-3 bg-success/10 rounded-lg">
-              <Text className="text-success font-medium mb-1">Tổng kết:</Text>
-              <Text className="text-secondary-dark text-sm">{result}</Text>
+          {strongPoints && (
+            <View className="p-3 bg-success/10 rounded-lg mb-2">
+              <Text className="text-success font-medium mb-1">Tổng kết điểm mạnh:</Text>
+              <Text className="text-secondary-dark text-sm">{strongPoints}</Text>
             </View>
-          )} */}
+          )}
         </View>
       )}
     </View>

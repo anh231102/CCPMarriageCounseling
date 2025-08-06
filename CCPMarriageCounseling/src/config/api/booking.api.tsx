@@ -15,6 +15,11 @@ import type {
   FeedbackForCounselor,
   FeedbackForCounselorResponse,
   BookingDiscountResponse,
+  BookingInvitationsResponse,
+  AcceptInvitationResponse,
+  DeclineInvitationResponse,
+  AssignMember2Response,
+  CancelInvitationResponse,
 } from "@/src/config/types/booking.type"
 
 const postBooking = async (bookingData: BookingRequest): Promise<BookingData> => {
@@ -114,6 +119,65 @@ const getMyBookingDiscount = async (): Promise<number> => {
   return response.data.data 
 }
 
+const getBookingInvitations = async (): Promise<BookingMemberData[]> => {
+  const response = await axiosInstance.get<BookingInvitationsResponse>("/Booking/invitations")
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy lời mời đặt lịch")
+  }
+
+  return response.data.data
+}
+
+const postAcceptInvitation = async (bookingId: string): Promise<string> => {
+  const response = await axiosInstance.post<AcceptInvitationResponse>(
+    `/Booking/accept-invitation?bookingId=${bookingId}`,
+    { bookingId }
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể chấp nhận lời mời")
+  }
+
+  return response.data.data
+}
+
+const postDeclineInvitation = async (bookingId: string): Promise<string> => {
+  const response = await axiosInstance.post<DeclineInvitationResponse>(
+    `/Booking/decline-invitation?bookingId=${bookingId}`,
+    { bookingId }
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể từ chối lời mời")
+  }
+
+  return response.data.data
+}
+
+export const putAssignMember2 = async (bookingId: string, memberCode: string): Promise<AssignMember2Response> => {
+  const response = await axiosInstance.put("/Booking/assign-member2", null, {
+    params: {
+      bookingId,
+      memberCode
+    }
+  });
+  return response.data;
+};
+
+
+export const postCancelInvitation = async (bookingId: string): Promise<string> => {
+  const response = await axiosInstance.post<CancelInvitationResponse>(
+    `/Booking/cancel-invitation?bookingId=${bookingId}`
+  )
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể hủy lời mời")
+  }
+  return response.data.data
+}
+
+
+
 const bookingApi = {
   postBooking,
   getMyBookings,
@@ -123,6 +187,11 @@ const bookingApi = {
   rateBooking,
   getFeedbacksByCounselor,
   getMyBookingDiscount,
+  getBookingInvitations,
+  postAcceptInvitation,
+  postDeclineInvitation,
+  putAssignMember2,
+  postCancelInvitation,
 }
 
 export default bookingApi

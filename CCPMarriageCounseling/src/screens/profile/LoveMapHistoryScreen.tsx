@@ -200,7 +200,7 @@ const LoveMapHistoryScreen = () => {
   const renderLoveMapCard = (couple: Couple) => {
     const partner1 = couple.member;
     const partner2 = couple.isVirtual
-      ? { fullname: couple.virtualName || "Đối tác ảo", avatar: null }
+      ? { fullname: couple.virtualName || "Đối tác ảo", avatar: couple.virtualAvatar }
       : couple.member1;
 
     return (

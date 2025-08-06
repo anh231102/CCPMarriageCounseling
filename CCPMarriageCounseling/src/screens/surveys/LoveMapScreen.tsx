@@ -176,7 +176,7 @@ const LoveMapScreen = () => {
     ? (coupleData.virtualName ?? "Đối tác ảo")
     : (coupleData.member1?.fullname ?? "Đối tác ảo")
   const partner2Avatar = coupleData.isVirtual
-    ? undefined
+    ? (coupleData.virtualAvatar ?? undefined)
     : (coupleData.member1?.avatar ?? undefined)
 
   const overallCompatibility = calculateOverallCompatibility(coupleData)
@@ -216,6 +216,7 @@ const LoveMapScreen = () => {
           mbti1={coupleData.mbti ?? ""}
           mbti2={coupleData.mbti1 ?? ""}
           onPressPerson={handlePersonDetail}
+
         />
 
         {/* Assessment Breakdown */}
@@ -308,6 +309,7 @@ const LoveMapScreen = () => {
               result={coupleData.mbtiResult ?? ""}
               expanded={expandedSectionsStrong.mbti}
               onToggle={() => toggleSectionStrong("mbti")}
+              strongPoints={coupleData.mbtiDetail?.strongPoints ?? ""}
             />
           )}
           {coupleData.disc && coupleData.disc1 && (
@@ -324,6 +326,7 @@ const LoveMapScreen = () => {
               result={coupleData.discResult ?? ""}
               expanded={expandedSectionsStrong.disc}
               onToggle={() => toggleSectionStrong("disc")}
+              strongPoints={coupleData.discDetail?.strongPoints ?? ""}
             />
           )}
           {coupleData.loveLanguage && coupleData.loveLanguage1 && (
@@ -340,6 +343,7 @@ const LoveMapScreen = () => {
               result={coupleData.loveLanguageResult ?? ""}
               expanded={expandedSectionsStrong.loveLanguage}
               onToggle={() => toggleSectionStrong("loveLanguage")}
+              strongPoints={coupleData.loveLanguageDetail?.strongPoints ?? ""}
             />
           )}
           {coupleData.bigFive && coupleData.bigFive1 && (
@@ -356,6 +360,7 @@ const LoveMapScreen = () => {
               result={coupleData.bigFiveResult ?? ""}
               expanded={expandedSectionsStrong.bigFive}
               onToggle={() => toggleSectionStrong("bigFive")}
+              strongPoints={coupleData.bigFiveDetail?.strongPoints ?? ""}
             />
           )}
         </View>
@@ -377,6 +382,7 @@ const LoveMapScreen = () => {
               suggestions="• Tăng cường giao tiếp và thấu hiểu lẫn nhau\n• Học cách chấp nhận và bổ trợ cho nhau\n• Phát triển các kỹ năng còn yếu thông qua thực hành"
               expanded={expandedSectionsWeak.mbti}
               onToggle={() => toggleSectionWeak("mbti")}
+              weaknesses={coupleData.mbtiDetail?.weaknesses ?? ""}
             />
           )}
           {coupleData.disc && coupleData.disc1 && (
@@ -393,6 +399,7 @@ const LoveMapScreen = () => {
               suggestions="• Nhận biết và điều chỉnh phong cách giao tiếp\n• Học cách thích ứng với phong cách của đối phương\n• Phát triển các kỹ năng hành vi còn thiếu"
               expanded={expandedSectionsWeak.disc}
               onToggle={() => toggleSectionWeak("disc")}
+              weaknesses={coupleData.discDetail?.weaknesses ?? ""}
             />
           )}
           {coupleData.loveLanguage && coupleData.loveLanguage1 && (
@@ -409,6 +416,7 @@ const LoveMapScreen = () => {
               suggestions="• Học cách thể hiện tình yêu theo ngôn ngữ của đối phương\n• Phát triển các ngôn ngữ tình yêu còn yếu\n• Tăng cường giao tiếp về nhu cầu tình cảm"
               expanded={expandedSectionsWeak.loveLanguage}
               onToggle={() => toggleSectionWeak("loveLanguage")}
+              weaknesses={coupleData.loveLanguageDetail?.weaknesses ?? ""}
             />
           )}
           {coupleData.bigFive && coupleData.bigFive1 && (
@@ -425,6 +433,7 @@ const LoveMapScreen = () => {
               suggestions="• Nhận thức và phát triển các yếu tố tính cách còn yếu\n• Tạo môi trường hỗ trợ lẫn nhau trong phát triển\n• Thực hành các hoạt động giúp cải thiện tính cách"
               expanded={expandedSectionsWeak.bigFive}
               onToggle={() => toggleSectionWeak("bigFive")}
+              weaknesses={coupleData.bigFiveDetail?.weaknesses ?? ""}
             />
           )}
         </View>

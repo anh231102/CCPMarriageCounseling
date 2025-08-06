@@ -37,6 +37,10 @@ export interface Couple {
   isVirtual: boolean | null
   virtualName: string | null
   virtualDob: string | null
+  virtualAvatar: string | null
+  virtualDescription: string | null
+  virtualRelationship: string | null
+  virtualGender: string | null
   createAt: string
   rec1: string | null
   rec2: string | null
@@ -134,6 +138,8 @@ export interface ResultDetail {
   compatibility: number
   image: string | null
   createAt: string
+  weaknesses: string | null
+  strongPoints: string | null
   status: number
   category: Category
   personType: PersonTypeWithCategory
@@ -160,6 +166,10 @@ export interface ApplyLatestResultResponse {
 
 export interface CreateVirtualCoupleRequest {
   surveyIds: string[]
+  virtualAvatar: string
+  virtualDescription: string
+  virtualRelationship: string
+  virtualGender: string
   virtualName: string
   virtualDob: string 
 }

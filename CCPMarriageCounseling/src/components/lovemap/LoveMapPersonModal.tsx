@@ -18,7 +18,13 @@ const LoveMapPersonModal = ({ visible, onClose, personKey, coupleData, parseScor
   const isFirst = personKey === "member"
   const person = isFirst ? coupleData.member : coupleData.member1
   const name = person?.fullname || coupleData.virtualName || "Đối tác ảo"
-  const avatar = person?.avatar || "https://placeholder.svg?height=80&width=80"
+  const avatar =
+    isFirst
+      ? (person?.avatar || require("../../../assets/images/avatar.png"))
+      : (coupleData.isVirtual
+        ? (coupleData.virtualAvatar || require("../../../assets/images/avatar.png"))
+        : (person?.avatar || require("../../../assets/images/avatar.png")));
+
 
   const mbtiData = isFirst ? coupleData.mbtiDescription : coupleData.mbti1Description
   const discData = isFirst ? coupleData.discDescription : coupleData.disc1Description
@@ -62,6 +68,34 @@ const LoveMapPersonModal = ({ visible, onClose, personKey, coupleData, parseScor
             <Text className="text-2xl font-bold text-secondary-dark mb-2">{name}</Text>
             {person?.dob && (
               <Text className="text-secondary">Sinh năm: {new Date(person.dob).getFullYear()}</Text>
+            )}
+            {!isFirst && coupleData.isVirtual && (
+              <>
+              {coupleData.virtualDob && (
+                  <Text className="text-secondary mb-1">
+                    <Text className="font-semibold">Ngày Sinh: </Text>
+                    {new Date(coupleData.virtualDob).toLocaleDateString("vi-VN")}
+                  </Text>
+                )}
+                {coupleData.virtualRelationship && (
+                  <Text className="text-secondary mb-1">
+                    <Text className="font-semibold">Mối quan hệ: </Text>
+                    {coupleData.virtualRelationship}
+                  </Text>
+                )}
+                {coupleData.virtualGender && (
+                  <Text className="text-secondary mb-1">
+                    <Text className="font-semibold">Giới tính: </Text>
+                    {coupleData.virtualGender}
+                  </Text>
+                )}
+                {coupleData.virtualDescription && (
+                  <Text className="text-secondary mb-1">
+                    <Text className="font-semibold">Mô tả: </Text>
+                    {coupleData.virtualDescription}
+                  </Text>
+                )}
+              </>
             )}
           </View>
 

@@ -51,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             name: decoded.sub,
             email: decoded.sub,
             avatar: decoded.avatar,
+            memberId: decoded.memberId,
           };
           setUser(userData);
           setIsAuth(true);
@@ -78,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name: decoded.sub,
         email: decoded.sub,
         avatar: decoded.avatar,
+        memberId: decoded.memberId,
       };
       setUser(userData);
       setIsAuth(true);

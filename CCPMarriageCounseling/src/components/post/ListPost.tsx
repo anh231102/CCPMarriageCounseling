@@ -64,23 +64,23 @@ const ListPost: React.FC<ListPostProps> = ({ allscreen }) => {
   }, [search, sortOrder, posts])
 
   const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  const now = new Date()
-  // So sánh ngày/tháng/năm
-  if (
-    date.getDate() === now.getDate() &&
-    date.getMonth() === now.getMonth() &&
-    date.getFullYear() === now.getFullYear()
-  ) {
-    return "Hôm nay"
-  }
-  const diffTime = Math.abs(now.getTime() - date.getTime())
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    const date = new Date(dateString)
+    const now = new Date()
+    // So sánh ngày/tháng/năm
+    if (
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear()
+    ) {
+      return "Hôm nay"
+    }
+    const diffTime = Math.abs(now.getTime() - date.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 1) return "Hôm qua"
-  if (diffDays < 7) return `${diffDays} ngày trước`
-  return date.toLocaleDateString("vi-VN", { day: "numeric", month: "short" })
-}
+    if (diffDays === 1) return "Hôm qua"
+    if (diffDays < 7) return `${diffDays} ngày trước`
+    return date.toLocaleDateString("vi-VN", { day: "numeric", month: "short" })
+  }
 
   const getReadingTime = (content: string) => {
     const wordsPerMinute = 200
@@ -129,7 +129,7 @@ const ListPost: React.FC<ListPostProps> = ({ allscreen }) => {
       {!allscreen && (
         <View className="flex-row justify-between items-center mb-6 px-4">
           <View className="flex-row items-center">
-            
+
             <Text className="text-xl font-bold text-gray-600">Bài viết hữu ích</Text>
           </View>
           <TouchableOpacity
@@ -217,10 +217,15 @@ const ListPost: React.FC<ListPostProps> = ({ allscreen }) => {
               {/* Post Image */}
               <View className="relative">
                 <Image
-                  source={{ uri: "https://images.unsplash.com/photo-1506744038136-46273834b3fb" }}
+                  source={
+                    typeof post.image === 'string'
+                      ? { uri: post.image }
+                      : require("../../../assets/images/postImage1.png")
+                  }
                   className="w-full h-48"
                   resizeMode="cover"
                 />
+
                 <LinearGradient
                   colors={["transparent", "rgba(0,0,0,0.3)"]}
                   className="absolute bottom-0 left-0 right-0 h-16"
@@ -303,7 +308,7 @@ const ListPost: React.FC<ListPostProps> = ({ allscreen }) => {
           </View>
         </View>
       )}
-      
+
     </View>
   )
 }

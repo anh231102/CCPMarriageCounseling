@@ -68,7 +68,7 @@ const PersonTypeHistoryScreen = () => {
       })
       setSurveyHistory(sorted)
     } catch (err) {
-      console.error("Lỗi khi tải lịch sử khảo sát:", err)
+      setSurveyHistory([])
     } finally {
       setLoading(false)
     }
@@ -79,56 +79,58 @@ const PersonTypeHistoryScreen = () => {
   }, [selectedSurveyType, sortOrder])
 
   const renderSurveyItem = ({ item }: { item: PersonTypeHistoryItem }) => {
-    const Icon = currentType.icon
+  // Nếu item có surveyId, lấy meta theo item.surveyId
+  const typeMeta = getSurveyMetaById(item.surveyId as SurveyType) || currentType;
+  const Icon = typeMeta.icon;
 
-    return (
-      <TouchableOpacity
-        className="bg-white rounded-xl p-4 mb-4 shadow-sm border border-gray-100"
-        onPress={() => {
-          navigation.navigate("PersonTypeHistoryDetail", { surveyResult: item })
-        }}
-      >
-        <View className="flex-row items-start">
-          <View className={`${currentType.bgColor} rounded-full p-3 mr-4`}>
-            <Icon size={20} color={currentType.color} />
+  return (
+    <TouchableOpacity
+      className="bg-white rounded-xl p-4 mb-4 shadow-sm border border-gray-100"
+      onPress={() => {
+        navigation.navigate("PersonTypeHistoryDetail", { surveyResult: item })
+      }}
+    >
+      <View className="flex-row items-start">
+        <View className={`${typeMeta.bgColor} rounded-full p-3 mr-4`}>
+          <Icon size={20} color={typeMeta.color} />
+        </View>
+        <View className="flex-1">
+          <View className="flex-row justify-between items-start mb-2">
+            <View className="flex-1">
+              <Text className="text-secondary-dark font-bold text-base">
+                {typeMeta.fullName}
+              </Text>
+              <Text className="text-secondary text-sm">
+                {getTimeAgo(item.createAt)}
+              </Text>
+            </View>
+            <View className={`${typeMeta.bgColor} rounded-lg px-3 py-1`}>
+              <Text className="font-bold" style={{ color: typeMeta.color }}>
+                {item.result}
+              </Text>
+            </View>
           </View>
-          <View className="flex-1">
-            <View className="flex-row justify-between items-start mb-2">
-              <View className="flex-1">
-                <Text className="text-secondary-dark font-bold text-base">
-                  {currentType.fullName}
-                </Text>
-                <Text className="text-secondary text-sm">
-                  {getTimeAgo(item.createAt)}
-                </Text>
-              </View>
-              <View className={`${currentType.bgColor} rounded-lg px-3 py-1`}>
-                <Text className="font-bold" style={{ color: currentType.color }}>
-                  {item.result}
-                </Text>
-              </View>
+          <Text className="text-secondary-dark text-sm mb-3" numberOfLines={2}>
+            {item.description}
+          </Text>
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center">
+              <Clock size={14} color="#6C757D" />
+              <Text className="text-secondary text-xs ml-1">
+                {formatDate(item.createAt)}
+              </Text>
             </View>
-            <Text className="text-secondary-dark text-sm mb-3" numberOfLines={2}>
-              {item.description}
-            </Text>
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center">
-                <Clock size={14} color="#6C757D" />
-                <Text className="text-secondary text-xs ml-1">
-                  {formatDate(item.createAt)}
-                </Text>
-              </View>
-              <TouchableOpacity onPress={() => {
-                navigation.navigate("PersonTypeHistoryDetail", { surveyResult: item })
-              }}>
-                <Text className="text-primary text-sm font-medium">Xem chi tiết</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={() => {
+              navigation.navigate("PersonTypeHistoryDetail", { surveyResult: item })
+            }}>
+              <Text className="text-primary text-sm font-medium">Xem chi tiết</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </TouchableOpacity>
-    )
-  }
+      </View>
+    </TouchableOpacity>
+  )
+}
 
   const renderSurveyTypeButtons = () => (
     <View className="bg-white py-4 px-4 border-b border-gray-200">

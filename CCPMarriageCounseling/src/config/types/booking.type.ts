@@ -144,3 +144,33 @@ export interface BookingDiscountResponse {
   data: number 
   error: string | null
 }
+
+export interface BookingInvitationsResponse {
+  success: boolean
+  data: BookingMemberData[] // dùng lại interface đã có sẵn
+  error: string | null
+}
+
+export interface AcceptInvitationResponse {
+  success: boolean
+  data: string
+  error: string | null
+}
+
+export interface DeclineInvitationResponse {
+  success: boolean
+  data: string
+  error: string | null
+}
+
+export interface AssignMember2Response {
+  success: boolean;
+  data: string; // "Updated Member2 successfully."
+  error: string | null;
+}
+
+export interface CancelInvitationResponse {
+  success: boolean
+  data: string
+  error: string | null
+}

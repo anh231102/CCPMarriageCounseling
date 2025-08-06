@@ -4,6 +4,7 @@ export interface PostItem {
   createBy: string
   title: string
   description: string // Có thể chứa HTML
+  image: string
   createAt: string
   status: number
 }

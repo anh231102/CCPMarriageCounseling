@@ -26,6 +26,8 @@ import { MyCourseListScreen } from "../screens/courses/MyCourseListScreen"
 import { CourseDetailScreen } from "../screens/courses/CourseDetailScreen"
 import CourseContentScreen from "../screens/courses/CourseContentScreen"
 import CourseReviewScreen from "../screens/courses/CourseReviewScreen"
+import VideoCallScreen from "../screens/counselors/VideoCallScreen"
+import PaymentWebView from "../screens/profile/PaymentWebView"
 
 
 
@@ -115,6 +117,16 @@ const ProfileNavigator = () => {
         name="CourseReview"
         component={CourseReviewScreen}
         options={{ title: "Đánh giá khóa học" }}
+      />
+      <Stack.Screen
+        name="VideoCall"
+        component={VideoCallScreen}
+        options={{ title: "Gọi tư vấn" }}
+      />
+      <Stack.Screen
+        name="PaymentWebView"
+        component={PaymentWebView}
+        options={{ title: "Thanh toán" }}
       />
       <Stack.Screen name="VirtualSurveyQuestions" component={VirtualSurveyQuestionsScreen} options={{ title: "Phòng khảo sát " }} />
     </Stack.Navigator>

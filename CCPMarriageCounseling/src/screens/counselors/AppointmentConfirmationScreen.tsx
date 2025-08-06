@@ -109,7 +109,7 @@ const AppointmentConfirmationScreen = () => {
         note: note || "",
         subCategoryIds: selectedSubCategories.map((s) => s.id),
       }
-
+      console.log("Booking data:", bookingData)
       const result = await bookingApi.postBooking(bookingData)
 
       setIsLoading(false)
@@ -128,7 +128,8 @@ const AppointmentConfirmationScreen = () => {
     } catch (error: any) {
       setIsLoading(false)
       setConfirmModalVisible(false)
-      Alert.alert("Lỗi", error.message || "Không thể đặt lịch hẹn")
+      
+      Alert.alert("Thông báo", error.response?.data?.error || error.message || "Không thể đặt lịch hẹn")
     }
   }
 

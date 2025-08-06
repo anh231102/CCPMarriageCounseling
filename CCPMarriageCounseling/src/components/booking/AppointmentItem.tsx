@@ -1,12 +1,14 @@
 // components/booking/AppointmentItem.tsx
-import React from "react"
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native"
+import React, { useState } from "react"
+import { View, Text, TouchableOpacity, Image, Alert, Modal, TextInput, } from "react-native"
 import {
     Calendar,
     Clock,
     Video,
     Phone,
     MessageCircle,
+    SquareX,
+    X,
 } from "lucide-react-native"
 import { useNavigation } from "@react-navigation/native"
 import { BookingMemberData, BookingStatus, getBookingStatusLabel } from "@/src/config/types/booking.type"
@@ -19,7 +21,10 @@ import {
     RebookAndConclusionButtons,
     RebookButtons,
     ScheduleButtons,
+    BookingConfirmActions,
 } from "./ActionButtons"
+import { useAuth } from "../../hooks/useAuth"
+import InvitePartnerModal from "./InvitePartnerModal"
 
 const getTypeIcon = (subCategories: any[]) => {
     if (!subCategories || subCategories.length === 0) return MessageCircle
@@ -56,6 +61,7 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
     onReload: () => void
     onUpdateItem: (updatedItem: BookingMemberData) => void
 }) => {
+    const { user } = useAuth()
     const navigation = useNavigation<any>()
     const IconComponent = getTypeIcon(item.subCategories)
     const statusColor = getStatusColor(item.status)
@@ -63,6 +69,18 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
     const startTime = new Date(item.timeStart).getTime()
     const endTime = new Date(item.timeEnd).getTime()
     const canStart = startTime <= now && now <= endTime
+    const [inviteModalVisible, setInviteModalVisible] = useState(false)
+    const [inviteCode, setInviteCode] = useState("")
+    const [loadingInvite, setLoadingInvite] = useState(false)
+    const [errorInvite, setErrorInvite] = useState("")
+
+    // Xác định đối tác
+    const partner =
+        user?.id === item.member.id
+            ? item.member2
+            : user?.id === item.member2?.id
+                ? item.member
+                : null;
 
     const alertCancelBooking = () => {
         Alert.alert("Xác nhận hủy lịch", "Việc hủy lịch sẽ bị trừ 50% số tiền booking. Bạn có chắc chắn muốn hủy?", [
@@ -81,19 +99,120 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
             },
         ])
     }
+    const handleCancelInvitation = () => {
+        Alert.alert(
+            "Xác nhận hủy lời mời",
+            "Bạn có muốn hủy lời mời đối tác không?",
+            [
+                { text: "Không", style: "cancel" },
+                {
+                    text: "Có", style: "destructive", onPress: async () => {
+                        try {
+                            await bookingApi.postCancelInvitation(item.id)
+                            Alert.alert("Thành công", "Đã hủy lời mời đối tác.")
+                            onReload()
+                        } catch (err: any) {
+                            const backendError =
+                                err?.response?.data?.error ||
+                                err?.message ||
+                                "Không thể hủy lời mời"
+                            console.log("Lỗi hủy lời mời:", err)
+                            Alert.alert("Lỗi", backendError)
+                        }
+                    }
+                }
+            ]
+        )
+    }
+    const handleInvitePartner = async () => {
+        if (!inviteCode.trim()) {
+            setErrorInvite("Vui lòng nhập mã đối tác")
+            return
+        }
+        setLoadingInvite(true)
+        setErrorInvite("")
+        try {
+            await bookingApi.putAssignMember2(item.id, inviteCode.trim())
+            setInviteModalVisible(false)
+            setInviteCode("")
+            onReload()
+            Alert.alert("Thành công", "Đã gửi lời mời đối tác tham gia buổi tư vấn.")
+        } catch (err: any) {
+            setErrorInvite(err.message || "Gửi lời mời thất bại")
+        } finally {
+            setLoadingInvite(false)
+        }
+    }
 
     return (
         <View className="bg-white rounded-lg shadow-sm mb-4 p-4">
             {/* Header */}
-            <View className="flex-row mb-3">
-                <Image source={{ uri: item.counselor.avatar || "https://placeholder.svg" }} className="w-16 h-16 rounded-full" />
-                <View className="ml-3 flex-1">
-                    <Text className="text-secondary-dark font-bold">{item.counselor.fullname}</Text>
-                    <Text className="text-secondary">{item.subCategories.map((sc) => sc.name).join(", ")}</Text>
-                    <View className={`mt-1 px-2 py-0.5 rounded-full self-start ${statusColor.bg}`}>
-                        <Text className={`text-xs ${statusColor.text}`}>{getBookingStatusLabel(item.status)}</Text>
+            <View className="flex-col bg-white rounded-2xl   mb-4">
+
+                {/* Counselor Information Section */}
+                <View className="flex-col  mb-4 pb-4 border-b border-gray-100">
+                    <View className="bg-pink-50 p-2 rounded-xl mr-3 self-start">
+                        <Text className="text-pink-600 font-semibold text-sm">Tư vấn viên</Text>
+                    </View>
+                    <View className="flex-row items-center mb-3">
+                        <Image
+                            source={{
+                                uri: item.counselor.avatar || "https://placehold.co/64x64.png?text=User",
+                            }}
+                            className="w-16 h-16 rounded-full border-2 border-pink-100 mr-4"
+                        />
+
+                        <View className="flex-1">
+                            <Text className="text-gray-900 font-bold text-lg mb-1" numberOfLines={1}>
+                                {item.counselor.fullname}
+                            </Text>
+
+                            <Text className="text-gray-600 text-sm mb-2" numberOfLines={1}>
+                                {item.subCategories.map((sc: any) => sc.name).join(", ")}
+                            </Text>
+
+                            <View className={` px-3 py-1 rounded-full self-start ${statusColor.bg}`}>
+                                <Text className={`text-xs font-semibold ${statusColor.text}`}>
+                                    {getBookingStatusLabel(item.status)}
+                                </Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
+
+                {/* Partner Information Section */}
+                {partner && (
+                    <View className="flex-col pt-4 border-b border-gray-100">
+                        <View className="bg-blue-50 p-2 rounded-xl mr-3 mb-3 w-16">
+                            <Text className="text-blue-600 font-semibold text-sm">Đối tác</Text>
+                        </View>
+                        <View className="flex-row items-center mb-3">
+
+                            <View className="flex-row items-center flex-1">
+                                <Image
+                                    source={{
+                                        uri: partner.avatar || "https://placehold.co/40x40.png?text=User",
+                                    }}
+                                    className="w-10 h-10 rounded-full border-2 border-blue-100 mr-3"
+                                />
+                                <Text className="text-gray-800 font-medium text-base" numberOfLines={1}>
+                                    {partner.fullname}
+                                </Text>
+                            </View>
+
+                        </View>
+                        {user?.id !== item.member2?.id && (
+                            <>
+                                {item.isCouple === false && (
+                                    <Text className="text-orange-600 ml-2 mb-2">Đang đợi phản hồi của đối tác</Text>
+                                )}
+                                {item.isCouple === true && (
+                                    <Text className="text-green-600 ml-2 mb-2">Đối tác đã xác nhận</Text>
+                                )}
+                            </>
+                        )}
+                    </View>)}
+
             </View>
 
             {/* Time & Type */}
@@ -117,21 +236,20 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
 
             {/* Actions */}
             {item.status === BookingStatus.XacNhan && (
-                <View className="flex-row">
-                    <TouchableOpacity
-                        disabled={!canStart}
-                        onPress={() => {
-                            if (!canStart) return
-                            navigation.navigate("VideoCall", { bookingid: `${item.id}` })
-                        }}
-                        className={`flex-1 rounded-lg p-2 mr-2 items-center ${canStart ? "bg-primary" : "bg-gray-300"}`}
-                    >
-                        <Text className={`font-medium ${canStart ? "text-white" : "text-gray-600"}`}>Bắt đầu tư vấn</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={alertCancelBooking} className="flex-1 border border-red-500 bg-red-500/10 rounded-lg p-2 ml-2 items-center">
-                        <Text className="text-red-500 font-medium">Hủy lịch</Text>
-                    </TouchableOpacity>
-                </View>
+                <>
+                    <BookingConfirmActions
+                        item={item}
+                        now={now}
+                        endTime={endTime}
+                        startTime={startTime}
+                        canStart={canStart}
+                        navigation={navigation}
+                        setInviteModalVisible={setInviteModalVisible}
+                        handleCancelInvitation={handleCancelInvitation}
+                        alertCancelBooking={alertCancelBooking}
+                        isMember2={user?.id === item.member2?.id}
+                    />
+                </>
             )}
 
             {item.status === BookingStatus.HoanThanh && item.rating === null && (
@@ -217,6 +335,15 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                     onRebook={() => navigation.navigate("CounselorsTab", { screen: "CounselorList" })}
                 />
             )}
+            <InvitePartnerModal
+                visible={inviteModalVisible}
+                onClose={() => setInviteModalVisible(false)}
+                inviteCode={inviteCode}
+                setInviteCode={setInviteCode}
+                loadingInvite={loadingInvite}
+                errorInvite={errorInvite}
+                handleInvitePartner={handleInvitePartner}
+            />
         </View>
     )
 }

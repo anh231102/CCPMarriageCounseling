@@ -22,6 +22,7 @@ export type User = {
   email: string;
   avatar?: string;
   membershipType?: string;
+  memberId?: string;
   isCouple?: boolean;
   partnerId?: string;
   interests?: string[];

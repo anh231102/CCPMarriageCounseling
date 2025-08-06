@@ -28,6 +28,7 @@ import memberApi from "@/src/config/api/member.api"
 import { Member } from "@/src/config/types/member.type"
 import Loading from "@/src/components/share/Loading"
 import MyProfileComponent from "@/src/components/share/MyProfileComponent"
+import InviteCodeCard from "@/src/components/couple/InviteCodeCard"
 
 const convertDateToInput = (isoDate: string): string => {
   const date = new Date(isoDate)
@@ -216,7 +217,10 @@ const ProfileViewScreen = () => {
             <Text className="text-white font-medium ml-2">Chỉnh sửa</Text>
           </TouchableOpacity>
         </View>
-
+        <View className="mt-3">
+          <InviteCodeCard inviteCode={(user?.memberId || "").replace("Member_", "")} />
+          
+        </View>
 
       </View>
 

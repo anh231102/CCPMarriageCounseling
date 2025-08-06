@@ -16,7 +16,7 @@ export const surveyTypes: SurveyTypeMeta[] = [
   {
     id: "SV001",
     name: "MBTI",
-    fullName: "Myers-Briggs Type Indicator",
+    fullName: "Myers Briggs Type Indicator",
     icon: Brain,
     color: "#E83E8C",
     bgColor: "bg-primary/10",

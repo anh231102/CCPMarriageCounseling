@@ -15,6 +15,7 @@ interface Props {
   suggestions: string
   expanded: boolean
   onToggle: () => void
+  weaknesses?: string
 }
 
 const WeaknessBlock = ({
@@ -30,6 +31,7 @@ const WeaknessBlock = ({
   suggestions,
   expanded,
   onToggle,
+  weaknesses,
 }: Props) => {
   const filterWeakness = (data: Record<string, number>) =>
     Object.entries(data).filter(([_, val]) => val <= threshold)
@@ -53,29 +55,35 @@ const WeaknessBlock = ({
         <View className="mt-3 p-4 bg-danger/5 rounded-lg">
           <Text className="text-secondary-dark font-medium mb-3">Điểm yếu {title} cần cải thiện:</Text>
 
-          {[{ name: name1, code: type1, data: data1 }, { name: name2, code: type2, data: data2 }].map((person) => (
-            <View key={person.name} className="mb-4">
-              <Text className="text-danger font-medium mb-2">
-                {person.name} ({person.code}) - Cần phát triển:
-              </Text>
-              {filterWeakness(person.data).map(([key, value]) => (
-                <View key={key} className="flex-row justify-between items-center mb-1">
-                  <Text className="text-secondary-dark text-sm">⚠ {key}</Text>
-                  <View className="flex-row items-center">
-                    <Text className="text-danger font-bold text-sm mr-2">{value}</Text>
-                    <View className="w-16 h-1 bg-gray-200 rounded-full">
-                      <View className="h-full bg-danger rounded-full" style={{ width: `${(value / 15) * 100}%` }} />
+          {[{ name: name1, code: type1, data: data1 }, { name: name2, code: type2, data: data2 }].map((person) => {
+            const weaknessesArr = filterWeakness(person.data);
+            if (weaknessesArr.length === 0) return null;
+            return (
+              <View key={person.name} className="mb-4">
+                <Text className="text-danger font-medium mb-2">
+                  {person.name} ({person.code}) - Cần phát triển:
+                </Text>
+                {weaknessesArr.map(([key, value]) => (
+                  <View key={key} className="flex-row justify-between items-center mb-1">
+                    <Text className="text-secondary-dark text-sm">⚠ {key}</Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-danger font-bold text-sm mr-2">{value}</Text>
+                      <View className="w-16 h-1 bg-gray-200 rounded-full">
+                        <View className="h-full bg-danger rounded-full" style={{ width: `${(value / 30) * 100}%` }} />
+                      </View>
                     </View>
                   </View>
-                </View>
-              ))}
-            </View>
-          ))}
+                ))}
+              </View>
+            );
+          })}
 
-          <View className="p-3 bg-danger/10 rounded-lg">
-            <Text className="text-danger font-medium mb-1">Gợi ý cải thiện:</Text>
-            <Text className="text-secondary-dark text-sm">{suggestions}</Text>
-          </View>
+          {weaknesses && (
+            <View className="p-3 bg-danger/10 rounded-lg mb-2">
+              <Text className="text-danger font-medium mb-1">Tổng kết điểm yếu:</Text>
+              <Text className="text-secondary-dark text-sm">{weaknesses}</Text>
+            </View>
+          )}
         </View>
       )}
     </View>

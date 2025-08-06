@@ -22,6 +22,7 @@ import * as ImagePicker from "expo-image-picker"
 import Loading from "@/src/components/share/Loading"
 import MyProfileComponent from "@/src/components/share/MyProfileComponent"
 import DateTimePicker from "@react-native-community/datetimepicker"
+import uploadImageApi from "@/src/config/api/uploadImage.api";
 
 
 const formatDateLocal = (date: Date): string => {
@@ -111,10 +112,10 @@ const EditProfileScreen = () => {
     }
   }
   const handlePickAvatar = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
-      Alert.alert("Cần quyền truy cập ảnh")
-      return
+      Alert.alert("Cần quyền truy cập ảnh");
+      return;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -122,130 +123,147 @@ const EditProfileScreen = () => {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.7,
-    })
+    });
 
     if (!result.canceled && result.assets.length > 0) {
-      const selectedImage = result.assets[0]
-      setAvatar(selectedImage.uri) // Hoặc upload ảnh và lấy URL nếu cần
+      const selectedImage = result.assets[0];
+      try {
+        setIsLoading(true)
+        // Upload ảnh lên Cloudinary
+        const imageUrl = await uploadImageApi.uploadImageToCloudinary(selectedImage.uri);
+        if (!imageUrl) throw new Error("Không thể upload ảnh");
+        setAvatar(imageUrl); // Lưu URL ảnh đã upload
+      } catch (err: any) {
+        Alert.alert("Lỗi upload ảnh", err?.message || "Không thể upload ảnh");
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }
+  };
 
 
   return (
-     <KeyboardAvoidingView
-           behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }} // Sử dụng style thay vì className
-        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Có thể điều chỉnh offset nếu cần
-      >
-    <ScrollView className="flex-1 bg-gray-50">
-      <View className="p-4">
-        <View className="items-center mb-6">
-          <View className="relative">
-            <MyProfileComponent image />
-            <TouchableOpacity
-              onPress={handlePickAvatar}
-              className="absolute bottom-0 right-0 bg-primary rounded-full p-2 shadow-sm"
-            >
-              <Camera size={16} color="white" />
-            </TouchableOpacity>
-
-          </View>
-        </View>
-
-        <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
-          <Text className="text-lg font-bold text-secondary-dark mb-4">Thông tin cá nhân</Text>
-
-          <View className="mb-4">
-            <Text className="text-secondary-dark font-medium mb-1">Họ và tên</Text>
-            <TextInput
-              className="border border-gray-200 rounded-lg p-3 text-secondary-dark"
-              placeholder="Nhập họ và tên"
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
-
-
-
-          <View className="mb-4">
-            <Text className="text-secondary-dark font-medium mb-1">Số điện thoại</Text>
-            <TextInput
-              className="border border-gray-200 rounded-lg p-3 text-secondary-dark"
-              placeholder="Nhập số điện thoại"
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={setPhone}
-            />
-          </View>
-
-          <View className="mb-4">
-            <Text className="text-secondary-dark font-medium mb-1">Ngày sinh</Text>
-            <TouchableOpacity
-              onPress={() => setShowDatePicker(true)}
-              className="border border-gray-200 rounded-lg p-3"
-              activeOpacity={0.7}
-            >
-              <Text className="text-secondary-dark">
-                {birthdate || "Chọn ngày sinh"}
-              </Text>
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={birthdate ? convertInputToDate(birthdate) : new Date()}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  setShowDatePicker(false)
-                  if (selectedDate) {
-                    const dd = String(selectedDate.getDate()).padStart(2, "0")
-                    const mm = String(selectedDate.getMonth() + 1).padStart(2, "0")
-                    const yyyy = selectedDate.getFullYear()
-                    setBirthdate(`${dd}/${mm}/${yyyy}`)
-                  }
-                }}
-                maximumDate={new Date()}
-              />
-            )}
-          </View>
-
-          <View className="mb-4">
-            <Text className="text-secondary-dark font-medium mb-1">Giới tính</Text>
-            <View className="flex-row">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }} // Sử dụng style thay vì className
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Có thể điều chỉnh offset nếu cần
+    >
+      <ScrollView className="flex-1 bg-gray-50">
+        <View className="p-4">
+          <View className="items-center mb-6">
+            <View className="relative">
+              {avatar ? (
+                <Image
+                  source={{ uri: avatar }}
+                  style={{ width: 120, height: 120, borderRadius: 60 }}
+                />
+              ) : (
+                <MyProfileComponent image />
+              )}
               <TouchableOpacity
-                onPress={() => setGender("Nam")}
-                className={`flex-1 p-3 rounded-lg mr-2 ${gender === "Nam" ? "bg-primary" : "bg-gray-100 border border-gray-200"
-                  }`}
+                onPress={handlePickAvatar}
+                className="absolute bottom-0 right-0 bg-primary rounded-full p-2 shadow-sm"
               >
-                <Text className={`text-center font-medium ${gender === "Nam" ? "text-white" : "text-secondary-dark"}`}>
-                  Nam
-                </Text>
+                <Camera size={16} color="white" />
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setGender("Nữ")}
-                className={`flex-1 p-3 rounded-lg ml-2 ${gender === "Nữ" ? "bg-primary" : "bg-gray-100 border border-gray-200"
-                  }`}
-              >
-                <Text className={`text-center font-medium ${gender === "Nữ" ? "text-white" : "text-secondary-dark"}`}>
-                  Nữ
-                </Text>
-              </TouchableOpacity>
+
             </View>
           </View>
-        </View>
 
-        <TouchableOpacity
-          onPress={handleSave}
-          disabled={isLoading}
-          className={`rounded-lg p-4 items-center mb-6 ${isLoading ? "bg-primary-light" : "bg-primary"}`}
-        >
-          {isLoading ? (
-            <Loading size={20} color="white" />
-          ) : (
-            <Text className="text-white font-bold text-lg">Lưu thay đổi</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
+            <Text className="text-lg font-bold text-secondary-dark mb-4">Thông tin cá nhân</Text>
+
+            <View className="mb-4">
+              <Text className="text-secondary-dark font-medium mb-1">Họ và tên</Text>
+              <TextInput
+                className="border border-gray-200 rounded-lg p-3 text-secondary-dark"
+                placeholder="Nhập họ và tên"
+                value={name}
+                onChangeText={setName}
+              />
+            </View>
+
+
+
+            <View className="mb-4">
+              <Text className="text-secondary-dark font-medium mb-1">Số điện thoại</Text>
+              <TextInput
+                className="border border-gray-200 rounded-lg p-3 text-secondary-dark"
+                placeholder="Nhập số điện thoại"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+              />
+            </View>
+
+            <View className="mb-4">
+              <Text className="text-secondary-dark font-medium mb-1">Ngày sinh</Text>
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(true)}
+                className="border border-gray-200 rounded-lg p-3"
+                activeOpacity={0.7}
+              >
+                <Text className="text-secondary-dark">
+                  {birthdate || "Chọn ngày sinh"}
+                </Text>
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={birthdate ? convertInputToDate(birthdate) : new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    setShowDatePicker(false)
+                    if (selectedDate) {
+                      const dd = String(selectedDate.getDate()).padStart(2, "0")
+                      const mm = String(selectedDate.getMonth() + 1).padStart(2, "0")
+                      const yyyy = selectedDate.getFullYear()
+                      setBirthdate(`${dd}/${mm}/${yyyy}`)
+                    }
+                  }}
+                  maximumDate={new Date()}
+                />
+              )}
+            </View>
+
+            <View className="mb-4">
+              <Text className="text-secondary-dark font-medium mb-1">Giới tính</Text>
+              <View className="flex-row">
+                <TouchableOpacity
+                  onPress={() => setGender("Nam")}
+                  className={`flex-1 p-3 rounded-lg mr-2 ${gender === "Nam" ? "bg-primary" : "bg-gray-100 border border-gray-200"
+                    }`}
+                >
+                  <Text className={`text-center font-medium ${gender === "Nam" ? "text-white" : "text-secondary-dark"}`}>
+                    Nam
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setGender("Nữ")}
+                  className={`flex-1 p-3 rounded-lg ml-2 ${gender === "Nữ" ? "bg-primary" : "bg-gray-100 border border-gray-200"
+                    }`}
+                >
+                  <Text className={`text-center font-medium ${gender === "Nữ" ? "text-white" : "text-secondary-dark"}`}>
+                    Nữ
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            onPress={handleSave}
+            disabled={isLoading}
+            className={`rounded-lg p-4 items-center mb-6 ${isLoading ? "bg-primary-light" : "bg-primary"}`}
+          >
+            {isLoading ? (
+              <Loading size={20} color="white" />
+            ) : (
+              <Text className="text-white font-bold text-lg">Lưu thay đổi</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   )
 }

@@ -73,26 +73,19 @@ const MyWalletScreen = () => {
   
 
   const handleTopUp = () => {
-    const amount =
-      selectedAmount || Number.parseInt(customAmount.replace(/[^0-9]/g, "")) || 0
-    if (amount < 10000) {
-      Alert.alert("Lỗi", "Số tiền nạp tối thiểu là 10,000 VND")
-      return
-    }
-
-    Alert.alert("Xác nhận nạp tiền", `Bạn muốn nạp ${formatCurrency(amount)} vào ví?`, [
-      { text: "Hủy", style: "cancel" },
-      {
-        text: "Xác nhận",
-        onPress: () => {
-          setShowTopUpModal(false)
-          Alert.alert("Thành công", "Nạp tiền thành công!")
-          setSelectedAmount(null)
-          setCustomAmount("")
-        },
-      },
-    ])
+  const amount =
+    selectedAmount || Number.parseInt(customAmount.replace(/[^0-9]/g, "")) || 0;
+  if (amount < 10000) {
+    Alert.alert("Lỗi", "Số tiền nạp tối thiểu là 10,000 VND");
+    return;
   }
+
+  // Tạo paymentUrl (thay bằng url thực tế từ backend)
+  const paymentUrl = `https://your-payment-gateway.com/pay?amount=${amount}&method=${selectedMethod}`;
+
+  setShowTopUpModal(false);
+  navigation.navigate("PaymentWebView", { paymentUrl });
+};
   const renderOverview = () => (
     <View>
       {/* Balance Card */}
