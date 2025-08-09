@@ -23,6 +23,8 @@ import {
 } from "@/src/config/types/transaction.type"
 import transactionApi from "@/src/config/api/transaction.api"
 import Loading from "../share/Loading"
+import { Modal } from "react-native";
+import TransactionStatsModal from "./TransactionStatsModal"
 
 const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("vi-VN", {
@@ -49,7 +51,7 @@ const getTransactionIcon = (type: TransactionType) => {
     }
 }
 
-const FILTER_OPTIONS: { label: string; value: TransactionType | null  }[] = [
+const FILTER_OPTIONS: { label: string; value: TransactionType | null }[] = [
     { label: "Tất cả", value: null },
     { label: "Tư vấn", value: TransactionType.Booking },
     { label: "Hoàn tiền 100%", value: TransactionType.Refund100 },
@@ -62,16 +64,21 @@ const FILTER_OPTIONS: { label: string; value: TransactionType | null  }[] = [
 ]
 
 const TransactionHistory = () => {
+    const [statsMode, setStatsMode] = useState<"month" | "year" | "all">("month");
+    const [showStatsModal, setShowStatsModal] = useState(false);
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [stats, setStats] = useState<{ totalDeposit: number; totalSpent: number; count: number; list: Transaction[] } | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [loading, setLoading] = useState(false)
-   const [filter, setFilter] = useState<TransactionType | null>(null)
+    const [filter, setFilter] = useState<TransactionType | null>(null)
 
 
     useEffect(() => {
-    fetchTransactions(1, filter ?? undefined)
-}, [filter])
+        fetchTransactions(1, filter ?? undefined)
+    }, [filter])
 
 
     const fetchTransactions = async (
@@ -107,14 +114,22 @@ const TransactionHistory = () => {
         <View className="bg-white rounded-2xl p-6 shadow-sm mb-40 relative">
             {/* Dropdown Filter */}
             <View className="mb-4">
+                <View className="flex-row items-center justify-between mb-2">
                 <Text className="text-sm text-secondary-dark mb-1">
                     Lọc theo loại giao dịch
                 </Text>
+                <TouchableOpacity
+                    onPress={() => setShowStatsModal(true)}
+                    className=" px-4 py-2 bg-primary rounded-xl self-end"
+                >
+                    <Text className="text-white font-bold">Xem thống kê</Text>
+                </TouchableOpacity>
+                </View>
                 <View className="border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
                     <Picker
                         selectedValue={filter}
                         onValueChange={(itemValue) => setFilter(itemValue)}
-                        style={{ height: 48 }}
+                        style={{ height: 50 }}
                     >
                         {FILTER_OPTIONS.map((option) => (
                             <Picker.Item
@@ -126,7 +141,7 @@ const TransactionHistory = () => {
                     </Picker>
                 </View>
             </View>
-           
+
             {/* Transaction List */}
             <FlatList
                 data={transactions}
@@ -192,11 +207,50 @@ const TransactionHistory = () => {
 
             {loading && (
                 <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/60 z-10 justify-center items-center">
-                    <Loading size={40}  />
+                    <Loading size={40} />
                 </View>
             )}
 
+
+            <TransactionStatsModal
+                visible={showStatsModal}
+                onClose={() => setShowStatsModal(false)}
+                statsMode={statsMode}
+                setStatsMode={setStatsMode}
+                selectedMonth={selectedMonth}
+                setSelectedMonth={setSelectedMonth}
+                selectedYear={selectedYear}
+                setSelectedYear={setSelectedYear}
+                stats={stats}
+                loading={loading}
+                onFetchStats={async () => {
+                    setStats(null);
+                    setLoading(true);
+                    try {
+                        const data = await transactionApi.getMyTransactions(undefined, 1, 1000);
+                        const filtered = data.items.filter(item => {
+                            const d = new Date(item.createDate);
+                            if (statsMode === "month") {
+                                return d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear;
+                            }
+                            if (statsMode === "year") {
+                                return d.getFullYear() === selectedYear;
+                            }
+                            return true;
+                        });
+                        const totalDeposit = filtered.filter(i => i.amount > 0).reduce((sum, i) => sum + i.amount, 0);
+                        const totalSpent = filtered.filter(i => i.amount < 0).reduce((sum, i) => sum + Math.abs(i.amount), 0);
+                        setStats({ totalDeposit, totalSpent, count: filtered.length, list: filtered });
+                    } catch (e) {
+                        Alert.alert("Lỗi", "Không thể lấy thống kê");
+                    } finally {
+                        setLoading(false);
+                    }
+                }}
+            />
         </View>
+
+
     )
 }
 

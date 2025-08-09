@@ -57,7 +57,7 @@ const CoupleConnectionScreen = () => {
           const msg = result.error || ""
           console.warn("Create couple failed:", msg)
 
-          if (msg.includes("active room") || msg.includes("sẵn phòng")) {
+          if (msg.includes("active room") || msg.includes("phòng đang hoạt động")) {
             Alert.alert(
               "Bạn đã có sẵn phòng",
               "Bạn đã tạo một phòng trước đó. Bạn muốn làm gì?",

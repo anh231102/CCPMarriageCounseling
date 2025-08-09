@@ -141,7 +141,7 @@ const SelfCheckScreen = () => {
       })
     } catch (error: any) {
       const message = error?.message || "Không thể tạo phòng ảo"
-      if (message.includes("active room") || message.includes("sẵn phòng")) {
+      if (message.includes("active room") || message.includes("phòng đang hoạt động")) {
         Alert.alert(
           "Bạn đã có phòng",
           "Bạn đã tạo một phòng ảo trước đó. Bạn muốn làm gì?",

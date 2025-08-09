@@ -121,14 +121,21 @@ const AppointmentConfirmationScreen = () => {
           text: "OK", onPress: () =>
             navigation.reset({
               index: 0,
-              routes: [{ name: "AppointmentHistory" }],
+              routes: [
+                {
+                  name: "CounselorsTab",
+                  state: {
+                    routes: [{ name: "AppointmentHistory" }]
+                  }
+                }
+              ]
             })
         }]
       )
     } catch (error: any) {
       setIsLoading(false)
       setConfirmModalVisible(false)
-      
+
       Alert.alert("Thông báo", error.response?.data?.error || error.message || "Không thể đặt lịch hẹn")
     }
   }

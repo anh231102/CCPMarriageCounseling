@@ -28,6 +28,7 @@ export enum TransactionType {
   RefundCourse = "6",
   CounselorEarn = "7",
   Withdraw = "8",
+  Deposit = "9",
 }
 
 export const getTransactionTypeLabel = (type: TransactionType): string => {
@@ -48,6 +49,8 @@ export const getTransactionTypeLabel = (type: TransactionType): string => {
       return "Tư vấn viên nhận tiền"
     case TransactionType.Withdraw:
       return "Rút tiền"
+    case TransactionType.Deposit:
+      return "Nạp tiền"
     default:
       return "Không xác định"
   }

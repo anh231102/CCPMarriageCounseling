@@ -103,18 +103,16 @@ const VirtualSurveyQuestionsScreen = () => {
         })),
       }
 
-      // Log dữ liệu gửi lên API
-      console.log("Gửi kết quả khảo sát ảo:", formattedResult)
+      
 
       const resultText = await surveyApi.postVirtualSurveyResult(formattedResult)
 
-      // Log kết quả trả về từ API
-      console.log("Kết quả trả về từ API:", resultText)
+      
 
       isLastSurvey = currentSurveyIndex >= selectedSurveyIds.length - 1
 
       if (isLastSurvey) {
-        console.log("Đây là survey cuối cùng của nhân vật ảo, chuyển về CoupleSurveyRoom")
+        
         navigation.navigate("CoupleSurveyRoom", {
           roomId,
           isHost,
@@ -136,7 +134,7 @@ const VirtualSurveyQuestionsScreen = () => {
       }
     } catch (error) {
       // Log lỗi chi tiết
-      console.log("Lỗi khi lưu kết quả khảo sát ảo:", error)
+
       Alert.alert("Lỗi", "Không thể lưu kết quả khảo sát. Vui lòng thử lại.")
     } finally {
       setLoading(false)

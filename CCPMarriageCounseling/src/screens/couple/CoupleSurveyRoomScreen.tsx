@@ -233,7 +233,7 @@ const CoupleSurveyRoomScreen = () => {
     navigation.navigate("VirtualSurveyQuestions", {
       selectedSurveyIds: surveyIds,
       currentSurveyIndex: 0,
-      
+
       userType: isUserHost ? "host" : "partner",
       isAuth: true,
       roomId: roomData.accessCode,
@@ -386,7 +386,11 @@ const CoupleSurveyRoomScreen = () => {
                 <View className="flex-row items-center mb-4">
                   <View className="relative">
                     <Image
-                      source={ roomData?.virtualAvatar!=null ? { uri: roomData.virtualAvatar } : require("../../../assets/images/avatar.png")}
+                      source={
+                        roomData?.virtualAvatar
+                          ? { uri: roomData.virtualAvatar }
+                          : require("../../../assets/images/avatar.png")
+                      }
                       className="w-16 h-16 rounded-full"
                     />
                   </View>
@@ -405,8 +409,8 @@ const CoupleSurveyRoomScreen = () => {
 
                     </Text>
                     <Text className="text-secondary text-sm">
-                      Giới tính: 
-                       {roomData?.virtualGender || "Không rõ"}
+                      Giới tính:
+                      {roomData?.virtualGender || "Không rõ"}
                     </Text>
                     <Text className="text-secondary text-sm">
                       Mối quan hệ:

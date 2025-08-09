@@ -104,7 +104,7 @@ export const CourseListScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
       <View className="p-4 bg-white shadow-sm">
-        <Text className="text-2xl font-bold text-secondary-dark mb-4">Khóa học</Text>
+        
         <View className="flex-row items-center border border-gray-300 rounded-lg px-3 py-2 bg-white">
           <Search size={20} color="#6C757D" />
           <TextInput

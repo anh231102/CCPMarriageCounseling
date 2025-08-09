@@ -9,6 +9,7 @@ import {
   TextInput,
   Alert,
   Modal,
+
 } from "react-native"
 import {
   Wallet,
@@ -26,7 +27,12 @@ import {
 import CustomButton from "../../components/CustomButton"
 import accountApi from "@/src/config/api/account.api"
 import TransactionHistory from "@/src/components/transaction/TransactionHistory"
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation, useFocusEffect } from "@react-navigation/native"
+import depositApi from "@/src/config/api/deposit.api"; // Thêm import này
+import React from "react"
+// import iconVnpay from "@/assets/images/iconvnpay.png"; // Đường dẫn tới file icon VNPAY
+import { Image } from "react-native";
+
 
 const MyWalletScreen = () => {
   const navigation = useNavigation<any>()
@@ -34,34 +40,35 @@ const MyWalletScreen = () => {
   const [activeTab, setActiveTab] = useState("overview")
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState("")
-  const [selectedMethod, setSelectedMethod] = useState("momo")
+  const [selectedMethod, setSelectedMethod] = useState("vnpay")
   const [showTopUpModal, setShowTopUpModal] = useState(false)
   const [walletBalance, setWalletBalance] = useState<number | null>(null)
   const [loadingBalance, setLoadingBalance] = useState(true)
 
-  
+
 
   const quickAmounts = [50000, 100000, 200000, 500000, 1000000, 2000000]
 
   const paymentMethods = [
-    { id: "momo", name: "Ví MoMo", icon: "📱", fee: 0 },
-    { id: "bank", name: "Chuyển khoản ngân hàng", icon: "🏦", fee: 0 },
-    { id: "card", name: "Thẻ tín dụng", icon: "💳", fee: 2.5 },
-  ]
+  { id: "vnpay", name: "VNPAY", icon: "💸", fee: 0 },
+]
 
-  useEffect(() => {
-    const fetchWalletBalance = async () => {
-      try {
-        const data = await accountApi.getWalletBalance()
-        setWalletBalance(data.remaining)
-      } catch (error) {
-        Alert.alert("Lỗi", "Không thể lấy số dư ví")
-      } finally {
-        setLoadingBalance(false)
-      }
-    }
-    fetchWalletBalance()
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reload số dư ví khi màn hình được focus lại
+      const fetchWalletBalance = async () => {
+        try {
+          const data = await accountApi.getWalletBalance();
+          setWalletBalance(data.remaining);
+        } catch (error) {
+          Alert.alert("Lỗi", "Không thể lấy số dư ví");
+        } finally {
+          setLoadingBalance(false);
+        }
+      };
+      fetchWalletBalance();
+    }, [])
+  );
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -70,22 +77,25 @@ const MyWalletScreen = () => {
     }).format(amount)
   }
 
-  
 
-  const handleTopUp = () => {
-  const amount =
-    selectedAmount || Number.parseInt(customAmount.replace(/[^0-9]/g, "")) || 0;
-  if (amount < 10000) {
-    Alert.alert("Lỗi", "Số tiền nạp tối thiểu là 10,000 VND");
-    return;
-  }
 
-  // Tạo paymentUrl (thay bằng url thực tế từ backend)
-  const paymentUrl = `https://your-payment-gateway.com/pay?amount=${amount}&method=${selectedMethod}`;
+  const handleTopUp = async () => {
+    const amount =
+      selectedAmount || Number.parseInt(customAmount.replace(/[^0-9]/g, "")) || 0;
+    if (amount < 10000) {
+      Alert.alert("Lỗi", "Số tiền nạp tối thiểu là 10,000 VND");
+      return;
+    }
 
-  setShowTopUpModal(false);
-  navigation.navigate("PaymentWebView", { paymentUrl });
-};
+    try {
+      // Gọi API lấy URL thanh toán VNPAY
+      const paymentUrl = await depositApi.createVnpayRequest({ amount });
+      setShowTopUpModal(false);
+      navigation.navigate("PaymentWebView", { paymentUrl });
+    } catch (error: any) {
+      Alert.alert("Lỗi", error.message || "Không thể tạo yêu cầu thanh toán");
+    }
+  };
   const renderOverview = () => (
     <View>
       {/* Balance Card */}
@@ -122,14 +132,14 @@ const MyWalletScreen = () => {
       </View>
 
       {/* Stats */}
-      <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+      {/* <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
         <Text className="text-lg font-bold text-secondary-dark mb-4">Thống kê tháng này</Text>
         <View className="flex-row justify-between">
           <View className="flex-1 items-center">
             <View className="bg-success/10 rounded-full p-3 mb-2">
               <TrendingUp size={24} color="#28A745" />
             </View>
-            {/* <Text className="text-success font-bold text-lg">{formatCurrency(walletData.totalTopUp)}</Text> */}
+             <Text className="text-success font-bold text-lg">{formatCurrency(walletData.totalTopUp)}</Text> 
             <Text className="text-secondary text-sm">Đã nạp</Text>
           </View>
           <View className="w-px bg-border mx-4" />
@@ -137,23 +147,27 @@ const MyWalletScreen = () => {
             <View className="bg-danger/10 rounded-full p-3 mb-2">
               <TrendingDown size={24} color="#DC3545" />
             </View>
-            {/* <Text className="text-danger font-bold text-lg">{formatCurrency(walletData.totalSpent)}</Text> */}
+            <Text className="text-danger font-bold text-lg">{formatCurrency(walletData.totalSpent)}</Text> 
             <Text className="text-secondary text-sm">Đã chi</Text>
           </View>
         </View>
-      </View>
+      </View> */}
 
       {/* Quick Actions */}
       <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
         <Text className="text-lg font-bold text-secondary-dark mb-4">Thao tác nhanh</Text>
         <View className="flex-row justify-between">
-          <TouchableOpacity className="flex-1 items-center p-4 bg-primary/5 rounded-xl mr-2">
+          <TouchableOpacity onPress={() =>
+            navigation.navigate("CoursesTab", {
+              screen: "CourseList",
+            })
+          } className="flex-1 items-center p-4 bg-primary/5 rounded-xl mr-2">
             <Text className="text-2xl mb-2">📚</Text>
             <Text className="text-primary font-medium text-center">Mua khóa học</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() =>
             navigation.navigate("CounselorsTab", {
-              screen: "CounselorList", 
+              screen: "CounselorList",
             })
           } className="flex-1 items-center p-4 bg-primary/5 rounded-xl mx-2">
             <Text className="text-2xl mb-2">👨‍⚕️</Text>
@@ -168,7 +182,7 @@ const MyWalletScreen = () => {
     </View>
   )
 
- 
+
 
   const renderTopUpModal = () => (
     <Modal visible={showTopUpModal} transparent animationType="slide">
@@ -231,7 +245,10 @@ const MyWalletScreen = () => {
                   className={`flex-row items-center p-4 mb-3 rounded-xl border ${selectedMethod === method.id ? "border-primary bg-primary/5" : "border-gray-200 bg-gray-50"
                     }`}
                 >
-                  <Text className="text-xl mr-3">{method.icon}</Text>
+                  <Image
+                    source={require("../../../assets/images/vnpay.png")}
+                    style={{ width: 30, height: 24, marginRight: 10 }}
+                  />
                   <Text
                     className={`flex-1 font-medium ${selectedMethod === method.id ? "text-primary" : "text-secondary-dark"
                       }`}
@@ -290,8 +307,8 @@ const MyWalletScreen = () => {
         </ScrollView>
       ) : (
         <View className="flex-1 ">
-          
-        <TransactionHistory />
+
+          <TransactionHistory />
         </View>
       )}
 

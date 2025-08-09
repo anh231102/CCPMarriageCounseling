@@ -17,10 +17,10 @@ const PaymentWebView = () => {
   const handleNavigationChange = (navState: any) => {
   const { url } = navState;
 
-  if (url.startsWith("com.baymaxphan.seasondecormobileapp:/screens/payment/success")) {
-    Alert.alert("Thanh toán thành công!");
-    navigation.goBack(); // hoặc navigation.navigate("MyWalletScreen")
-  } else if (url.startsWith("com.baymaxphan.seasondecormobileapp:/screens/payment/failure")) {
+  if (url.startsWith("https://v0-2-page-payment-website.vercel.app/success")) {
+  Alert.alert("Thanh toán thành công!");
+  navigation.goBack();
+} else if (url.startsWith("https://v0-2-page-payment-website.vercel.app/failure")) {
     Alert.alert("Thanh toán thất bại!");
     navigation.goBack();
   }
@@ -28,13 +28,7 @@ const PaymentWebView = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {loading && (
-        <ActivityIndicator
-          size="large"
-          color="#0000ff"
-          style={{ position: "absolute", top: "50%", left: "50%", zIndex: 1 }}
-        />
-      )}
+      
       <WebView
         ref={webViewRef}
         source={{ uri: paymentUrl }}
