@@ -95,22 +95,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (email: string, password: string, fullName: string) => {
-    setIsLoading(true);
+    
     try {
       const res = await authApi.registerMember({ email, password, fullName });
       // if (res !== 1) {
       //   throw new Error("Đăng ký không thành công");
       // }
-      // if (res === 1) {
-      //   await login(email, password);
-      // } else {
-      //   throw new Error("Đăng ký không thành công");
-      // }
+       if (res === 1) {
+         await login(email, password);
+       } else {
+        throw new Error("Đăng ký không thành công");
+      }
     } catch (err) {
 
       throw err;
     } finally {
-      setIsLoading(false);
+      
     }
   };
 

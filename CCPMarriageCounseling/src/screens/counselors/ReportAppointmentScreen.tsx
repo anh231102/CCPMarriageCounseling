@@ -75,6 +75,7 @@ const ReportAppointmentScreen = () => {
           <TextInput
             className="border border-gray-200 rounded-lg p-3 min-h-[120px] text-secondary-dark"
             placeholder="Mô tả vấn đề bạn gặp phải trong buổi tư vấn..."
+            placeholderTextColor="#6C757D"
             multiline
             textAlignVertical="top"
             value={reportMessage}

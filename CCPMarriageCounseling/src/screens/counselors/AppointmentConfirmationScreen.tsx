@@ -218,6 +218,7 @@ const AppointmentConfirmationScreen = () => {
           <TextInput
             className="border border-gray-200 rounded-lg p-3 min-h-[100px] text-secondary-dark"
             placeholder="Nhập thông tin về vấn đề bạn muốn tư vấn..."
+            placeholderTextColor="#6C757D"
             multiline
             textAlignVertical="top"
             value={note}

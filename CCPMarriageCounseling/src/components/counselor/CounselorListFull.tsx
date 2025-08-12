@@ -1,4 +1,4 @@
-import { FlatList, TouchableOpacity, View, Text, Image } from "react-native"
+import { FlatList, TouchableOpacity, View, Text, Image, RefreshControl } from "react-native"
 import { Star, Calendar } from "lucide-react-native"
 import { useNavigation } from "@react-navigation/native"
 import { Counselor } from "@/src/config/types/counselor.type"
@@ -6,9 +6,11 @@ import { Counselor } from "@/src/config/types/counselor.type"
 interface Props {
   data: Counselor[]
   searchQuery: string
+  refreshing: boolean
+  onRefresh: () => void
 }
 
-const CounselorListFull = ({ data, searchQuery }: Props) => {
+const CounselorListFull = ({ data, searchQuery, refreshing, onRefresh }: Props) => {
   const navigation = useNavigation<any>()
 
   const handleCounselorPress = (counselor: Counselor) => {
@@ -47,7 +49,7 @@ const CounselorListFull = ({ data, searchQuery }: Props) => {
       </View>
 
       <View className="flex-row justify-between items-center mt-3 pt-3 border-t border-gray-100">
-        <Text className="text-primary font-bold">{`${item.price.toLocaleString("vi-VN")}đ/50 phút`}</Text>
+        <Text className="text-primary font-bold">{`${item.price.toLocaleString("vi-VN")}đ/Suất tư vấn`}</Text>
         <TouchableOpacity
           onPress={() => {
             if (item.isBookingAvailible) {
@@ -79,6 +81,15 @@ const CounselorListFull = ({ data, searchQuery }: Props) => {
       renderItem={renderCounselorItem}
       keyExtractor={(item) => item.id}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        colors={["#E83E8C"]} // màu vòng quay Android
+        tintColor="#E83E8C"  // màu vòng quay iOS
+      />
+    }
+      
     />
   )
 }

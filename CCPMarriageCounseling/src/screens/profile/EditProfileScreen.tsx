@@ -178,6 +178,7 @@ const EditProfileScreen = () => {
               <TextInput
                 className="border border-gray-200 rounded-lg p-3 text-secondary-dark"
                 placeholder="Nhập họ và tên"
+                placeholderTextColor="#6C757D"
                 value={name}
                 onChangeText={setName}
               />
@@ -190,6 +191,7 @@ const EditProfileScreen = () => {
               <TextInput
                 className="border border-gray-200 rounded-lg p-3 text-secondary-dark"
                 placeholder="Nhập số điện thoại"
+                placeholderTextColor="#6C757D"
                 keyboardType="phone-pad"
                 value={phone}
                 onChangeText={setPhone}

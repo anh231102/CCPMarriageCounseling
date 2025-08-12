@@ -453,11 +453,20 @@ const CourseContentScreen = ({ route, navigation }: any) => {
                     <Text className="text-white font-bold">Hoàn thành khóa học</Text>
                     <CheckCircle size={20} color="#fff" style={{ marginLeft: 8 }} />
                   </TouchableOpacity>
-                  {!canFinishCourse && (
-                    <Text style={{ color: "#EF4444", marginTop: 8, fontWeight: "bold", textAlign: "right" }}>
-                      Bạn cần hoàn thành tất cả bài giảng trước đó để có thể ấn hoàn thành
-                    </Text>
-                  )}
+                  {!canFinishCourse &&
+                    !lessons.filter(chap => chap.status === 1).every(chap => chap.isDone) && (
+                      <Text
+                        style={{
+                          color: "#EF4444",
+                          marginTop: 8,
+                          fontWeight: "bold",
+                          textAlign: "right"
+                        }}
+                      >
+                        Bạn cần hoàn thành tất cả bài giảng trước đó để có thể ấn hoàn thành
+                      </Text>
+                    )}
+
                 </View>
               )}
             </View>

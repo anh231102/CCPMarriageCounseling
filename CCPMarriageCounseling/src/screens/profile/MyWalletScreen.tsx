@@ -225,6 +225,7 @@ const MyWalletScreen = () => {
                 <TextInput
                   className="border border-gray-200 rounded-xl p-4 bg-gray-50 text-secondary-dark"
                   placeholder="Nhập số tiền"
+                  placeholderTextColor="#6C757D"
                   value={customAmount}
                   onChangeText={(text) => {
                     setCustomAmount(text)
@@ -246,7 +247,7 @@ const MyWalletScreen = () => {
                     }`}
                 >
                   <Image
-                    source={require("../../../assets/images/vnpay.png")}
+                    source={require("../../../assets/images/vnpay.jpg")}
                     style={{ width: 30, height: 24, marginRight: 10 }}
                   />
                   <Text

@@ -20,6 +20,8 @@ const CounselorListScreen = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [counselors, setCounselors] = useState<Counselor[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false);
+
 
   useEffect(() => {
     const fetchCounselors = async () => {
@@ -35,6 +37,17 @@ const CounselorListScreen = () => {
 
     fetchCounselors()
   }, [])
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const data = await counselorApi.getCounselorWithSub();
+      setCounselors(data);
+    } catch (err) {
+      console.error("Lỗi khi reload danh sách tư vấn viên:", err);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
@@ -44,6 +57,7 @@ const CounselorListScreen = () => {
           <TextInput
             className="flex-1 p-2"
             placeholder="Tìm kiếm chuyên gia"
+            placeholderTextColor="#6C757D"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -59,16 +73,16 @@ const CounselorListScreen = () => {
       >
         <View className="flex-row items-center mb-2">
           <Text className="text-primary font-bold text-lg ">Lịch sử tư vấn</Text>
-        <ArrowRight size={16} color="#E83E8C" className="ml-1" />
+          <ArrowRight size={16} color="#E83E8C" className="ml-1" />
         </View>
-        
+
         <Text className="text-primary font-medium">Xem lại các buổi tư vấn đã đặt và đánh giá chuyên gia</Text>
       </TouchableOpacity>
 
       {loading ? (
-         <Loading size={60}/>
+        <Loading size={60} />
       ) : (
-        <CounselorListFull data={counselors} searchQuery={searchQuery} />
+        <CounselorListFull data={counselors} searchQuery={searchQuery} refreshing={refreshing} onRefresh={onRefresh}/>
       )}
     </View>
   )

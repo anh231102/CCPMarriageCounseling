@@ -9,6 +9,7 @@ import postApi from "@/src/config/api/post.api"
 import type { PostItem } from "@/src/config/types/post.type"
 import HTMLViewer from "@/src/components/share/HTMLViewer"
 import ListPostHorizontal from "@/src/components/post/ListPostHorizontal"
+import Loading from "@/src/components/share/Loading"
 
 type RouteParams = {
   postId: string
@@ -78,7 +79,7 @@ const PostDetailScreen = () => {
         <View className="flex-1 justify-center items-center">
           <View className="bg-white p-8 rounded-3xl shadow-sm items-center">
             <View className="w-16 h-16 bg-pink-50 rounded-full items-center justify-center mb-4">
-              <ActivityIndicator size="large" color="#E83E8C" />
+              <Loading size={60} color="#E83E8C" />
             </View>
             <Text className="text-gray-600 font-medium">Đang tải bài viết...</Text>
           </View>

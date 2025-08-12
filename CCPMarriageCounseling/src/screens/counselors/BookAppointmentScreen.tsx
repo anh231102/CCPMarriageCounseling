@@ -14,6 +14,10 @@ import {
   Clock,
   ArrowRight,
   Video,
+  CalendarDays,
+  ChevronDown,
+  ChevronUp,
+  Info
 } from "lucide-react-native";
 import counselorApi from "@/src/config/api/counselor.api";
 import type {
@@ -22,16 +26,16 @@ import type {
 } from "@/src/config/types/counselor.type";
 
 const durations = [
-  { id: 50, label: "50 phút" },
-  { id: 110, label: "1 giờ 50 phút" },
-  { id: 170, label: "2 giờ 50 phút" },
+  { id: 50, label: "50 phút(1 Suất tư vấn)" },
+  { id: 110, label: "1 giờ 50 phút(2 Suất tư vấn)" },
+  { id: 170, label: "2 giờ 50 phút(3 Suất tư vấn)" },
 ];
 
 const BookAppointmentScreen = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { counselor } = route.params;
-
+  const [showGuide, setShowGuide] = useState(false);
   const [scheduleData, setScheduleData] = useState<AvailableScheduleData | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
@@ -134,73 +138,144 @@ const BookAppointmentScreen = () => {
             <Text className="text-secondary">với {counselor.fullname}</Text>
           </View>
         </View>
+        <View className="bg-primary/10 rounded-2xl mb-4 overflow-hidden">
+          <TouchableOpacity
+            onPress={() => setShowGuide(!showGuide)}
+            className="flex-row items-center justify-between px-4 py-3 bg-primary/20"
+            activeOpacity={0.7}
+          >
+            <View className="flex-row items-center">
+              <Info size={20} color="#E83E8C" />
+              <Text className="text-primary font-bold ml-2">Hướng dẫn đặt lịch tư vấn</Text>
+            </View>
+            {showGuide ? (
+              <ChevronUp size={20} color="#E83E8C" />
+            ) : (
+              <ChevronDown size={20} color="#E83E8C" />
+            )}
+          </TouchableOpacity>
+
+          {showGuide && (
+            <View className="px-4 py-4">
+              {/* Tiêu đề */}
+              <Text className="text-primary font-semibold mb-3 text-lg">Các bước đặt lịch:</Text>
+
+              {/* Danh sách bước */}
+              {[
+                "Chọn ngày bạn muốn đặt lịch tư vấn.",
+                "Chọn thời lượng buổi tư vấn phù hợp.",
+                "Chọn khung giờ và giờ bắt đầu.",
+                "Xác nhận thông tin và hoàn tất đặt lịch."
+              ].map((step, index) => (
+                <View key={index} className="flex-row items-start mb-2">
+                  <Text className="text-primary font-bold mr-2">{index + 1}.</Text>
+                  <Text className="text-primary flex-1">{step}</Text>
+                </View>
+              ))}
+
+              {/* Bảng quy đổi */}
+              <View className="bg-white rounded-xl p-4 shadow-sm mt-4">
+                <Text className="text-secondary-dark font-bold mb-3 text-base">Bảng quy đổi slot & thời lượng</Text>
+                {[
+                  { slot: "1 Suất tư vấn", duration: "50 phút" },
+                  { slot: "2 Suất tư vấn", duration: "1 giờ 50 phút" },
+                  { slot: "3 Suất tư vấn", duration: "2 giờ 50 phút" }
+                ].map((item, idx) => (
+                  <View
+                    key={idx}
+                    className="flex-row  py-1 border-b border-gray-100 last:border-b-0"
+                  >
+                    <Text className="text-secondary">{item.slot} = </Text>
+                    <Text className="text-secondary">{item.duration}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+        </View>
 
         {/* Chọn ngày */}
         <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
           <Text className="text-lg font-bold text-secondary-dark mb-3">Chọn ngày</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2">
-            {scheduleData?.dailyAvailableSchedules.map((d) => (
-              <TouchableOpacity
-                key={d.workDate}
-                onPress={() => {
-                  setSelectedDate(d.workDate);
-                  setSelectedSlot(null);
-                  setSelectedStartTime(null);
-                }}
-                className={`mr-3 p-3 rounded-lg min-w-[100px] items-center ${selectedDate === d.workDate ? "bg-primary" : "bg-gray-100"
-                  }`}
-              >
-                <Text className={`font-medium ${selectedDate === d.workDate ? "text-white" : "text-secondary-dark"}`}>
-                  {formatDateWithDay(d.workDate)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          {(!scheduleData?.dailyAvailableSchedules || scheduleData.dailyAvailableSchedules.length === 0) ? (
+            <View className="items-center justify-center p-8 bg-white rounded-2xl shadow-sm">
+              <View className="w-16 h-16 bg-gray-100 rounded-full items-center justify-center mb-4">
+                <CalendarDays size={32} color="#9CA3AF" />
+              </View>
+              <Text className="text-gray-700 text-lg font-bold mb-2 text-center">
+                Tư vấn viên hiện đã kín lịch
+              </Text>
+              <Text className="text-gray-500 text-center mb-6">
+                Hiện tại chưa có thời gian trống để đặt lịch tư vấn. Vui lòng quay lại sau hoặc chọn tư vấn viên khác.
+              </Text>
+            </View>
+
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2">
+              {scheduleData.dailyAvailableSchedules.map((d) => (
+                <TouchableOpacity
+                  key={d.workDate}
+                  onPress={() => {
+                    setSelectedDate(d.workDate);
+                    setSelectedSlot(null);
+                    setSelectedStartTime(null);
+                  }}
+                  className={`mr-3 p-3 rounded-lg min-w-[100px] items-center ${selectedDate === d.workDate ? "bg-primary" : "bg-gray-100"}`}
+                >
+                  <Text className={`font-medium ${selectedDate === d.workDate ? "text-white" : "text-secondary-dark"}`}>
+                    {formatDateWithDay(d.workDate)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         {/* Thời lượng */}
-        <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
-          <Text className="text-lg font-bold text-secondary-dark mb-3">Thời lượng buổi tư vấn</Text>
-          <View className="flex-row flex-wrap">
-            {durations.map((d) => (
-              <TouchableOpacity
-                key={d.id}
-                onPress={() => {
-                  setSelectedDuration(d.id);
-                  setSelectedStartTime(null);
-                }}
-                className={`mr-2 mb-2 p-3 rounded-lg min-w-[120px] items-center ${selectedDuration === d.id ? "bg-primary" : "bg-gray-100"
-                  }`}
-              >
-                <Text className={selectedDuration === d.id ? "text-white" : "text-secondary-dark"}>
-                  {d.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+        {selectedDate && (
+          <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
+            <Text className="text-lg font-bold text-secondary-dark mb-3">Thời lượng buổi tư vấn</Text>
+            <View className="flex-row flex-wrap">
+              {durations.map((d) => (
+                <TouchableOpacity
+                  key={d.id}
+                  onPress={() => {
+                    setSelectedDuration(d.id);
+                    setSelectedStartTime(null);
+                  }}
+                  className={`mr-2 mb-2 p-3 rounded-lg min-w-[120px] items-center ${selectedDuration === d.id ? "bg-primary" : "bg-gray-100"}`}
+                >
+                  <Text className={selectedDuration === d.id ? "text-white" : "text-secondary-dark"}>
+                    {d.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Khung giờ */}
-        <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
-          <Text className="text-lg font-bold text-secondary-dark mb-3">Khung giờ</Text>
-          <View className="flex-row flex-wrap">
-            {currentDaySlots?.availableSlots.map((slot, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  setSelectedSlot(slot);
-                  setSelectedStartTime(null);
-                }}
-                className={`mr-2 mb-2 p-3 rounded-lg min-w-[150px] items-center ${selectedSlot === slot ? "bg-primary" : "bg-gray-100"
-                  }`}
-              >
-                <Text className={selectedSlot === slot ? "text-white" : "text-secondary-dark"}>
-                  {slot.start} - {slot.end}
-                </Text>
-              </TouchableOpacity>
-            ))}
+        {selectedDate && selectedDuration && (
+          <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
+            <Text className="text-lg font-bold text-secondary-dark mb-3">Khung giờ</Text>
+            <View className="flex-row flex-wrap">
+              {currentDaySlots?.availableSlots.map((slot, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    setSelectedSlot(slot);
+                    setSelectedStartTime(null);
+                  }}
+                  className={`mr-2 mb-2 p-3 rounded-lg min-w-[150px] items-center ${selectedSlot === slot ? "bg-primary" : "bg-gray-100"}`}
+                >
+                  <Text className={selectedSlot === slot ? "text-white" : "text-secondary-dark"}>
+                    {slot.start} - {slot.end}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Giờ bắt đầu */}
         {selectedSlot && (

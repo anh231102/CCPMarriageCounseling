@@ -267,7 +267,7 @@ const SelfCheckScreen = () => {
                 <View className="relative">
                   {/* Ảnh avatar chính */}
                   <Image
-                    source={avatar ? { uri: avatar } : require("../../../assets/images/avatar.png")}
+                    source={avatar ? { uri: avatar } : require("../../../assets/images/avatar.jpg")}
                     style={{ width: 64, height: 64, borderRadius: 32 }}
                   />
 

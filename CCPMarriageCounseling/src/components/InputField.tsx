@@ -43,6 +43,7 @@ const InputField = ({
         <TextInput
           className="flex-1 text-foreground"
           placeholder={placeholder}
+          placeholderTextColor="#6C757D"
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           secureTextEntry={secureTextEntry}

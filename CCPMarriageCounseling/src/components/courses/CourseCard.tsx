@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity, Alert } from "react-native"
-import { BookOpen, Star } from "lucide-react-native"
+import { BookOpen, Gift, Star } from "lucide-react-native"
 import type { Course } from "../../config/types/course.type"
 import courseApi from "@/src/config/api/course.api"
 
@@ -92,9 +92,19 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onPress, onEnrol
             <Text className="text-primary font-bold text-base">
               {course.price === 0 ? "Miễn phí" : `${course.price?.toLocaleString("vi-VN")}đ`}
             </Text>
-            <Text className="text-primary text-base">
-              Miễn phí cho người đã đăng ký: {course.freeByMembershipName}
-            </Text>
+            {course.freeByMembershipName && (
+                  <View className="bg-green-50 rounded-2xl p-4 border border-green-200">
+                    <View className="flex-row items-center">
+                      <View className="bg-green-100 p-2 rounded-xl mr-3">
+                        <Gift size={18} color="#10B981" />
+                      </View>
+                      <View className="flex-1">
+                        <Text className="text-green-800 font-semibold text-sm">Ưu đãi thành viên</Text>
+                        <Text className="text-green-700 text-sm">Miễn phí cho: {course.freeByMembershipName}</Text>
+                      </View>
+                    </View>
+                  </View>
+                )}
             <View className="flex-row items-center">
               <View className="bg-blue-50 p-1 rounded-lg mr-2">
                 <BookOpen size={14} color="#3B82F6" />

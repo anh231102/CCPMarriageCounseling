@@ -53,6 +53,7 @@ const RegisterScreen = () => {
 
     try {
       await register(email, password, name);
+      Alert.alert("Đăng ký thành công", "Bạn đã đăng ký tài khoản thành công!");
       navigation.navigate("Login");
     } catch (error) {
       const err = error as any;
@@ -61,7 +62,7 @@ const RegisterScreen = () => {
         apiError = err.response.data.error || err.response.data.message;
       }
       setErrors((prev) => ({ ...prev, api: apiError }));
-      console.log("Lỗi đăng ký:", err.response ? err.response.data : err);
+      
     }
   };
 
@@ -96,6 +97,7 @@ const RegisterScreen = () => {
               <TextInput
                 className="flex-1 ml-2 text-secondary-dark"
                 placeholder="Nhập họ và tên của bạn"
+                placeholderTextColor="#6C757D"
                 value={name}
                 onChangeText={setName}
               />
@@ -110,6 +112,7 @@ const RegisterScreen = () => {
               <TextInput
                 className="flex-1 ml-2 text-secondary-dark"
                 placeholder="Nhập email của bạn"
+                placeholderTextColor="#6C757D"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
@@ -126,6 +129,7 @@ const RegisterScreen = () => {
               <TextInput
                 className="flex-1 ml-2 text-secondary-dark"
                 placeholder="Tạo mật khẩu"
+                placeholderTextColor="#6C757D"
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
@@ -144,6 +148,7 @@ const RegisterScreen = () => {
               <TextInput
                 className="flex-1 ml-2 text-secondary-dark"
                 placeholder="Nhập lại mật khẩu"
+                placeholderTextColor="#6C757D"
                 secureTextEntry={!showConfirmPassword}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}

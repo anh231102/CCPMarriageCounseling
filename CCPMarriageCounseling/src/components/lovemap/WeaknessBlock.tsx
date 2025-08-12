@@ -1,6 +1,7 @@
 import React from "react"
 import { View, Text, TouchableOpacity } from "react-native"
 import { ChevronDown, ChevronUp } from "lucide-react-native"
+import HTMLViewer from "../share/HTMLViewer"
 
 interface Props {
   title: string
@@ -81,7 +82,7 @@ const WeaknessBlock = ({
           {weaknesses && (
             <View className="p-3 bg-danger/10 rounded-lg mb-2">
               <Text className="text-danger font-medium mb-1">Tổng kết điểm yếu:</Text>
-              <Text className="text-secondary-dark text-sm">{weaknesses}</Text>
+              <Text className="text-secondary-dark text-sm"><HTMLViewer htmlContent={weaknesses} /></Text>
             </View>
           )}
         </View>

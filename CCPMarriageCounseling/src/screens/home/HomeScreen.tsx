@@ -12,6 +12,7 @@ import Loading from "@/src/components/share/Loading"
 import MyProfileComponent from "@/src/components/share/MyProfileComponent"
 import ListPost from "@/src/components/post/ListPost"
 import CourseListMini from "@/src/components/courses/CourseListMini"
+import MembershipPromoPanel from "@/src/components/membership/MembershipPromoPanel"
 
 const HomeScreen = () => {
   const navigation = useNavigation<any>()
@@ -19,7 +20,7 @@ const HomeScreen = () => {
 
   const [counselors, setCounselors] = useState<Counselor[]>([])
   const [loading, setLoading] = useState(true)
-   const [refreshing, setRefreshing] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const fetchCounselors = async () => {
     try {
@@ -37,7 +38,7 @@ const HomeScreen = () => {
     fetchCounselors()
   }, [])
 
-const onRefresh = async () => {
+  const onRefresh = async () => {
     setRefreshing(true)
     await fetchCounselors()
     setRefreshing(false)
@@ -46,7 +47,7 @@ const onRefresh = async () => {
 
   return (
     <ScrollView className="flex-1 bg-gray-50"
-    refreshControl={
+      refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#E83E8C"]} />
       }>
       {/* Header */}
@@ -99,7 +100,9 @@ const onRefresh = async () => {
           </TouchableOpacity>
         </View>
       </View>
-
+      <View className="px-4 mt-4">
+        <MembershipPromoPanel />
+      </View>
       {/* Featured Counselors */}
       <View className="mt-6 px-4">
         <View className="flex-row justify-between items-center mb-4">

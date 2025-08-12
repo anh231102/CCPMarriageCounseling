@@ -101,6 +101,7 @@ const RateAppointmentScreen = () => {
           <TextInput
             className="border border-gray-200 rounded-lg p-3 min-h-[120px] text-secondary-dark"
             placeholder="Chia sẻ trải nghiệm của bạn về buổi tư vấn này..."
+            placeholderTextColor="#6C757D"
             multiline
             textAlignVertical="top"
             value={comment}

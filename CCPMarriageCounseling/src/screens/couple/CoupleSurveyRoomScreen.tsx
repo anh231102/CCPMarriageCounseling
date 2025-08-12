@@ -389,7 +389,7 @@ const CoupleSurveyRoomScreen = () => {
                       source={
                         roomData?.virtualAvatar
                           ? { uri: roomData.virtualAvatar }
-                          : require("../../../assets/images/avatar.png")
+                          : require("../../../assets/images/avatar.jpg")
                       }
                       className="w-16 h-16 rounded-full"
                     />
@@ -470,7 +470,7 @@ const CoupleSurveyRoomScreen = () => {
               <View className="flex-row items-center mb-4">
                 <View className="relative">
                   <Image
-                    source={avatar ? { uri: avatar } : require("../../../assets/images/avatar.png")}
+                    source={avatar ? { uri: avatar } : require("../../../assets/images/avatar.jpg")}
                     className="w-16 h-16 rounded-full"
                   />
                   {isHost && (

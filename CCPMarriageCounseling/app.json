@@ -4,7 +4,7 @@
     "slug": "CCPMarriageCounseling",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/appccpicon.png",
     "scheme": "ccpmarriagecounseling",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -17,18 +17,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/appccpicon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
-      ]
+        
+        "CAMERA",
+        "RECORD_AUDIO"
+      ],
+      "package": "com.anh231102.CCPMarriageCounseling"
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/appccpicon.png"
     },
     "plugins": [
       [
@@ -42,7 +44,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/appccpicon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -50,7 +52,6 @@
       ],
       "expo-web-browser",
       "expo-font",
-      "expo-barcode-scanner",
       "expo-video"
     ],
     "experiments": {

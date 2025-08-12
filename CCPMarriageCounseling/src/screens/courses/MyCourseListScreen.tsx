@@ -119,7 +119,7 @@ export const MyCourseListScreen = () => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <CourseCard course={item} onPress={handleCoursePress} onEnrollSuccess={fetchCourses} ofMyCourses="mycourses" />}
           contentContainerStyle={{ paddingVertical: 16 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#E83E8C"]} tintColor="#E83E8C" />}
         />
       )}
 

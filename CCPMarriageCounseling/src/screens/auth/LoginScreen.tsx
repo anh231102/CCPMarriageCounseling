@@ -77,6 +77,7 @@ const LoginScreen = () => {
                 <TextInput
                   className="flex-1 ml-2 text-secondary-dark"
                   placeholder="Nhập email của bạn"
+                  placeholderTextColor="#6C757D"
                   keyboardType="email-address"
                   autoCapitalize="none"
                   value={email}
@@ -93,6 +94,7 @@ const LoginScreen = () => {
                 <TextInput
                   className="flex-1 ml-2 text-secondary-dark"
                   placeholder="Nhập mật khẩu"
+                  placeholderTextColor="#6C757D"
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}

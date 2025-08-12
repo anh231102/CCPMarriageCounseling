@@ -20,10 +20,10 @@ const LoveMapPersonModal = ({ visible, onClose, personKey, coupleData, parseScor
   const name = person?.fullname || coupleData.virtualName || "Đối tác ảo"
   const avatar =
     isFirst
-      ? (person?.avatar || require("../../../assets/images/avatar.png"))
+      ? (person?.avatar || require("../../../assets/images/avatar.jpg"))
       : (coupleData.isVirtual
-        ? (coupleData.virtualAvatar || require("../../../assets/images/avatar.png"))
-        : (person?.avatar || require("../../../assets/images/avatar.png")));
+        ? (coupleData.virtualAvatar || require("../../../assets/images/avatar.jpg"))
+        : (person?.avatar || require("../../../assets/images/avatar.jpg")));
 
 
   const mbtiData = isFirst ? coupleData.mbtiDescription : coupleData.mbti1Description

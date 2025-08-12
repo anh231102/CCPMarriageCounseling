@@ -137,6 +137,7 @@ const JoinCoupleRoomScreen = () => {
                 error ? "border-danger bg-danger/5" : "border-gray-200 bg-gray-50"
               }`}
               placeholder="LOVE2024"
+              placeholderTextColor="#6C757D"
               value={roomCode}
               onChangeText={(text) => {
                 setRoomCode(text)

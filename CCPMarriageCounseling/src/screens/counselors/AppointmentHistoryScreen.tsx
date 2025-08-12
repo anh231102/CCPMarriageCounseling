@@ -66,7 +66,7 @@ const AppointmentHistoryScreen = () => {
       const data = await bookingApi.getMyBookings()
       setBookings(data)
     } catch (error) {
-      console.error("Lỗi khi tải dữ liệu lịch sử:", error)
+      
     } finally {
       setLoading(false)
     }

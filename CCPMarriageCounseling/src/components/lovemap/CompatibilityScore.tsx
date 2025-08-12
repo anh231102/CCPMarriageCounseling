@@ -72,7 +72,7 @@ const CompatibilityScore = ({
             source={
               member1.avatar
                 ? { uri: member1.avatar }
-                : require("../../../assets/images/avatar.png")
+                : require("../../../assets/images/avatar.jpg")
             }
             className="w-12 h-12 rounded-full my-2"
           />
@@ -97,7 +97,7 @@ const CompatibilityScore = ({
             source={
               member2.avatar
                 ? { uri: member2.avatar }
-                : require("../../../assets/images/avatar.png")
+                : require("../../../assets/images/avatar.jpg")
             }
             className="w-12 h-12 rounded-full my-2"
           />

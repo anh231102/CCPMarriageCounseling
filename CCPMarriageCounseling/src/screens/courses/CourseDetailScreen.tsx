@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { View, Text, ScrollView, Image, ActivityIndicator, Alert, TouchableOpacity, Modal } from "react-native"
 import { useRoute, useNavigation } from "@react-navigation/native"
-import type { RouteProp } from "@react-navigation/native"
+import { RouteProp, useFocusEffect } from "@react-navigation/native"
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { Star, PlayCircle, ArrowRight, CheckCircle, Gift, CreditCard, X } from "lucide-react-native"
 import courseApi from "../../config/api/course.api"
@@ -32,7 +32,7 @@ export const CourseDetailScreen = () => {
   const navigation = useNavigation<any>()
   const { courseId, initialCourse } = route.params
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-
+const [reviewReloadKey, setReviewReloadKey] = useState(0);
 
 
   const [course, setCourse] = useState<CourseDetail | null>(null)
@@ -42,10 +42,10 @@ export const CourseDetailScreen = () => {
   const isFree = initialCourse?.isFree ?? false
   const freeByMembershipName = initialCourse?.freeByMembershipName ?? ""
   const isBuy = initialCourse?.isBuy ?? true
-  const Progress =
-    (course?.processingCount ?? 0) /
-    (course?.chapterCount && course.chapterCount !== 0 ? course.chapterCount : 1)
-
+ const openedChapters = course?.chapters?.filter(chap => chap.status === 1) ?? [];
+const chapterCount = openedChapters.length;
+const processingCount = openedChapters.filter(chap => chap.isDone).length;
+const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
 
   const fetchCourseDetails = useCallback(async () => {
     setLoading(true)
@@ -60,9 +60,11 @@ export const CourseDetailScreen = () => {
     }
   }, [courseId])
 
-  useEffect(() => {
-    fetchCourseDetails()
+  useFocusEffect(
+  useCallback(() => {
+    fetchCourseDetails();
   }, [fetchCourseDetails])
+);
 
   const handleEnrollCourse = () => {
     setShowConfirmModal(true);
@@ -172,7 +174,7 @@ export const CourseDetailScreen = () => {
                       <Text className="text-gray-700 font-medium">Giá khóa học</Text>
                     </View>
                     <View className="items-end">
-                      {course.price === 0 || isFree ? (
+                      {course.price === 0  ? (
                         <View className="bg-green-500 rounded-full px-3 py-1">
                           <Text className="text-white font-bold text-sm">Miễn phí</Text>
                         </View>
@@ -283,7 +285,7 @@ export const CourseDetailScreen = () => {
                 <Text className="text-gray-500 text-sm ml-2">({course.rank || 0} xếp hạng)</Text>
               </View>
               <Text className="text-primary font-bold text-xl mb-4">
-                {course.price === 0 || isFree ? `Miễn phí ` : `${course.price?.toLocaleString("vi-VN")}đ`}
+                {course.price === 0  ? `Miễn phí ` : `${course.price?.toLocaleString("vi-VN")}đ`}
               </Text>
               <CustomButton
                 onPress={handleEnrollCourse}
@@ -302,11 +304,11 @@ export const CourseDetailScreen = () => {
           isEnrolled={isEnrolled}
           onPressChapter={handlePressChapter}
         />
-        <CourseReviews CourseId={course.id} openReviewForm={true} />
+        <CourseReviews CourseId={course.id} openReviewForm={true} reloadKey={reviewReloadKey} />
         {isEnrolled && (
           <>
             <View className="p-4  shadow-sm mb-4">
-              <CourseRatingForm courseId={course.id} Progress={Progress} />
+              <CourseRatingForm courseId={course.id} Progress={Progress} onSuccess={() => setReviewReloadKey(prev => prev + 1)} />
             </View>
           </>
         )}

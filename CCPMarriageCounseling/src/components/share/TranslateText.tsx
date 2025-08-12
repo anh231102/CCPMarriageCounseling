@@ -39,6 +39,7 @@ const TranslateText = () => {
         value={input}
         onChangeText={setInput}
         placeholder="Enter text in English..."
+        placeholderTextColor="#6C757D"
         multiline
         className="border border-gray-300 rounded-md p-3 mb-3 bg-white"
         style={{ minHeight: 100 }}

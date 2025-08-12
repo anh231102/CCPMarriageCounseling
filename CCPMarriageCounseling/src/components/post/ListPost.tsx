@@ -220,7 +220,7 @@ const ListPost: React.FC<ListPostProps> = ({ allscreen }) => {
                   source={
                     typeof post.image === 'string'
                       ? { uri: post.image }
-                      : require("../../../assets/images/postImage1.png")
+                      : require("../../../assets/images/postImage1.jpg")
                   }
                   className="w-full h-48"
                   resizeMode="cover"

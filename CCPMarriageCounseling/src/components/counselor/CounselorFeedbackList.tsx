@@ -3,6 +3,7 @@ import { View, Text } from "react-native"
 import { Star } from "lucide-react-native"
 import bookingApi from "@/src/config/api/booking.api"
 import type { FeedbackForCounselor } from "@/src/config/types/booking.type"
+import Loading from "../share/Loading"
 
 type Props = {
   counselorId: string
@@ -28,8 +29,13 @@ const CounselorFeedbackList = ({ counselorId }: Props) => {
   }, [counselorId])
 
   if (loading) {
-    return <Text className="text-secondary">Đang tải đánh giá...</Text>
-  }
+  return (
+    <View style={{ alignItems: "center", justifyContent: "center" }}>
+      <Loading size={30}/>
+      <Text className="text-secondary" style={{ marginTop: 8 }}>Đang tải đánh giá...</Text>
+    </View>
+  );
+}
 
   if (feedbacks.length === 0) {
     return <Text className="text-secondary">Chưa có đánh giá</Text>

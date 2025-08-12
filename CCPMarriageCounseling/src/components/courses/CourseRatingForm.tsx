@@ -19,6 +19,7 @@ export const CourseRatingForm: React.FC<CourseRatingFormProps> = ({ courseId, on
   const [loading, setLoading] = useState(false)
   const [hoveredStar, setHoveredStar] = useState(0)
   const isLocked = typeof Progress === "number" && Progress < 0.8
+ 
 
   const handleSubmit = async () => {
     if (rating === 0) {

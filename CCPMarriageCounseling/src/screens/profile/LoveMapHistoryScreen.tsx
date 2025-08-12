@@ -357,6 +357,7 @@ const LoveMapHistoryScreen = () => {
             <TextInput
               className="flex-1 p-2"
               placeholder="Tìm kiếm theo tên..."
+              placeholderTextColor="#6C757D"
               value={searchQuery}
               onChangeText={setSearchQuery}
             />

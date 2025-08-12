@@ -137,7 +137,7 @@ const CounselorRecommendList = () => {
                                         </View>
 
                                         <View className="flex-row items-center justify-between">
-                                            <Text className="text-primary font-bold">{counselor.price.toLocaleString("vi-VN")}đ/50 phút</Text>
+                                            <Text className="text-primary font-bold">{counselor.price.toLocaleString("vi-VN")}đ/Suất tư vấn</Text>
 
                                         </View>
                                         <View className="bg-primary/10 rounded-full px-3 py-1 w-32 mt-2">

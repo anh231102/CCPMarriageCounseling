@@ -12,6 +12,7 @@ import { CourseRatingForm } from "./CourseRatingForm"
 interface CourseReviewsProps {
   CourseId: string
   openReviewForm?: boolean
+  reloadKey?: number
 }
 
 // Helper: Lấy màu avatar dựa trên tên
@@ -70,7 +71,7 @@ const getRatingDistribution = (reviews: CourseReview[]) => {
   return dist
 }
 
-export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openReviewForm }) => {
+export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openReviewForm, reloadKey }) => {
   const navigation = useNavigation()
   const [reviews, setReviews] = useState<CourseReview[]>([])
   const [loading, setLoading] = useState(true)
@@ -90,8 +91,8 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openRevi
   }
 
   useEffect(() => {
-    fetchReviews()
-  }, [CourseId])
+  fetchReviews();
+}, [CourseId, reloadKey]);
 
   // Nếu openReviewForm = false, dùng style phủ đủ trang (flex: 1, không margin/padding ngoài)
   const containerStyle =
