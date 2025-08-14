@@ -16,6 +16,7 @@ const SurveySectionCompleteScreen = () => {
     isAuth,
     couple,
     isVirtual, // 👈 thêm dòng này
+    accumulatedAnswers, // 👈 thêm dòng này
   } = route.params
 
   const completedSurveyIds = selectedSurveyIds.slice(0, currentSurveyIndex + 1)
@@ -36,6 +37,7 @@ const SurveySectionCompleteScreen = () => {
       isAuth,
       roomId: route.params?.roomId,
       isHost: route.params?.isHost,
+      accumulatedAnswers: route.params?.accumulatedAnswers || {},
     })
   }
 

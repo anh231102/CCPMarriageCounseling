@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance"
-import type { CounselorResponse, AvailableScheduleResponse, AvailableScheduleData, RecommendedCounselorResponse } from "@/src/config/types/counselor.type"
+import type { CounselorResponse, AvailableScheduleResponse, AvailableScheduleData, RecommendedCounselorResponse, RecommendedCounselorByCoupleResponse } from "@/src/config/types/counselor.type"
 
 const getAllCounselor = async () => {
   const response = await axiosInstance.get<CounselorResponse>("/Counselor")
@@ -45,12 +45,25 @@ const getRecommendedCounselors = async () => {
   return response.data.data
 }
 
+const getRecommendedCounselorsByCouple = async (coupleId: string) => {
+  const response = await axiosInstance.get<RecommendedCounselorByCoupleResponse>(
+    `/Counselor/recommendations/by-couple/${coupleId}`
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy danh sách gợi ý tư vấn viên cho cặp đôi")
+  }
+
+  return response.data.data
+}
+
 
 const counselorApi = {
   getAllCounselor,
   getCounselorWithSub,
   postAvailableSchedule,
   getRecommendedCounselors,
+  getRecommendedCounselorsByCouple,
 }
 
 export default counselorApi

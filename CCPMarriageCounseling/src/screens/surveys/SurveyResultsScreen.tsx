@@ -12,6 +12,7 @@ import { Award } from "lucide-react-native"
 import CustomButton from "../../components/CustomButton"
 import SurveyDetailBlock from "@/src/components/survey/SurveyDetailBlock"
 import CounselorRecommendList from "@/src/components/counselor/CounselorRecommendList"
+import CourseRecommendList from "@/src/components/courses/CourseRecommendList "
 
 interface SurveyAnswer {
   user: string | number
@@ -74,8 +75,13 @@ const SurveyResultsScreen = () => {
 
         {renderAllSurveyDetails()}
         <View className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-         <CounselorRecommendList />
-      </View>
+          <CounselorRecommendList />
+
+        </View>
+        <View className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+
+          <CourseRecommendList />
+        </View>
 
         {!isAuthenticated && (
           <View className="bg-primary/10 rounded-xl p-5 mb-6">

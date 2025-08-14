@@ -38,17 +38,21 @@ const CoupleSurveyQuestionsScreen = () => {
   const [surveyTitle, setSurveyTitle] = useState<string>("")
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, any>>({})
-  const [personalAnswers, setPersonalAnswers] = useState<Record<string, any[]>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const currentSurveyId = selectedSurveyIds[currentSurveyIndex]
   const currentQuestion = questions[currentQuestionIndex]
   const totalQuestions = questions.length
+  const answersAccumulator = useRef<Record<string, any[]>>({})
+  const { accumulatedAnswers: initialAnswersFromRoute } = route.params || {};
+
 
   useEffect(() => {
+
     const fetchQuestions = async () => {
       setLoading(true)
+
       try {
         const questionData = await surveyApi.getRandomSurveyQuestions(currentSurveyId)
         setQuestions(questionData)
@@ -62,9 +66,11 @@ const CoupleSurveyQuestionsScreen = () => {
         setLoading(false)
       }
     }
-
+    if (initialAnswersFromRoute) {
+      answersAccumulator.current = initialAnswersFromRoute;
+    }
     fetchQuestions()
-  }, [currentSurveyId])
+  }, [currentSurveyId, initialAnswersFromRoute])
 
   useEffect(() => {
     Animated.timing(progressAnim, {
@@ -105,32 +111,26 @@ const CoupleSurveyQuestionsScreen = () => {
 
         // ✅ Gửi Couple API
         await coupleApi.postCoupleSurveyResult(formattedResult)
-
-        // ✅ Gộp vào personalAnswers theo surveyId
-        setPersonalAnswers((prev) => ({
-          ...prev,
+        // Lưu lại toàn bộ câu trả lời từng survey vào allAnswers
+        
+        answersAccumulator.current = {
+          ...answersAccumulator.current,
           [currentSurveyId]: [
-            ...(prev[currentSurveyId] || []),
+            ...(answersAccumulator.current[currentSurveyId] || []),
             ...Object.values(updatedAnswers),
           ],
-        }))
+        }
 
         const isLastSurvey = currentSurveyIndex >= selectedSurveyIds.length - 1
 
         if (isLastSurvey) {
-          // ✅ Sang màn LoadingBeforeSave, truyền personalAnswers đã gồm survey hiện tại
+          // In ra toàn bộ đáp án đã tích lũy 
           navigation.replace("LoadingBeforeSave", {
             selectedSurveyIds,
             roomId,
             isHost,
             isSurvey,
-            answers: {
-              ...personalAnswers,
-              [currentSurveyId]: [
-                ...(personalAnswers[currentSurveyId] || []),
-                ...Object.values(updatedAnswers),
-              ],
-            },
+            answers: answersAccumulator.current,
           })
         } else {
           navigation.replace("SurveySectionComplete", {
@@ -143,6 +143,7 @@ const CoupleSurveyQuestionsScreen = () => {
             userData,
             isAuth: isAuth ?? authState,
             couple: true,
+            accumulatedAnswers: answersAccumulator.current, 
           })
         }
       } catch (error) {

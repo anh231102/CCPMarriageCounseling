@@ -10,6 +10,8 @@ import type {
   CourseReviewResponse,
   PostCourseRatingRequest,
   PostCourseRatingResponse,
+  RecommendedCourse,
+  RecommendedCourseResponse,
 } from "@/src/config/types/course.type"
 
 const getAllCoursesForUser = async () => {
@@ -127,6 +129,31 @@ const postCourseRating = async (
   return response.data.data
 }
 
+const getRecommendedCourses = async (): Promise<RecommendedCourse[]> => {
+  const response = await axiosInstance.post<RecommendedCourseResponse>("/Course/recommend")
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy danh sách khóa học gợi ý")
+  }
+
+  return response.data.data
+}
+
+const getRecommendationsByCouple = async (
+  coupleId: string
+): Promise<RecommendedCourse[]> => {
+  const response = await axiosInstance.get<RecommendedCourseResponse>(
+    `/Course/recommendations/by-couple/${coupleId}`
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy khóa học gợi ý cho cặp đôi")
+  }
+
+  return response.data.data
+}
+
+
 const courseApi = {
   getAllCoursesForUser,
   getCourseById,
@@ -137,7 +164,9 @@ const courseApi = {
   postBuyCourse,
   putEnrollCourse,
   getCourseReviews,
-  postCourseRating
+  postCourseRating,
+  getRecommendedCourses,
+  getRecommendationsByCouple,
 }
 
 export default courseApi

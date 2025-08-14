@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { View, Text, ActivityIndicator, TouchableOpacity, Image } from "react-native"
 import { useNavigation } from "@react-navigation/native"
@@ -7,174 +5,182 @@ import { Star, Award, Crown, Medal, Trophy } from "lucide-react-native"
 import counselorApi from "@/src/config/api/counselor.api"
 import type { Counselor } from "@/src/config/types/counselor.type"
 
-const CounselorRecommendList = () => {
-    const navigation = useNavigation<any>()
-    const [data, setData] = useState<Counselor[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
+interface CounselorRecommendListProps {
+  coupleId?: string
+}
 
-    useEffect(() => {
-        const fetchRecommended = async () => {
-            try {
-                const res = await counselorApi.getRecommendedCounselors()
-                setData(res.slice(0, 3)) // chỉ lấy top 3
-            } catch (err: any) {
-                console.error("Lỗi khi lấy dữ liệu recommend:", err)
-                setError("Không thể tải danh sách gợi ý")
-            } finally {
-                setLoading(false)
-            }
+const CounselorRecommendList = ({ coupleId }: CounselorRecommendListProps) => {
+  const navigation = useNavigation<any>()
+  const [data, setData] = useState<Counselor[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchRecommended = async () => {
+      try {
+        let res: Counselor[]
+        if (coupleId) {
+          res = await counselorApi.getRecommendedCounselorsByCouple(coupleId)
+        } else {
+          res = await counselorApi.getRecommendedCounselors()
         }
-
-        fetchRecommended()
-    }, [])
-
-    const getRankIcon = (index: number) => {
-        switch (index) {
-            case 0: return <Crown size={20} color="#FFD700" />
-            case 1: return <Medal size={20} color="#C0C0C0" />
-            case 2: return <Trophy size={20} color="#CD7F32" />
-            default: return <Award size={20} color="#6C757D" />
-        }
+        setData(res.slice(0, 3)) // chỉ lấy top 3
+      } catch (err: any) {
+        console.error("Lỗi khi lấy dữ liệu recommend:", err)
+        setError("Không thể tải danh sách gợi ý")
+      } finally {
+        setLoading(false)
+      }
     }
+    fetchRecommended()
+  }, [coupleId])
 
-    const getRankBadge = (index: number) => {
-        const badges = [
-            { text: "TOP 1", bg: "bg-yellow-500", textColor: "text-white" },
-            { text: "TOP 2", bg: "bg-gray-400", textColor: "text-white" },
-            { text: "TOP 3", bg: "bg-orange-600", textColor: "text-white" },
-        ]
-        return badges[index] || { text: `TOP ${index + 1}`, bg: "bg-gray-300", textColor: "text-gray-700" }
+  const getRankIcon = (index: number) => {
+    switch (index) {
+      case 0: return <Crown size={20} color="#FFD700" />
+      case 1: return <Medal size={20} color="#C0C0C0" />
+      case 2: return <Trophy size={20} color="#CD7F32" />
+      default: return <Award size={20} color="#6C757D" />
     }
+  }
 
-    const handleCounselorPress = (counselor: Counselor) => {
-        navigation.navigate("CounselorsTab", {
-            screen: "CounselorDetail",
-            params: { counselor },
-        })
-    }
+  const getRankBadge = (index: number) => {
+    const badges = [
+      { text: "TOP 1", bg: "bg-yellow-500", textColor: "text-white" },
+      { text: "TOP 2", bg: "bg-gray-400", textColor: "text-white" },
+      { text: "TOP 3", bg: "bg-orange-600", textColor: "text-white" },
+    ]
+    return badges[index] || { text: `TOP ${index + 1}`, bg: "bg-gray-300", textColor: "text-gray-700" }
+  }
 
-    if (loading) {
-        return (
-            <View className="py-6 items-center">
-                <ActivityIndicator size="large" color="#E83E8C" />
-                <Text className="text-secondary mt-2">Đang tải gợi ý...</Text>
-            </View>
-        )
-    }
+  const handleCounselorPress = (counselor: Counselor) => {
+    navigation.navigate("CounselorsTab", {
+      screen: "CounselorDetail",
+      params: { counselor },
+    })
+  }
 
-    if (error) {
-        return (
-            <View className="py-6 items-center">
-                <Text className="text-danger text-sm">{error}</Text>
-            </View>
-        )
-    }
-
-    if (data.length === 0) {
-        return (
-            <View className="py-6 items-center ">
-                <Text className="text-secondary">Không có tư vấn viên gợi ý nào</Text>
-            </View>
-        )
-    }
-
+  if (loading) {
     return (
-        <View className="px-4 mb-6 ">
-            <View className="flex-row items-center mb-4">
-                <View className="bg-primary/10 rounded-full p-2 mr-3">
-                    <Star size={20} color="#E83E8C" />
-                </View>
-                <Text className="text-lg font-bold text-secondary-dark">Tư vấn viên được đề xuất</Text>
-            </View>
-
-            <View className="space-y-3 ">
-                {data.map((counselor, index) => {
-                    const rankBadge = getRankBadge(index)
-
-                    return (
-                        <View className="mb-4" key={counselor.id}>
-                            <TouchableOpacity
-                                key={counselor.id}
-                                onPress={() => handleCounselorPress(counselor)}
-                                className={`bg-white rounded-xl p-4 shadow-sm border-l-4 ${index === 0 ? "border-yellow-500" : index === 1 ? "border-gray-400" : "border-orange-600"
-                                    }`}
-                            >
-                                <View className="flex-row items-center">
-                                    {/* Rank Badge */}
-                                    <View className="items-center mr-4">
-                                        <View className={`${rankBadge.bg} rounded-full px-2 py-1 mb-1`}>
-                                            <Text className={`text-xs font-bold ${rankBadge.textColor}`}>{rankBadge.text}</Text>
-                                        </View>
-                                        {getRankIcon(index)}
-                                    </View>
-
-                                    {/* Avatar */}
-                                    <View className="relative mr-4">
-                                        <Image
-                                            source={{ uri: counselor.avatar || "https://via.placeholder.com/100" }}
-                                            className="w-16 h-16 rounded-full"
-                                        />
-                                        {index === 0 && (
-                                            <View className="absolute -top-1 -right-1 bg-yellow-500 rounded-full p-1">
-                                                <Crown size={12} color="white" />
-                                            </View>
-                                        )}
-                                    </View>
-
-                                    {/* Info */}
-                                    <View className="flex-1">
-                                        <Text className="text-secondary-dark font-bold text-base mb-1">{counselor.fullname}</Text>
-                                        <Text className="text-secondary text-sm mb-2">
-                                            {counselor.subCategories.map((cat) => cat.name).slice(0, 2).join(", ") +
-                                                (counselor.subCategories.length > 2 ? "..." : "")}
-                                        </Text>
-
-                                        <View className="flex-row items-center mb-2">
-                                            <Star size={14} color="#FFC107" fill="#FFC107" />
-                                            <Text className="text-secondary-dark ml-1 font-medium">{counselor.rating.toFixed(1)}</Text>
-                                            <Text className="text-secondary text-xs ml-1">({counselor.reviews} đánh giá)</Text>
-                                        </View>
-
-                                        <View className="flex-row items-center justify-between">
-                                            <Text className="text-primary font-bold">{counselor.price.toLocaleString("vi-VN")}đ/Suất tư vấn</Text>
-
-                                        </View>
-                                        <View className="bg-primary/10 rounded-full px-3 py-1 w-32 mt-2">
-                                            <Text className="text-primary text-xs font-medium">
-                                                {index === 0 ? "Phù hợp nhất" : index === 1 ? "Kinh nghiệm cao" : "Đánh giá tốt"}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                </View>
-
-                                {index === 0 && (
-                                    <View className="mt-3 pt-3 border-t border-gray-100">
-                                        <View className="flex-row items-center">
-                                            <View className="bg-yellow-500/10 rounded-full p-1 mr-2">
-                                                <Star size={12} color="#FFD700" />
-                                            </View>
-                                            <Text className="text-yellow-600 text-xs font-medium">
-                                                Được đề xuất hàng đầu dựa trên hồ sơ của bạn
-                                            </Text>
-                                        </View>
-                                    </View>
-                                )}
-                            </TouchableOpacity>
-                        </View>
-                    )
-                })}
-            </View>
-
-            {/* View All */}
-            <TouchableOpacity
-                onPress={() => navigation.navigate("CounselorsTab")}
-                className="mt-4 bg-primary/5 rounded-xl p-4 items-center"
-            >
-                <Text className="text-primary font-medium">Xem tất cả tư vấn viên</Text>
-            </TouchableOpacity>
-        </View>
+      <View className="py-6 items-center">
+        <ActivityIndicator size="large" color="#E83E8C" />
+        <Text className="text-secondary mt-2">Đang tải gợi ý...</Text>
+      </View>
     )
+  }
+
+  if (error) {
+    return (
+      <View className="py-6 items-center">
+        <Text className="text-danger text-sm">{error}</Text>
+      </View>
+    )
+  }
+
+  if (data.length === 0) {
+    return (
+      <View className="py-6 items-center ">
+        <Text className="text-secondary">Không có tư vấn viên gợi ý nào</Text>
+      </View>
+    )
+  }
+
+  return (
+    <View className="px-4 mb-6 ">
+      <View className="flex-row items-center mb-4">
+        <View className="bg-primary/10 rounded-full p-2 mr-3">
+          <Star size={20} color="#E83E8C" />
+        </View>
+        <Text className="text-lg font-bold text-secondary-dark">
+          {coupleId ? "Tư vấn viên được đề xuất cho cặp đôi" : "Tư vấn viên được đề xuất"}
+        </Text>
+      </View>
+
+      <View className="space-y-3 ">
+        {data.map((counselor, index) => {
+          const rankBadge = getRankBadge(index)
+          return (
+            <View className="mb-4" key={counselor.id}>
+              <TouchableOpacity
+                key={counselor.id}
+                onPress={() => handleCounselorPress(counselor)}
+                className={`bg-white rounded-xl p-4 shadow-sm border-l-4 ${index === 0 ? "border-yellow-500" : index === 1 ? "border-gray-400" : "border-orange-600"
+                  }`}
+              >
+                <View className="flex-row items-center">
+                  {/* Rank Badge */}
+                  <View className="items-center mr-4">
+                    <View className={`${rankBadge.bg} rounded-full px-2 py-1 mb-1`}>
+                      <Text className={`text-xs font-bold ${rankBadge.textColor}`}>{rankBadge.text}</Text>
+                    </View>
+                    {getRankIcon(index)}
+                  </View>
+
+                  {/* Avatar */}
+                  <View className="relative mr-4">
+                    <Image
+                      source={{ uri: counselor.avatar || "https://via.placeholder.com/100" }}
+                      className="w-16 h-16 rounded-full"
+                    />
+                    {index === 0 && (
+                      <View className="absolute -top-1 -right-1 bg-yellow-500 rounded-full p-1">
+                        <Crown size={12} color="white" />
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Info */}
+                  <View className="flex-1">
+                    <Text className="text-secondary-dark font-bold text-base mb-1">{counselor.fullname}</Text>
+                    <Text className="text-secondary text-sm mb-2">
+                      {counselor.subCategories.map((cat) => cat.name).slice(0, 2).join(", ") +
+                        (counselor.subCategories.length > 2 ? "..." : "")}
+                    </Text>
+
+                    <View className="flex-row items-center mb-2">
+                      <Star size={14} color="#FFC107" fill="#FFC107" />
+                      <Text className="text-secondary-dark ml-1 font-medium">{counselor.rating.toFixed(1)}</Text>
+                      <Text className="text-secondary text-xs ml-1">({counselor.reviews} đánh giá)</Text>
+                    </View>
+
+                    <View className="flex-row items-center justify-between">
+                      <Text className="text-primary font-bold">{counselor.price.toLocaleString("vi-VN")}đ/Suất tư vấn</Text>
+                    </View>
+                    <View className="bg-primary/10 rounded-full px-3 py-1 w-32 mt-2">
+                      <Text className="text-primary text-xs font-medium">
+                        {index === 0 ? "Phù hợp nhất" : index === 1 ? "Kinh nghiệm cao" : "Đánh giá tốt"}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                {index === 0 && (
+                  <View className="mt-3 pt-3 border-t border-gray-100">
+                    <View className="flex-row items-center">
+                      <View className="bg-yellow-500/10 rounded-full p-1 mr-2">
+                        <Star size={12} color="#FFD700" />
+                      </View>
+                      <Text className="text-yellow-600 text-xs font-medium">
+                        Được đề xuất hàng đầu dựa trên hồ sơ của bạn
+                      </Text>
+                    </View>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+          )
+        })}
+      </View>
+
+      {/* View All */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate("CounselorsTab")}
+        className="mt-4 bg-primary/5 rounded-xl p-4 items-center"
+      >
+        <Text className="text-primary font-medium">Xem tất cả tư vấn viên</Text>
+      </TouchableOpacity>
+    </View>
+  )
 }
 
 export default CounselorRecommendList

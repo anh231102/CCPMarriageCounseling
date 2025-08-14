@@ -23,6 +23,7 @@ import coupleApi from "../../config/api/couple.api"
 import type { Couple } from "../../config/types/couple.type"
 import Loading from "@/src/components/share/Loading"
 import CounselorRecommendList from "@/src/components/counselor/CounselorRecommendList"
+import CourseRecommendList from "@/src/components/courses/CourseRecommendList "
 
 interface RouteParams {
   coupleId: string
@@ -441,13 +442,18 @@ const LoveMapScreen = () => {
         {/* Counselor Recommendations */}
         <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
           <Text className="text-xl font-bold text-secondary-dark mb-4">Lời khuyên từ tư vấn viên</Text>
-          <CounselorRecommendation
+          {/* <CounselorRecommendation
             rec1={coupleData.rec1 ?? ""}
             rec2={coupleData.rec2 ?? ""}
             onRegister={() => navigation.navigate("CounselorsTab")}
-          />
-          <CounselorRecommendList />
+          /> */}
+          <CounselorRecommendList coupleId={coupleId}/>
         </View>
+        <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
+          <Text className="text-xl font-bold text-secondary-dark mb-4">Khóa học phù hợp cho cặp đôi</Text>
+          <CourseRecommendList coupleId={coupleId} />
+        </View>
+
 
         {/* Action Buttons */}
         <View className="mb-6">

@@ -25,14 +25,14 @@ type CoursesStackParamList = {
 }
 
 type CourseDetailScreenRouteProp = RouteProp<CoursesStackParamList, "CourseDetail">
-type CourseDetailScreenNavigationProp = NativeStackNavigationProp<CoursesStackParamList, "CourseDetail">
+
 
 export const CourseDetailScreen = () => {
   const route = useRoute<CourseDetailScreenRouteProp>()
   const navigation = useNavigation<any>()
   const { courseId, initialCourse } = route.params
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-const [reviewReloadKey, setReviewReloadKey] = useState(0);
+  const [reviewReloadKey, setReviewReloadKey] = useState(0);
 
 
   const [course, setCourse] = useState<CourseDetail | null>(null)
@@ -42,10 +42,10 @@ const [reviewReloadKey, setReviewReloadKey] = useState(0);
   const isFree = initialCourse?.isFree ?? false
   const freeByMembershipName = initialCourse?.freeByMembershipName ?? ""
   const isBuy = initialCourse?.isBuy ?? true
- const openedChapters = course?.chapters?.filter(chap => chap.status === 1) ?? [];
-const chapterCount = openedChapters.length;
-const processingCount = openedChapters.filter(chap => chap.isDone).length;
-const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
+  const openedChapters = course?.chapters?.filter(chap => chap.status === 1) ?? [];
+  const chapterCount = openedChapters.length;
+  const processingCount = openedChapters.filter(chap => chap.isDone).length;
+  const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
 
   const fetchCourseDetails = useCallback(async () => {
     setLoading(true)
@@ -61,10 +61,10 @@ const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
   }, [courseId])
 
   useFocusEffect(
-  useCallback(() => {
-    fetchCourseDetails();
-  }, [fetchCourseDetails])
-);
+    useCallback(() => {
+      fetchCourseDetails();
+    }, [fetchCourseDetails])
+  );
 
   const handleEnrollCourse = () => {
     setShowConfirmModal(true);
@@ -174,7 +174,7 @@ const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
                       <Text className="text-gray-700 font-medium">Giá khóa học</Text>
                     </View>
                     <View className="items-end">
-                      {course.price === 0  ? (
+                      {course.price === 0 ? (
                         <View className="bg-green-500 rounded-full px-3 py-1">
                           <Text className="text-white font-bold text-sm">Miễn phí</Text>
                         </View>
@@ -231,7 +231,7 @@ const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
                     className="flex items-center justify-center"
 
                   >
-                    
+
                     <Text className="text-white font-bold items-center text-lg ml-2">Đăng ký ngay</Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -241,7 +241,7 @@ const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
                   className="bg-gray-100 py-4 px-6 rounded-2xl mt-2 flex-row items-center justify-center"
                   activeOpacity={0.7}
                 >
-                  
+
                   <Text className="text-gray-700 font-semibold text-lg ml-2">Hủy bỏ</Text>
                 </TouchableOpacity>
               </View>
@@ -267,25 +267,25 @@ const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
           {(!isEnrolled && !isBuy) && (
             <>
               {freeByMembershipName && (
-                  <View className="bg-green-50 rounded-2xl p-4 mb-2 border border-green-200">
-                    <View className="flex-row items-center">
-                      <View className="bg-green-100 p-2 rounded-xl mr-3">
-                        <Gift size={18} color="#10B981" />
-                      </View>
-                      <View className="flex-1">
-                        <Text className="text-green-800 font-semibold text-sm">Ưu đãi thành viên</Text>
-                        <Text className="text-green-700 text-sm">Miễn phí cho: {freeByMembershipName}</Text>
-                      </View>
+                <View className="bg-green-50 rounded-2xl p-4 mb-2 border border-green-200">
+                  <View className="flex-row items-center">
+                    <View className="bg-green-100 p-2 rounded-xl mr-3">
+                      <Gift size={18} color="#10B981" />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-green-800 font-semibold text-sm">Ưu đãi thành viên</Text>
+                      <Text className="text-green-700 text-sm">Miễn phí cho: {freeByMembershipName}</Text>
                     </View>
                   </View>
-                )}
+                </View>
+              )}
               <View className="flex-row items-center mb-2">
                 <Star size={20} color="#FFC107" fill="#FFC107" />
                 <Text className="text-secondary-dark ml-1 text-base">{course.rating?.toFixed(1) || "N/A"}</Text>
                 <Text className="text-gray-500 text-sm ml-2">({course.rank || 0} xếp hạng)</Text>
               </View>
               <Text className="text-primary font-bold text-xl mb-4">
-                {course.price === 0  ? `Miễn phí ` : `${course.price?.toLocaleString("vi-VN")}đ`}
+                {course.price === 0 ? `Miễn phí ` : `${course.price?.toLocaleString("vi-VN")}đ`}
               </Text>
               <CustomButton
                 onPress={handleEnrollCourse}

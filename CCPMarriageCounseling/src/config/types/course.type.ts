@@ -164,3 +164,20 @@ export interface PostCourseRatingResponse {
   data: string // "Course rated successfully."
   error: string | null
 }
+
+export interface RecommendedCourse {
+  id: string
+  name: string
+  thumble: string | null
+  description: string | null
+  price: number | null
+  rating: number | null
+  reviews: number | null
+  subCategories: SubCategory[]
+}
+
+export interface RecommendedCourseResponse {
+  success: boolean
+  data: RecommendedCourse[]
+  error: string | null
+}

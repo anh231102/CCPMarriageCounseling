@@ -51,3 +51,10 @@ export interface AvailableScheduleResponse {
   data: AvailableScheduleData
   error: any
 }
+
+export interface RecommendedCounselorByCoupleResponse {
+  success: boolean
+  data: Counselor[]
+  error: string | null
+}
+
