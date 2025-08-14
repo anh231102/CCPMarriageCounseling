@@ -112,7 +112,7 @@ const MembershipPromoPanel = () => {
                 showsHorizontalScrollIndicator={false}
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
-                
+
             >
                 {membershipList.map((item, index) => (
                     <TouchableOpacity
@@ -126,25 +126,42 @@ const MembershipPromoPanel = () => {
                             colors={getGradientColors(index)}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
-                            className="rounded-3xl shadow-2xl overflow-hidden"
-                            style={{ height: 230 }}
+                            style={{
+                                borderRadius: 24,
+                                height: 230,
+                                shadowColor: "#000",
+                                shadowOpacity: 0.2,
+                                shadowRadius: 6,
+                                overflow: "hidden"
+                            }}
                         >
+
                             {/* Background Pattern */}
                             <View className="absolute top-0 right-0 w-32 h-32 opacity-20">
                                 <LinearGradient
                                     colors={["rgba(255,255,255,0.3)", "transparent"]}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 1 }}
-                                    className="w-full h-full rounded-full"
+                                    style={{
+                                        width: "100%",       // w-full
+                                        height: "100%",      // h-full
+                                        borderRadius: 9999,  // rounded-full
+                                    }}
                                 />
+
                             </View>
                             <View className="absolute bottom-0 left-0 w-24 h-24 opacity-10">
                                 <LinearGradient
                                     colors={["rgba(255,255,255,0.2)", "transparent"]}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 1 }}
-                                    className="w-full h-full rounded-full"
+                                    style={{
+                                        width: "100%",       // w-full
+                                        height: "100%",      // h-full
+                                        borderRadius: 9999,  // rounded-full
+                                    }}
                                 />
+
                             </View>
 
                             {/* Content */}

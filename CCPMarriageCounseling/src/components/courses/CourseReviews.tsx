@@ -8,6 +8,7 @@ import { LinearGradient } from "expo-linear-gradient"
 import courseApi from "@/src/config/api/course.api"
 import type { CourseReview } from "@/src/config/types/course.type"
 import { CourseRatingForm } from "./CourseRatingForm"
+import Loading from "../share/Loading"
 
 interface CourseReviewsProps {
   CourseId: string
@@ -77,7 +78,7 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openRevi
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-   const fetchReviews = async () => {
+  const fetchReviews = async () => {
     setLoading(true)
     setError(null)
     try {
@@ -91,8 +92,8 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openRevi
   }
 
   useEffect(() => {
-  fetchReviews();
-}, [CourseId, reloadKey]);
+    fetchReviews();
+  }, [CourseId, reloadKey]);
 
   // Nếu openReviewForm = false, dùng style phủ đủ trang (flex: 1, không margin/padding ngoài)
   const containerStyle =
@@ -109,7 +110,11 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openRevi
           colors={["#E83E8C", "#FF6B9D"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          className="rounded-t-3xl p-6"
+          style={{
+            padding: 24, // tương đương p-6
+            borderTopLeftRadius: 24, // rounded-t-3xl
+            borderTopRightRadius: 24,
+          }}
         >
           <View className="flex-row items-center">
             <View className="bg-white/20 p-3 rounded-2xl mr-4 overflow-hidden">
@@ -119,7 +124,7 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openRevi
           </View>
         </LinearGradient>
         <View className="bg-white rounded-b-3xl shadow-lg p-8 items-center">
-          <ActivityIndicator size="large" color="#E83E8C" />
+          <Loading size={30} color="#E83E8C" />
           <Text className="text-gray-500 mt-4 font-medium">Đang tải đánh giá...</Text>
         </View>
       </View>
@@ -134,7 +139,12 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openRevi
           colors={["#E83E8C", "#FF6B9D"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          className="rounded-t-3xl p-6 overflow-hidden"
+          style={{
+            padding: 24, // p-6
+            borderTopLeftRadius: 24, // rounded-t-3xl
+            borderTopRightRadius: 24,
+            overflow: "hidden", // overflow-hidden
+          }}
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
@@ -197,42 +207,50 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openRevi
 
               {/* Reviews List */}
               <View style={openReviewForm === false ? { flex: 1 } : {}}>
-                
-               
-                  <View className="p-4">
-                    {reviews.map((review, idx) => {
-                      const avatarColors = getAvatarColor(review.memberName)
-                      return (
-                        <View key={idx} className="mb-4">
-                          <View className="bg-gray-50 rounded-2xl p-5">
-                            <View className="flex-row items-start ">
-                              {/* Avatar */}
-                              <LinearGradient
-                                colors={avatarColors}
-                                className="w-12 h-12 rounded-full items-center justify-center mr-4 overflow-hidden"
-                              >
-                                <Text className="text-white font-bold text-sm">{getInitials(review.memberName)}</Text>
-                              </LinearGradient>
-                              {/* Review Content */}
-                              <View className="flex-1">
-                                <View className="flex-row items-center justify-between mb-2">
-                                  <Text className="font-bold text-gray-800 text-base">{review.memberName}</Text>
-                                </View>
-                                {/* Rating */}
-                                <View className="flex-row items-center mb-3">
-                                  {renderStars(review.rating)}
-                                  <Text className="text-gray-500 text-sm ml-2">({review.rating}/5)</Text>
-                                </View>
-                                {/* Feedback */}
-                                <Text className="text-gray-700 leading-6 text-base">{review.feedback}</Text>
+
+
+                <View className="p-4">
+                  {reviews.map((review, idx) => {
+                    const avatarColors = getAvatarColor(review.memberName)
+                    return (
+                      <View key={idx} className="mb-4">
+                        <View className="bg-gray-50 rounded-2xl p-5">
+                          <View className="flex-row items-start ">
+                            {/* Avatar */}
+                            <LinearGradient
+                              colors={avatarColors}
+                              style={{
+                                width: 48, // w-12 (12 × 4)
+                                height: 48, // h-12
+                                borderRadius: 24, // rounded-full
+                                alignItems: "center", // items-center
+                                justifyContent: "center", // justify-center
+                                marginRight: 16, // mr-4
+                                overflow: "hidden", // overflow-hidden
+                              }}
+                            >
+                              <Text className="text-white font-bold text-sm">{getInitials(review.memberName)}</Text>
+                            </LinearGradient>
+                            {/* Review Content */}
+                            <View className="flex-1">
+                              <View className="flex-row items-center justify-between mb-2">
+                                <Text className="font-bold text-gray-800 text-base">{review.memberName}</Text>
                               </View>
+                              {/* Rating */}
+                              <View className="flex-row items-center mb-3">
+                                {renderStars(review.rating)}
+                                <Text className="text-gray-500 text-sm ml-2">({review.rating}/5)</Text>
+                              </View>
+                              {/* Feedback */}
+                              <Text className="text-gray-700 leading-6 text-base">{review.feedback}</Text>
                             </View>
                           </View>
                         </View>
-                      )
-                    })}
-                  </View>
-                
+                      </View>
+                    )
+                  })}
+                </View>
+
               </View>
               {/* Show More Button */}
               {reviews.length > 2 && openReviewForm && (
@@ -249,7 +267,7 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({ CourseId, openRevi
                 </View>
               )}
             </>
-            
+
           )}
         </View>
       </View>

@@ -228,8 +228,15 @@ const ListPost: React.FC<ListPostProps> = ({ allscreen }) => {
 
                 <LinearGradient
                   colors={["transparent", "rgba(0,0,0,0.3)"]}
-                  className="absolute bottom-0 left-0 right-0 h-16"
+                  style={{
+                    position: "absolute", // absolute
+                    bottom: 0,            // bottom-0
+                    left: 0,              // left-0
+                    right: 0,             // right-0
+                    height: 64,           // h-16 (16 × 4 = 64px)
+                  }}
                 />
+
                 {/* Date Badge */}
                 <View className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-xl px-3 py-1">
                   <Text className="text-gray-700 text-xs font-medium">{formatDate(post.createAt)}</Text>
@@ -264,8 +271,11 @@ const ListPost: React.FC<ListPostProps> = ({ allscreen }) => {
                 colors={["#E83E8C", "#FF6B9D"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                className="h-1"
+                style={{
+                  height: 4, // h-1 (1 × 4 = 4px)
+                }}
               />
+
             </TouchableOpacity>
           ))
         )}

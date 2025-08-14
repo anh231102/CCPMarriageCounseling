@@ -19,7 +19,7 @@ export const CourseRatingForm: React.FC<CourseRatingFormProps> = ({ courseId, on
   const [loading, setLoading] = useState(false)
   const [hoveredStar, setHoveredStar] = useState(0)
   const isLocked = typeof Progress === "number" && Progress < 0.8
- 
+
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -68,13 +68,17 @@ export const CourseRatingForm: React.FC<CourseRatingFormProps> = ({ courseId, on
 
   return (
     <View style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: 'hidden' }} className=" ">
-      
-        {/* Header Section */}
-        <LinearGradient
-          colors={["#E83E8C", "#FF6B9D"]}
-          start={{ x: 0, y: 0 }}
+
+      {/* Header Section */}
+      <LinearGradient
+        colors={["#E83E8C", "#FF6B9D"]}
+        start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        className="rounded-t-3xl p-6"
+        style={{
+          borderTopLeftRadius: 24, // rounded-t-3xl
+          borderTopRightRadius: 24,
+          padding: 24 // p-6
+        }}
       >
         <View className="flex-row items-center">
           <View className="bg-white/20 p-3 rounded-2xl mr-4">
@@ -167,7 +171,13 @@ export const CourseRatingForm: React.FC<CourseRatingFormProps> = ({ courseId, on
               colors={rating > 0 && !isLocked ? ["#E83E8C", "#FF6B9D"] : ["#9CA3AF", "#6B7280"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="p-4 flex-row items-center justify-center"
+              style={{
+                padding: 16,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 24, // nếu bạn muốn border-radius tương đương rounded-t-3xl
+              }}
             >
               {loading ? (
                 <>

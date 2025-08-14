@@ -216,8 +216,11 @@ const SelfCheckScreen = () => {
               colors={["#E83E8C", "#FF6B9D"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="p-6"
+              style={{
+                padding: 24,
+              }}
             >
+
               <View className="items-center">
                 <View className="bg-white/20 rounded-full p-4 mb-4">
                   <Heart size={32} color="#fff" />
@@ -281,8 +284,11 @@ const SelfCheckScreen = () => {
                       colors={["#E83E8C", "#FF6B9D"]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
-                      className="p-2"
+                      style={{
+                        padding: 8,
+                      }}
                     >
+
                       <Camera size={16} color="white" />
                     </LinearGradient>
                   </TouchableOpacity>
@@ -388,8 +394,12 @@ const SelfCheckScreen = () => {
               colors={["#E83E8C", "#FF6B9D"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="p-4 items-center"
+              style={{
+                padding: 16,
+                alignItems: "center",
+              }}
             >
+
               <Text className="text-white font-bold text-lg">Bắt đầu khảo sát</Text>
             </LinearGradient>
           </TouchableOpacity>

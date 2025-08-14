@@ -183,16 +183,18 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                 {/* Partner Information Section */}
                 {partner && (
                     <View className="flex-col pt-4 border-b border-gray-100">
-                        <View className="bg-blue-50 p-2 rounded-xl mr-3 mb-3 w-16">
+                        <View className="bg-blue-50 p-2 rounded-xl mr-3 mb-3 self-start">
                             <Text className="text-blue-600 font-semibold text-sm">Đối tác</Text>
                         </View>
                         <View className="flex-row items-center mb-3">
 
                             <View className="flex-row items-center flex-1">
                                 <Image
-                                    source={{
-                                        uri: partner.avatar || "https://placehold.co/40x40.png?text=User",
-                                    }}
+                                    source={
+                                        partner.avatar
+                                            ? { uri: partner.avatar }
+                                            : require("../../../assets/images/avatar.jpg")
+                                    }
                                     className="w-10 h-10 rounded-full border-2 border-blue-100 mr-3"
                                 />
                                 <Text className="text-gray-800 font-medium text-base" numberOfLines={1}>

@@ -7,8 +7,9 @@ import {
     FlatList,
     Alert,
     TouchableOpacity,
+    Modal,
 } from "react-native"
-import { Picker } from "@react-native-picker/picker"
+// import DropDownPicker from "react-native-dropdown-picker"
 import {
     Wallet,
     Gift,
@@ -23,8 +24,59 @@ import {
 } from "@/src/config/types/transaction.type"
 import transactionApi from "@/src/config/api/transaction.api"
 import Loading from "../share/Loading"
-import { Modal } from "react-native";
 import TransactionStatsModal from "./TransactionStatsModal"
+
+// CustomPicker giống TransactionStatsModal
+interface CustomPickerProps {
+    label: string;
+    options: { label: string; value: any }[];
+    selectedValue: any;
+    onValueChange: (value: any) => void;
+}
+
+const CustomPicker: React.FC<CustomPickerProps> = ({ label, options, selectedValue, onValueChange }) => {
+    const [modalVisible, setModalVisible] = useState(false);
+
+    return (
+        <View className="mb-4">
+            <Text className="text-gray-800 font-semibold mb-2">{label}</Text>
+            <TouchableOpacity
+                className="bg-gray-50 rounded-xl border border-gray-200 p-3"
+                onPress={() => setModalVisible(true)}
+            >
+                <Text className="text-gray-900">{options.find(o => o.value === selectedValue)?.label || "Chọn"}</Text>
+            </TouchableOpacity>
+
+            <Modal visible={modalVisible} transparent animationType="fade">
+                <View className="flex-1 justify-center items-center bg-black/40">
+                    <View className="bg-white rounded-2xl w-11/12 max-h-80 overflow-hidden">
+                        <FlatList
+                            data={options}
+                            keyExtractor={(item) => item.value?.toString() ?? ""}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    className="p-4 border-b border-gray-200"
+                                    onPress={() => {
+                                        onValueChange(item.value);
+                                        setModalVisible(false);
+                                    }}
+                                >
+                                    <Text className="text-gray-900">{item.label}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                        <TouchableOpacity
+                            className="p-4 items-center"
+                            onPress={() => setModalVisible(false)}
+                        >
+                            <Text className="text-red-500 font-semibold">Đóng</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+        </View>
+    );
+};
 
 const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("vi-VN", {
@@ -53,38 +105,32 @@ const getTransactionIcon = (type: TransactionType) => {
 
 const FILTER_OPTIONS: { label: string; value: TransactionType | null }[] = [
     { label: "Tất cả", value: null },
-    { label: "Tư vấn", value: TransactionType.Booking },
+    { label: "Nạp tiền", value: TransactionType.Deposit },
+    { label: "Thanh toán buổi tư vấn", value: TransactionType.Booking },
     { label: "Hoàn tiền 100%", value: TransactionType.Refund100 },
     { label: "Hoàn tiền 50%", value: TransactionType.Refund50 },
-    { label: "Hoàn tiền khóa học", value: TransactionType.RefundCourse },
-    { label: "Khóa học", value: TransactionType.BuyCourse },
-    // { label: "Rút tiền", value: TransactionType.Withdraw },
+    { label: "Mua khóa học", value: TransactionType.BuyCourse },
     { label: "Mua membership", value: TransactionType.BuyMembership },
-    // { label: "Tư vấn viên nhận tiền", value: TransactionType.CounselorEarn },
 ]
 
 const TransactionHistory = () => {
-    const [statsMode, setStatsMode] = useState<"month" | "year" | "all">("month");
-    const [showStatsModal, setShowStatsModal] = useState(false);
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const [stats, setStats] = useState<{ totalDeposit: number; totalSpent: number; count: number; list: Transaction[] } | null>(null);
+    const [statsMode, setStatsMode] = useState<"month" | "year" | "all">("month")
+    const [showStatsModal, setShowStatsModal] = useState(false)
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1)
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+    const [stats, setStats] = useState<{ totalDeposit: number; totalSpent: number; count: number; list: Transaction[] } | null>(null)
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [loading, setLoading] = useState(false)
     const [filter, setFilter] = useState<TransactionType | null>(null)
-
+    const [statsLoading, setStatsLoading] = useState(false)
 
     useEffect(() => {
         fetchTransactions(1, filter ?? undefined)
     }, [filter])
 
-
-    const fetchTransactions = async (
-        pageNumber: number,
-        type?: TransactionType
-    ) => {
+    const fetchTransactions = async (pageNumber: number, type?: TransactionType) => {
         setLoading(true)
         try {
             const data = await transactionApi.getMyTransactions(type, pageNumber, 10)
@@ -112,37 +158,29 @@ const TransactionHistory = () => {
 
     return (
         <View className="bg-white rounded-2xl p-6 shadow-sm mb-40 relative">
-            {/* Dropdown Filter */}
             <View className="mb-4">
                 <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-sm text-secondary-dark mb-1">
-                    Lọc theo loại giao dịch
-                </Text>
-                <TouchableOpacity
-                    onPress={() => setShowStatsModal(true)}
-                    className=" px-4 py-2 bg-primary rounded-xl self-end"
-                >
-                    <Text className="text-white font-bold">Xem thống kê</Text>
-                </TouchableOpacity>
-                </View>
-                <View className="border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
-                    <Picker
-                        selectedValue={filter}
-                        onValueChange={(itemValue) => setFilter(itemValue)}
-                        style={{ height: 50 }}
+                    <Text className="text-sm text-secondary-dark ">
+                        Lọc theo loại giao dịch
+                    </Text>
+                    <TouchableOpacity
+                        onPress={() => setShowStatsModal(true)}
+                        className="px-4 py-2 bg-primary rounded-xl self-end"
                     >
-                        {FILTER_OPTIONS.map((option) => (
-                            <Picker.Item
-                                key={option.label}
-                                label={option.label}
-                                value={option.value}
-                            />
-                        ))}
-                    </Picker>
+                        <Text className="text-white font-bold">Xem thống kê</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View className="">
+                    <CustomPicker
+                        label=""
+                        options={FILTER_OPTIONS}
+                        selectedValue={filter}
+                        onValueChange={(val) => setFilter(val)}
+                    />
                 </View>
             </View>
 
-            {/* Transaction List */}
             <FlatList
                 data={transactions}
                 keyExtractor={(item) => item.id}
@@ -163,8 +201,7 @@ const TransactionHistory = () => {
                             </Text>
                         </View>
                         <Text
-                            className={`font-bold ml-2 ${item.amount > 0 ? "text-success" : "text-danger"
-                                }`}
+                            className={`font-bold ml-2 ${item.amount > 0 ? "text-success" : "text-danger"}`}
                         >
                             {item.amount > 0 ? "+" : "-"}
                             {formatCurrency(Math.abs(item.amount))}
@@ -180,13 +217,11 @@ const TransactionHistory = () => {
                 }
             />
 
-            {/* Pagination Controls */}
             <View className="flex-row justify-between mt-4">
                 <TouchableOpacity
                     disabled={page <= 1 || loading}
                     onPress={goToPreviousPage}
-                    className={`px-4 py-2 rounded-xl ${page <= 1 ? "bg-gray-200" : "bg-gray-100"
-                        }`}
+                    className={`px-4 py-2 rounded-xl ${page <= 1 ? "bg-gray-200" : "bg-gray-100"}`}
                 >
                     <Text className="text-primary">Trang trước</Text>
                 </TouchableOpacity>
@@ -198,8 +233,7 @@ const TransactionHistory = () => {
                 <TouchableOpacity
                     disabled={page >= totalPages || loading}
                     onPress={goToNextPage}
-                    className={`px-4 py-2 rounded-xl ${page >= totalPages ? "bg-gray-200" : "bg-gray-100"
-                        }`}
+                    className={`px-4 py-2 rounded-xl ${page >= totalPages ? "bg-gray-200" : "bg-gray-100"}`}
                 >
                     <Text className="text-primary">Trang sau</Text>
                 </TouchableOpacity>
@@ -211,7 +245,6 @@ const TransactionHistory = () => {
                 </View>
             )}
 
-
             <TransactionStatsModal
                 visible={showStatsModal}
                 onClose={() => setShowStatsModal(false)}
@@ -222,35 +255,33 @@ const TransactionHistory = () => {
                 selectedYear={selectedYear}
                 setSelectedYear={setSelectedYear}
                 stats={stats}
-                loading={loading}
+                loading={statsLoading}
                 onFetchStats={async () => {
-                    setStats(null);
-                    setLoading(true);
+                    setStats(null)
+                    setStatsLoading(true)
                     try {
-                        const data = await transactionApi.getMyTransactions(undefined, 1, 1000);
-                        const filtered = data.items.filter(item => {
-                            const d = new Date(item.createDate);
+                        const data = await transactionApi.getMyTransactions(undefined, 1, 1000)
+                        const filtered = data.items.filter((item) => {
+                            const d = new Date(item.createDate)
                             if (statsMode === "month") {
-                                return d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear;
+                                return d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear
                             }
                             if (statsMode === "year") {
-                                return d.getFullYear() === selectedYear;
+                                return d.getFullYear() === selectedYear
                             }
-                            return true;
-                        });
-                        const totalDeposit = filtered.filter(i => i.amount > 0).reduce((sum, i) => sum + i.amount, 0);
-                        const totalSpent = filtered.filter(i => i.amount < 0).reduce((sum, i) => sum + Math.abs(i.amount), 0);
-                        setStats({ totalDeposit, totalSpent, count: filtered.length, list: filtered });
+                            return true
+                        })
+                        const totalDeposit = filtered.filter(i => i.amount > 0).reduce((sum, i) => sum + i.amount, 0)
+                        const totalSpent = filtered.filter(i => i.amount < 0).reduce((sum, i) => sum + Math.abs(i.amount), 0)
+                        setStats({ totalDeposit, totalSpent, count: filtered.length, list: filtered })
                     } catch (e) {
-                        Alert.alert("Lỗi", "Không thể lấy thống kê");
+                        Alert.alert("Lỗi", "Không thể lấy thống kê")
                     } finally {
-                        setLoading(false);
+                        setStatsLoading(false)
                     }
                 }}
             />
         </View>
-
-
     )
 }
 

@@ -95,7 +95,14 @@ const EmptyInvitation: React.FC<EmptyInvitationProps> = ({ onReloadHistory }) =>
                             colors={["#E83E8C", "#FF6B9D"]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
-                            className="p-5 flex-row items-center"
+                            style={{
+                                padding: 20,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                borderRadius: 12,
+                                width: "100%",    // hoặc số cụ thể
+                                minHeight: 60     // tránh bị invisible nếu không có content
+                            }}
                         >
                             <View className="w-14 h-14 bg-white/20 rounded-full items-center justify-center mr-4">
                                 <Users size={32} color="#fff" />

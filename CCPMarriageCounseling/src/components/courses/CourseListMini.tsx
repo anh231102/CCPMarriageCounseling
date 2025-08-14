@@ -114,8 +114,15 @@ const CourseListMini: React.FC = () => {
                         />
                         <LinearGradient
                             colors={["transparent", "rgba(0,0,0,0.3)"]}
-                            className="absolute bottom-0 left-0 right-0 h-12"
+                            style={{
+                                position: "absolute",
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height: 48, // h-12
+                            }}
                         />
+
 
                         {/* Price Badge */}
                         <View className="absolute top-3 right-3">
@@ -168,7 +175,13 @@ const CourseListMini: React.FC = () => {
                     </View>
 
                     {/* Bottom Accent */}
-                    <LinearGradient colors={["#E83E8C", "#FF6B9D"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} className="h-1" />
+                    <LinearGradient
+                        colors={["#E83E8C", "#FF6B9D"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={{ height: 4 }} // h-1 = 4px
+                    />
+
                 </TouchableOpacity>
             )}
             ItemSeparatorComponent={() => <View style={{ width: 4 }} />}

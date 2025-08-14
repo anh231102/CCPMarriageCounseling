@@ -31,7 +31,7 @@ const CounselorListMini = ({ data }: Props) => {
     return subCategories.map((cat) => cat.name).join(", ")
   }
 
-  
+
   const sortedData = [...data].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
 
   return (
@@ -92,7 +92,12 @@ const CounselorListMini = ({ data }: Props) => {
           </View>
 
           {/* Bottom Accent */}
-          <LinearGradient colors={["#E83E8C", "#FF6B9D"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} className="h-1" />
+          <LinearGradient
+            colors={["#E83E8C", "#FF6B9D"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{ height: 4 }} // h-1 ~ 4px
+          />
         </TouchableOpacity>
       )}
       ItemSeparatorComponent={() => <View style={{ width: 4 }} />}

@@ -39,31 +39,31 @@ const PostDetailScreen = () => {
   }, [postId])
 
   const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  const now = new Date()
-  // Kiểm tra có phải hôm nay không
-  if (
-    date.getDate() === now.getDate() &&
-    date.getMonth() === now.getMonth() &&
-    date.getFullYear() === now.getFullYear()
-  ) {
-    return "Hôm nay"
-  }
-  const diffTime = Math.abs(now.getTime() - date.getTime())
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    const date = new Date(dateString)
+    const now = new Date()
+    // Kiểm tra có phải hôm nay không
+    if (
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear()
+    ) {
+      return "Hôm nay"
+    }
+    const diffTime = Math.abs(now.getTime() - date.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 1) {
-    return "Hôm qua"
-  } else if (diffDays < 7) {
-    return `${diffDays} ngày trước`
-  } else {
-    return date.toLocaleDateString("vi-VN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+    if (diffDays === 1) {
+      return "Hôm qua"
+    } else if (diffDays < 7) {
+      return `${diffDays} ngày trước`
+    } else {
+      return date.toLocaleDateString("vi-VN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    }
   }
-}
 
   const getReadingTime = (content: string) => {
     const wordsPerMinute = 200
@@ -110,7 +110,15 @@ const PostDetailScreen = () => {
     <SafeAreaView className="flex-1 bg-gray-50">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header Section */}
-        <LinearGradient colors={["#FFFFFF", "#FAFAFA"]} className="px-6 pt-6 pb-4">
+        <LinearGradient
+          colors={["#FFFFFF", "#FAFAFA"]}
+          style={{
+            paddingHorizontal: 24,
+            paddingTop: 24,
+            paddingBottom: 16,
+          }}
+        >
+
           {/* Title */}
           <Text className="text-3xl font-bold text-gray-900 leading-tight mb-4">{post.title}</Text>
 
@@ -138,14 +146,14 @@ const PostDetailScreen = () => {
         {/* Content Section */}
         <View className="bg-white mx-2 rounded-2xl shadow-sm overflow-hidden mb-6">
           {/* Content Header */}
-          
+
 
           {/* Article Content */}
           <View className="px-6 py-6">
             <HTMLViewer htmlContent={post.description} />
           </View>
         </View>
-<View className="px-4 ">
+        <View className="px-4 ">
           <View className="bg-white rounded-2xl shadow-sm p-4">
             <View className="flex-row justify-center items-center">
             </View>

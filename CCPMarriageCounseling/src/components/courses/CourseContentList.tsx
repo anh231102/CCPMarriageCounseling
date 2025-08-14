@@ -138,9 +138,13 @@ export const CourseContentList: React.FC<CourseContentListProps> = ({ chapters, 
               colors={["#E83E8C", "#FF6B9D"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="h-full rounded-full"
-              style={{ width: `${progressPercentage}%` }}
+              style={{
+                height: "100%",
+                borderRadius: 9999, // tương đương rounded-full
+                width: `${progressPercentage}%`,
+              }}
             />
+
           </View>
 
           {/* Progress Labels */}
@@ -188,7 +192,15 @@ export const CourseContentList: React.FC<CourseContentListProps> = ({ chapters, 
                       {/* Chapter Icon */}
                       <LinearGradient
                         colors={canPress ? colors : ["#9CA3AF", "#6B7280"]}
-                        className="w-12 h-12 rounded-xl items-center justify-center mr-4 overflow-hidden"
+                        style={{
+                          width: 48, // w-12
+                          height: 48, // h-12
+                          borderRadius: 12, // rounded-xl
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginRight: 16, // mr-4
+                          overflow: "hidden",
+                        }}
                       >
                         {getChapterIcon(chapter.chapterType)}
                       </LinearGradient>

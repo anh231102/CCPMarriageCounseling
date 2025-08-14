@@ -119,7 +119,15 @@ export const CourseDetailScreen = () => {
         <View className="flex-1 justify-center items-center bg-black/40 px-4">
           <View className="bg-white rounded-3xl overflow-hidden w-full max-w-sm shadow-2xl">
             {/* Header with gradient */}
-            <LinearGradient colors={["#E83E8C", "#FF6B9D"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} className="p-6">
+            <LinearGradient
+              colors={["#E83E8C", "#FF6B9D"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{
+                padding: 24, // tương đương p-6
+                borderRadius: 12
+              }}
+            >
               <View className="flex-row justify-between items-center mb-4">
                 <Text className="text-white text-xl font-bold">Xác nhận đăng ký</Text>
                 <TouchableOpacity
@@ -227,9 +235,15 @@ export const CourseDetailScreen = () => {
                     colors={["#E83E8C", "#FF6B9D"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
-                    style={{ padding: 15 }}
-                    className="flex items-center justify-center"
-
+                    style={{
+                      padding: 15,
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 12,
+                      height: 55, // thêm kích thước cụ thể
+                      width: "100%"
+                    }}
                   >
 
                     <Text className="text-white font-bold items-center text-lg ml-2">Đăng ký ngay</Text>

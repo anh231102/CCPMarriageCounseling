@@ -184,7 +184,13 @@ const CourseContentScreen = ({ route, navigation }: any) => {
 
       {showLessons ? (
         <ScrollView className="flex-1 bg-white">
-          <LinearGradient colors={["#F8FAFC", "#F1F5F9"]} className="p-6 ">
+          <LinearGradient
+            colors={["#F8FAFC", "#F1F5F9"]}
+            style={{
+              padding: 24, // p-6 (6 × 4 = 24px)
+            }}
+          >
+
             <Text className="text-2xl font-bold text-gray-800 mb-6">Nội dung khóa học</Text>
             {lessons.map((lesson: Chapter, index: number) => {
               const isActive = lesson.id === chapterData.id
@@ -208,7 +214,18 @@ const CourseContentScreen = ({ route, navigation }: any) => {
                       }`}
                   >
                     <View className="flex-row items-center">
-                      <LinearGradient colors={colors} className="w-12 h-12 rounded-2xl items-center justify-center mr-4 overflow-hidden">
+                      <LinearGradient
+                        colors={colors}
+                        style={{
+                          width: 48,               // w-12 (12 × 4)
+                          height: 48,              // h-12
+                          borderRadius: 16,        // rounded-2xl ≈ 16px
+                          alignItems: "center",    // items-center
+                          justifyContent: "center",// justify-center
+                          marginRight: 16,         // mr-4
+                          overflow: "hidden",      // overflow-hidden
+                        }}
+                      >
                         {getChapterIcon(lesson.chapterType || "Lecture")}
                       </LinearGradient>
 
@@ -241,8 +258,15 @@ const CourseContentScreen = ({ route, navigation }: any) => {
             {/* Chapter Header */}
             <LinearGradient
               colors={getChapterTypeColor(chapterData.chapterType || "Lecture")}
-              className="mx-4 mt-4 rounded-3xl p-6 overflow-hidden"
+              style={{
+                marginHorizontal: 16, // mx-4 (4 × 4)
+                marginTop: 16,        // mt-4
+                borderRadius: 24,     // rounded-3xl
+                padding: 24,          // p-6
+                overflow: "hidden",
+              }}
             >
+
               <View className="flex-row items-center mb-4">
                 <View className="bg-white/20 p-3 rounded-2xl mr-4">
                   {getChapterIcon(chapterData.chapterType || "Lecture")}
@@ -364,7 +388,16 @@ const CourseContentScreen = ({ route, navigation }: any) => {
                         ))}
 
                         {quizSubmitted ? (
-                          <LinearGradient colors={["#10B981", "#059669"]} className="rounded-2xl p-6 items-center mt-6">
+                          <LinearGradient
+                            colors={["#10B981", "#059669"]}
+                            style={{
+                              borderRadius: 16,
+                              padding: 24,
+                              alignItems: "center",
+                              marginTop: 24,
+                            }}
+                          >
+
                             <Award size={32} color="#fff" />
                             <Text className="text-white font-bold text-lg text-center mt-2">{quizResult}</Text>
                           </LinearGradient>
@@ -377,8 +410,14 @@ const CourseContentScreen = ({ route, navigation }: any) => {
                           >
                             <LinearGradient
                               colors={canSubmitQuiz ? ["#14B8A6", "#0D9488"] : ["#9CA3AF", "#6B7280"]}
-                              className="w-full rounded-2xl p-4 items-center"
+                              style={{
+                                width: "100%",
+                                borderRadius: 16,
+                                padding: 16,
+                                alignItems: "center",
+                              }}
                             >
+
                               <Text className="text-white font-bold text-lg">Nộp bài kiểm tra</Text>
                             </LinearGradient>
                           </TouchableOpacity>

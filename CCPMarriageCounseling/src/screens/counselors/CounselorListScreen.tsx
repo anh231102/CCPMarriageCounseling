@@ -62,9 +62,7 @@ const CounselorListScreen = () => {
             onChangeText={setSearchQuery}
           />
         </View>
-        <TouchableOpacity className="bg-white p-3 rounded-lg border border-gray-200">
-          <Filter size={18} color="#6C757D" />
-        </TouchableOpacity>
+        
       </View>
 
       <TouchableOpacity
