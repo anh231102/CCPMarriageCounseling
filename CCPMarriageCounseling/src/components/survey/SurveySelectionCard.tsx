@@ -14,6 +14,8 @@ import Loading from "../share/Loading"
 import surveyApi from "@/src/config/api/survey.api"
 import { useAuth } from "@/src/hooks/useAuth"
 import type { Survey } from "@/src/config/types/survey.type"
+import { surveyTypes } from "@/src/config/types/survey.type"
+
 
 type Props = {
   navigateTo: string
@@ -83,16 +85,24 @@ const SurveySelectionCard = ({ navigateTo }: Props) => {
             <TouchableOpacity
               key={survey.id}
               onPress={() => toggleSelect(survey.id)}
-              className={`flex-row items-center p-3 rounded-lg ${
-                selectedIds.includes(survey.id) ? "bg-primary/10" : "bg-gray-50"
-              }`}
+              className={`flex-row items-center p-3 rounded-lg ${selectedIds.includes(survey.id) ? "bg-primary/10" : "bg-gray-50"
+                }`}
             >
               <View className="bg-white rounded-full p-2 mr-3">
                 <Text className="text-lg">📋</Text>
               </View>
               <View className="flex-1">
-                <Text className="font-medium text-secondary-dark">{survey.name}</Text>
-                <Text className="text-secondary text-sm">{survey.descriptione}</Text>
+                <Text className="font-medium text-secondary-dark">
+                  {survey.name}
+                  {surveyTypes.find(t => t.name === survey.name)?.fullNameVi
+                    ? ` (${surveyTypes.find(t => t.name === survey.name)?.fullNameVi})`
+                    : ""}
+                </Text>
+                <Text className="text-secondary text-sm">
+                  {
+                    surveyTypes.find(t => t.name === survey.name)?.shortTitle || survey.descriptione
+                  }
+                </Text>
               </View>
               {selectedIds.includes(survey.id) && (
                 <CheckCircle size={20} color="#28A745" />

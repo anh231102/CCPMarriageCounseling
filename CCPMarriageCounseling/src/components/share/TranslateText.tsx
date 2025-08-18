@@ -4,6 +4,7 @@
 import { useState } from "react"
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native"
 import axios from "axios"
+import Loading from "./Loading"
 
 const TranslateText = () => {
   const [input, setInput] = useState("")
@@ -53,7 +54,7 @@ const TranslateText = () => {
       </TouchableOpacity>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#EC4899" />
+        <Loading size={60} color="#EC4899" />
       ) : translated ? (
         <View className="bg-gray-100 rounded-md p-3">
           <Text className="text-secondary-dark font-medium">Kết quả dịch:</Text>

@@ -25,6 +25,7 @@ import {
 } from "lucide-react-native";
 import coupleApi from "@/src/config/api/couple.api";
 import { Couple } from "@/src/config/types/couple.type";
+import Loading from "@/src/components/share/Loading";
 
 const LoveMapHistoryScreen = () => {
   const navigation = useNavigation<any>();
@@ -431,7 +432,7 @@ const LoveMapHistoryScreen = () => {
       <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="flex-1 justify-center items-center py-20">
-            <ActivityIndicator size="large" color="#E83E8C" />
+            <Loading size={60} color="#E83E8C" />
             <Text className="text-secondary mt-2">Đang tải...</Text>
           </View>
         ) : loveMaps.length > 0 ? (

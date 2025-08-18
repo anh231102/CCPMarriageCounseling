@@ -14,7 +14,7 @@ const SurveyOptionsScreen = () => {
   // ✅ Lấy danh sách khảo sát được chọn từ màn trước
   const { selectedSurveyIds } = route.params as { selectedSurveyIds: string[] }
 
-  
+
 
   const handleSelfCheck = () => {
     navigation.navigate("SurveyQuestions", {
@@ -74,8 +74,7 @@ const SurveyOptionsScreen = () => {
             <ArrowRight size={20} color="#E83E8C" />
           </View>
           <Text className="text-secondary mb-4">
-            Bạn sẽ nhập thông tin của đối tác và trả lời các câu hỏi cho cả hai người. Phù hợp khi đối tác chưa có tài
-            khoản hoặc muốn thực hiện nhanh chóng.
+            Bạn sẽ làm bài khảo sát một mình, phù hợp khi bạn muốn tự đánh giá bản thân hoặc chưa có đối tác.
           </Text>
           <View className="bg-primary/5 rounded-xl p-3">
             <View className="flex-row items-center">
@@ -84,7 +83,7 @@ const SurveyOptionsScreen = () => {
             </View>
             <View className="flex-row items-center mt-1">
               <View className="w-2 h-2 bg-success rounded-full mr-2" />
-              <Text className="text-sm text-secondary-dark font-medium">Không cần đối tác có tài khoản</Text>
+              <Text className="text-sm text-secondary-dark font-medium">Dễ dàng đánh giá bản thân</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -132,12 +131,13 @@ const SurveyOptionsScreen = () => {
             </View>
 
             <Text className="text-secondary mb-4">
-              Bạn sẽ nhập thông tin của một nhân vật tưởng tượng và trả lời các câu hỏi dựa trên nhận định của bạn.
+              Bạn sẽ nhập thông tin của đối tác và trả lời các câu hỏi cho cả hai người. Phù hợp khi đối tác chưa có tài
+              khoản hoặc muốn thực hiện nhanh chóng.
             </Text>
 
-            
 
-            
+
+
             <View className="bg-primary/5 rounded-xl p-3 mt-3">
               <View className="flex-row items-center">
                 <View className="w-2 h-2 bg-success rounded-full mr-2" />
@@ -167,7 +167,9 @@ const SurveyOptionsScreen = () => {
               </View>
             </View>
 
-
+            <Text className="text-secondary mb-4">
+              Bạn sẽ tạo phòng để mời đối tác cùng tham gia khảo sát. Cả hai sẽ trả lời các câu hỏi một cách độc lập và kết quả sẽ được phân tích dựa trên thông tin của cả hai.
+            </Text>
 
             <TouchableOpacity onPress={handleConnectPartner} className="border border-primary p-2 rounded-md">
               <View className="flex-row items-center">

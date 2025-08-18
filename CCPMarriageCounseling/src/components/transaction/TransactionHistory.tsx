@@ -38,7 +38,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({ label, options, selectedVal
     const [modalVisible, setModalVisible] = useState(false);
 
     return (
-        <View className="mb-4">
+        <View className="mb-2">
             <Text className="text-gray-800 font-semibold mb-2">{label}</Text>
             <TouchableOpacity
                 className="bg-gray-50 rounded-xl border border-gray-200 p-3"
@@ -157,9 +157,9 @@ const TransactionHistory = () => {
     }
 
     return (
-        <View className="bg-white rounded-2xl p-6 shadow-sm mb-40 relative">
-            <View className="mb-4">
-                <View className="flex-row items-center justify-between mb-2">
+        <View className="bg-white rounded-2xl p-4 shadow-sm mb-44 relative">
+            <View className="mb-2">
+                <View className="flex-row items-center justify-between ">
                     <Text className="text-sm text-secondary-dark ">
                         Lọc theo loại giao dịch
                     </Text>
@@ -217,7 +217,7 @@ const TransactionHistory = () => {
                 }
             />
 
-            <View className="flex-row justify-between mt-4">
+            <View className="flex-row justify-between mt-2">
                 <TouchableOpacity
                     disabled={page <= 1 || loading}
                     onPress={goToPreviousPage}

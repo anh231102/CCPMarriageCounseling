@@ -16,8 +16,10 @@ import surveyApi from "@/src/config/api/survey.api"
 import type { Question, Survey } from "@/src/config/types/survey.type"
 import Loading from "@/src/components/share/Loading"
 import coupleApi from "@/src/config/api/couple.api"
+import SurveyStartModal from "@/src/components/survey/SurveyStartModal"
 
 const CoupleSurveyQuestionsScreen = () => {
+  const [showStartModal, setShowStartModal] = useState(true)
   const navigation = useNavigation<any>()
   const route = useRoute<any>()
   const {
@@ -52,7 +54,7 @@ const CoupleSurveyQuestionsScreen = () => {
 
     const fetchQuestions = async () => {
       setLoading(true)
-
+      setShowStartModal(true)
       try {
         const questionData = await surveyApi.getRandomSurveyQuestions(currentSurveyId)
         setQuestions(questionData)
@@ -112,7 +114,7 @@ const CoupleSurveyQuestionsScreen = () => {
         // ✅ Gửi Couple API
         await coupleApi.postCoupleSurveyResult(formattedResult)
         // Lưu lại toàn bộ câu trả lời từng survey vào allAnswers
-        
+
         answersAccumulator.current = {
           ...answersAccumulator.current,
           [currentSurveyId]: [
@@ -143,7 +145,7 @@ const CoupleSurveyQuestionsScreen = () => {
             userData,
             isAuth: isAuth ?? authState,
             couple: true,
-            accumulatedAnswers: answersAccumulator.current, 
+            accumulatedAnswers: answersAccumulator.current,
           })
         }
       } catch (error) {
@@ -249,6 +251,11 @@ const CoupleSurveyQuestionsScreen = () => {
           </Text>
         </View>
       </View>
+      <SurveyStartModal
+        visible={showStartModal}
+        surveyId={currentSurveyId}
+        onClose={() => setShowStartModal(false)}
+      />
     </View>
   )
 }

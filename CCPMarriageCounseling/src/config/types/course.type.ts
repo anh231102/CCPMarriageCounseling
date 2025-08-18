@@ -47,6 +47,7 @@ export interface CourseDetail {
   subCategories: SubCategory[]
   status: number
   isEnrolled: boolean
+  isBuy: boolean
   processingCount: number
 
 

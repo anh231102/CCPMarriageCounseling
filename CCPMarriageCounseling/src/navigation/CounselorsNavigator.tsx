@@ -40,7 +40,7 @@ const CounselorsNavigator = () => {
         component={VideoCallScreen}
         options={{ title: "Gọi tư vấn" }}
       />
-      <Stack.Screen name="ReportAppointment" component={ReportAppointmentScreen} />
+      <Stack.Screen name="ReportAppointment" component={ReportAppointmentScreen}  options={{ title: "Báo cáo buổi tư vấn" }}/>
 
 
     </Stack.Navigator>

@@ -28,6 +28,8 @@ import CourseContentScreen from "../screens/courses/CourseContentScreen"
 import CourseReviewScreen from "../screens/courses/CourseReviewScreen"
 import VideoCallScreen from "../screens/counselors/VideoCallScreen"
 import PaymentWebView from "../screens/profile/PaymentWebView"
+import ReportAppointmentScreen from "../screens/counselors/ReportAppointmentScreen"
+import RateAppointmentScreen from "../screens/counselors/RateAppointmentScreen"
 
 
 
@@ -128,6 +130,13 @@ const ProfileNavigator = () => {
         component={PaymentWebView}
         options={{ title: "Thanh toán" }}
       />
+      <Stack.Screen
+        name="RateAppointment"
+        component={RateAppointmentScreen}
+        options={{ title: "Đánh giá buổi tư vấn" }}
+      />
+      <Stack.Screen name="ReportAppointment" component={ReportAppointmentScreen} options={{ title: "Báo cáo buổi tư vấn" }} />
+
       <Stack.Screen name="VirtualSurveyQuestions" component={VirtualSurveyQuestionsScreen} options={{ title: "Phòng khảo sát " }} />
     </Stack.Navigator>
   )

@@ -16,8 +16,10 @@ import { useAuth } from "../../hooks/useAuth"
 import surveyApi from "@/src/config/api/survey.api"
 import type { Question, Survey } from "@/src/config/types/survey.type"
 import Loading from "@/src/components/share/Loading"
+import SurveyStartModal from "@/src/components/survey/SurveyStartModal"
 
 const VirtualSurveyQuestionsScreen = () => {
+  const [showStartModal, setShowStartModal] = useState(true)
   const navigation = useNavigation<any>()
   const route = useRoute<any>()
   const {
@@ -48,6 +50,7 @@ const VirtualSurveyQuestionsScreen = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       setLoading(true)
+      setShowStartModal(true)
       try {
         const questionData = await surveyApi.getRandomSurveyQuestions(currentSurveyId)
         setQuestions(questionData)
@@ -74,77 +77,77 @@ const VirtualSurveyQuestionsScreen = () => {
   }, [currentQuestionIndex, totalQuestions])
 
   const handleAnswer = async (answerValue: any) => {
-  let isLastSurvey = false;
-  const questionId = currentQuestion.id
-  const updatedAnswers = {
-    ...answers,
-    [questionId]: answerValue,
-  }
-  setAnswers(updatedAnswers)
+    let isLastSurvey = false;
+    const questionId = currentQuestion.id
+    const updatedAnswers = {
+      ...answers,
+      [questionId]: answerValue,
+    }
+    setAnswers(updatedAnswers)
 
-  if (currentQuestionIndex < totalQuestions - 1) {
-    setCurrentQuestionIndex(currentQuestionIndex + 1)
-  } else {
-    setLoading(true)
-    try {
-      const groupedAnswers: Record<string, number> = {}
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
+    } else {
+      setLoading(true)
+      try {
+        const groupedAnswers: Record<string, number> = {}
 
-      Object.values(updatedAnswers).forEach((ans: any) => {
-        if (ans.tag && typeof ans.score === "number") {
-          groupedAnswers[ans.tag] = (groupedAnswers[ans.tag] || 0) + ans.score
+        Object.values(updatedAnswers).forEach((ans: any) => {
+          if (ans.tag && typeof ans.score === "number") {
+            groupedAnswers[ans.tag] = (groupedAnswers[ans.tag] || 0) + ans.score
+          }
+        })
+
+        const formattedResult = {
+          surveyId: currentSurveyId,
+          answers: Object.entries(groupedAnswers).map(([tag, score]) => ({
+            tag,
+            score,
+          })),
         }
-      })
 
-      const formattedResult = {
-        surveyId: currentSurveyId,
-        answers: Object.entries(groupedAnswers).map(([tag, score]) => ({
-          tag,
-          score,
-        })),
-      }
 
-      
 
-      const resultText = await surveyApi.postVirtualSurveyResult(formattedResult)
+        const resultText = await surveyApi.postVirtualSurveyResult(formattedResult)
 
-      
 
-      isLastSurvey = currentSurveyIndex >= selectedSurveyIds.length - 1
 
-      if (isLastSurvey) {
-        
-        navigation.navigate("CoupleSurveyRoom", {
-          roomId,
-          isHost,
-          isSurvey,
-        })
-      } else {
-        navigation.replace("SurveySectionComplete", {
-          selectedSurveyIds,
-          currentSurveyIndex,
-          nextSurveyIndex: currentSurveyIndex + 1,
-          currentSurveyTitle: surveyTitle,
-          resultText,
-          userType,
-          userData,
-          isAuth: isAuth ?? authState,
-          couple: true,
-          isVirtual: true,
-        })
-      }
-    } catch (error) {
-      // Log lỗi chi tiết
+        isLastSurvey = currentSurveyIndex >= selectedSurveyIds.length - 1
 
-      Alert.alert("Lỗi", "Không thể lưu kết quả khảo sát. Vui lòng thử lại.")
-    } finally {
-      setLoading(false)
-      if (!isLastSurvey) {
-        setAnswers({})
-        setCurrentQuestionIndex(0)
+        if (isLastSurvey) {
+
+          navigation.navigate("CoupleSurveyRoom", {
+            roomId,
+            isHost,
+            isSurvey,
+          })
+        } else {
+          navigation.replace("SurveySectionComplete", {
+            selectedSurveyIds,
+            currentSurveyIndex,
+            nextSurveyIndex: currentSurveyIndex + 1,
+            currentSurveyTitle: surveyTitle,
+            resultText,
+            userType,
+            userData,
+            isAuth: isAuth ?? authState,
+            couple: true,
+            isVirtual: true,
+          })
+        }
+      } catch (error) {
+        // Log lỗi chi tiết
+
+        Alert.alert("Lỗi", "Không thể lưu kết quả khảo sát. Vui lòng thử lại.")
+      } finally {
+        setLoading(false)
+        if (!isLastSurvey) {
+          setAnswers({})
+          setCurrentQuestionIndex(0)
+        }
       }
     }
   }
-}
 
   const handleExit = () => {
     Alert.alert("Thoát khảo sát", "Bạn có chắc chắn muốn thoát?", [
@@ -237,6 +240,11 @@ const VirtualSurveyQuestionsScreen = () => {
           </Text>
         </View>
       </View>
+      <SurveyStartModal
+        visible={showStartModal}
+        surveyId={currentSurveyId}
+        onClose={() => setShowStartModal(false)}
+      />
     </View>
   )
 }

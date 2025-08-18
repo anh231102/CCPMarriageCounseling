@@ -19,11 +19,23 @@ const LoveMapPersonModal = ({ visible, onClose, personKey, coupleData, parseScor
   const person = isFirst ? coupleData.member : coupleData.member1
   const name = person?.fullname || coupleData.virtualName || "Đối tác ảo"
   const avatar =
-    isFirst
-      ? (person?.avatar || require("../../../assets/images/avatar.jpg"))
-      : (coupleData.isVirtual
-        ? (coupleData.virtualAvatar || require("../../../assets/images/avatar.jpg"))
-        : (person?.avatar || require("../../../assets/images/avatar.jpg")));
+  isFirst
+    ? (person?.avatar
+        ? (typeof person.avatar === "string"
+            ? { uri: person.avatar }
+            : require("../../../assets/images/avatar.jpg"))
+        : require("../../../assets/images/avatar.jpg"))
+    : (coupleData.isVirtual
+        ? (coupleData.virtualAvatar
+            ? (typeof coupleData.virtualAvatar === "string"
+                ? { uri: coupleData.virtualAvatar }
+                : require("../../../assets/images/avatar.jpg"))
+            : require("../../../assets/images/avatar.jpg"))
+        : (person?.avatar
+            ? (typeof person.avatar === "string"
+                ? { uri: person.avatar }
+                : require("../../../assets/images/avatar.jpg"))
+            : require("../../../assets/images/avatar.jpg")));
 
 
   const mbtiData = isFirst ? coupleData.mbtiDescription : coupleData.mbti1Description
@@ -64,7 +76,7 @@ const LoveMapPersonModal = ({ visible, onClose, personKey, coupleData, parseScor
         <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false}>
           {/* Profile */}
           <View className="bg-white rounded-xl p-6 mb-6 shadow-sm items-center">
-            <Image source={{ uri: avatar }} className="w-20 h-20 rounded-full mb-4" />
+           <Image source={avatar} className="w-20 h-20 rounded-full mb-4" />
             <Text className="text-2xl font-bold text-secondary-dark mb-2">{name}</Text>
             {person?.dob && (
               <Text className="text-secondary">Sinh năm: {new Date(person.dob).getFullYear()}</Text>

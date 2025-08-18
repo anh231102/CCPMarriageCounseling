@@ -5,6 +5,7 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityInd
 import { useNavigation, useRoute } from "@react-navigation/native"
 import { Star } from "lucide-react-native"
 import bookingApi from "@/src/config/api/booking.api"
+import Loading from "@/src/components/share/Loading"
 
 
 const RateAppointmentScreen = () => {
@@ -115,7 +116,7 @@ const RateAppointmentScreen = () => {
           className={`rounded-lg p-4 items-center mb-6 ${isLoading ? "bg-primary-light" : "bg-primary"}`}
         >
           {isLoading ? (
-            <ActivityIndicator color="white" />
+            <Loading size={30} color="white" />
           ) : (
             <Text className="text-white font-bold text-lg">Gửi đánh giá</Text>
           )}

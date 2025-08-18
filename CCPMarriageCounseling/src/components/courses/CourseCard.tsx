@@ -47,7 +47,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onPress, onEnrol
           <Text className="text-lg font-bold text-secondary-dark mb-1">{course.name}</Text>
           <View className="flex-row items-center mb-2">
             <Star size={16} color="#FFC107" fill="#FFC107" />
-            <Text className="text-secondary-dark ml-1 text-sm">{course.rating?.toFixed(1) || "N/A"}</Text>
+            <Text className="text-secondary-dark ml-1 text-sm">{course.rating?.toFixed(1) || 0}</Text>
             <Text className="text-gray-500 text-xs ml-1">({course.rank || 0} đánh giá)</Text>
           </View>
           <View className="flex-row items-center">
@@ -86,7 +86,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onPress, onEnrol
             <Text className="text-lg font-bold text-secondary-dark mb-1">{course.name}</Text>
             <View className="flex-row items-center mb-2">
               <Star size={16} color="#FFC107" fill="#FFC107" />
-              <Text className="text-secondary-dark ml-1 text-sm">{course.rating?.toFixed(1) || "N/A"}</Text>
+              <Text className="text-secondary-dark ml-1 text-sm">{course.rating?.toFixed(1) || 0}</Text>
               <Text className="text-gray-500 text-xs ml-1">({course.rank || 0} đánh giá)</Text>
             </View>
             <Text className="text-primary font-bold text-base">
@@ -139,7 +139,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onPress, onEnrol
         <Text className="text-lg font-bold text-secondary-dark mb-1">{course.name}</Text>
         <View className="flex-row items-center mb-2">
           <Star size={16} color="#FFC107" fill="#FFC107" />
-          <Text className="text-secondary-dark ml-1 text-sm">{course.rating?.toFixed(1) || "N/A"}</Text>
+          <Text className="text-secondary-dark ml-1 text-sm">{course.rating?.toFixed(1) || 0}</Text>
           <Text className="text-gray-500 text-xs ml-1">({course.rank || 0} đánh giá)</Text>
         </View>
 

@@ -235,7 +235,7 @@ const CoupleConnectionScreen = () => {
               className="flex-row items-center justify-center p-3"
             >
               {isLoading ? (
-                <ActivityIndicator color="#DC3545" size="small" />
+                <Loading size={30} color="#DC3545" />
               ) : (
                 <>
                   <X size={16} color="#DC3545" className="mr-2" />

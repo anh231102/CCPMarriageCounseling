@@ -4,6 +4,7 @@ import { Modal, View, Text, TouchableOpacity, TextInput, ActivityIndicator } fro
 import { X, Info, Send, UserCheck, QrCode } from "lucide-react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import QRScannerScreen from "../share/QRScannerScreen" // Đường dẫn có thể cần chỉnh lại
+import Loading from "../share/Loading"
 
 const InvitePartnerModal = ({
   visible,
@@ -134,7 +135,7 @@ const InvitePartnerModal = ({
                 >
                   {loadingInvite ? (
                     <>
-                      <ActivityIndicator color="#fff" size="small" className="mr-2" />
+                      <Loading size={30} color="#fff"   />
                       <Text className="text-white font-bold text-lg">Đang gửi...</Text>
                     </>
                   ) : (

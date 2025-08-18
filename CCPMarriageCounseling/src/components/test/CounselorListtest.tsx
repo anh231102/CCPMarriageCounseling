@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { View, Text, FlatList, Image, ActivityIndicator } from "react-native"
 import counselorApi from "@/src/config/api/counselor.api"
 import { Counselor } from "@/src/config/types/counselor.type"
+import Loading from "../share/Loading"
 
 const CounselorListScreen = () => {
   const [counselors, setCounselors] = useState<Counselor[]>([])
@@ -25,7 +26,7 @@ const CounselorListScreen = () => {
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#007AFF" />
+        <Loading size={60} color="#007AFF" />
         <Text className="mt-2">Đang tải danh sách tư vấn viên...</Text>
       </View>
     )

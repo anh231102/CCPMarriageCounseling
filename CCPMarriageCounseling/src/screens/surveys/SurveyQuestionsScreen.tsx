@@ -16,8 +16,11 @@ import { useAuth } from "../../hooks/useAuth"
 import surveyApi from "@/src/config/api/survey.api"
 import type { Question, Survey } from "@/src/config/types/survey.type"
 import Loading from "@/src/components/share/Loading"
+import SurveyStartModal from "@/src/components/survey/SurveyStartModal"
+
 
 const SurveyQuestionsScreen = () => {
+  const [showStartModal, setShowStartModal] = useState(true)
   const navigation = useNavigation<any>()
   const route = useRoute<any>()
   const {
@@ -45,6 +48,7 @@ const SurveyQuestionsScreen = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       setLoading(true)
+      setShowStartModal(true)
       try {
         const questionData = await surveyApi.getRandomSurveyQuestions(currentSurveyId)
         setQuestions(questionData)
@@ -175,7 +179,7 @@ const SurveyQuestionsScreen = () => {
             <ArrowLeft size={24} color="#6C757D" />
           </TouchableOpacity>
           <Text className="text-lg font-semibold text-secondary-dark">
-            Khảo sát {currentSurveyIndex + 1}/{selectedSurveyIds.length}
+            Khảo sát {surveyTitle} {currentSurveyIndex + 1}/{selectedSurveyIds.length}
           </Text>
           <View style={{ width: 32 }} />
         </View>
@@ -229,6 +233,11 @@ const SurveyQuestionsScreen = () => {
           </Text>
         </View>
       </View>
+      <SurveyStartModal
+        visible={showStartModal}
+        surveyId={currentSurveyId}
+        onClose={() => setShowStartModal(false)}
+      />
     </View>
   )
 }

@@ -13,6 +13,7 @@ import { X, BarChart3, TrendingUp, TrendingDown, Calendar, DollarSign } from "lu
 import { LinearGradient } from "expo-linear-gradient";
 import type { Transaction } from "@/src/config/types/transaction.type";
 import { getTransactionTypeLabel } from "@/src/config/types/transaction.type";
+import Loading from "../share/Loading";
 
 // Format tiền tệ
 const formatCurrency = (amount: number) =>
@@ -107,11 +108,11 @@ const TransactionStatsModal: React.FC<TransactionStatsModalProps> = ({
   const totalPages = stats ? Math.ceil(stats.list.length / pageSize) : 1;
 
   useEffect(() => {
-  if (visible && !stats && !loading) {
-    onFetchStats();
-  }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [visible]);
+    if (visible && !stats && !loading) {
+      onFetchStats();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
 
   return (
     <Modal visible={visible} transparent animationType="fade">
@@ -205,8 +206,10 @@ const TransactionStatsModal: React.FC<TransactionStatsModalProps> = ({
               >
                 {loading ? (
                   <>
-                    <ActivityIndicator color="#fff" size="small" className="mr-2" />
-                    <Text className="text-white font-bold text-lg">Đang tải...</Text>
+                    <View className="items-center justify-center w-full">
+                      <Loading size={30} color="#fff" />
+                      <Text className="text-white font-bold text-lg mt-2">Đang tải...</Text>
+                    </View>
                   </>
                 ) : (
                   <>

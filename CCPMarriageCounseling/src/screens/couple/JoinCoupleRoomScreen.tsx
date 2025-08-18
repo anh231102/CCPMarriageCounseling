@@ -13,6 +13,7 @@ import { Hash, AlertCircle } from "lucide-react-native";
 import { useAuth } from "../../hooks/useAuth";
 import coupleApi from "@/src/config/api/couple.api";
 import ActiveCoupleRoomCard from "@/src/components/couple/ActiveCoupleRoomCard";
+import Loading from "@/src/components/share/Loading";
 
 const JoinCoupleRoomScreen = () => {
   const navigation = useNavigation<any>();
@@ -140,7 +141,7 @@ const JoinCoupleRoomScreen = () => {
                 }`}
               >
                 {isLoading ? (
-                  <ActivityIndicator color="white" size="small" />
+                  <Loading size={30} color="white"  />
                 ) : (
                   <Text className="text-white font-bold">Vào phòng</Text>
                 )}

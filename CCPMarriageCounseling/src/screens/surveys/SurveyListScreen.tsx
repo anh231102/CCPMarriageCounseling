@@ -1,16 +1,26 @@
 "use client"
-
-import { View, Text, ScrollView } from "react-native"
+import { useState } from "react"
+import { View, Text, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager } from "react-native"
 import { useNavigation } from "@react-navigation/native"
-import { UserPlus, CheckCircle } from "lucide-react-native"
-
+import { UserPlus, CheckCircle, ChevronDown, ChevronUp } from "lucide-react-native"
+import { surveyTypes } from "@/src/config/types/survey.type"
 import CustomButton from "@/src/components/CustomButton"
 import SurveySelectionCard from "@/src/components/survey/SurveySelectionCard"
 import { useAuth } from "@/src/hooks/useAuth"
 
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true)
+}
+
 const SurveyListScreen = () => {
   const navigation = useNavigation<any>()
   const { isAuth } = useAuth()
+  const [showAllDetails, setShowAllDetails] = useState(false)
+
+  const handleToggle = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+    setShowAllDetails(!showAllDetails)
+  }
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -38,6 +48,43 @@ const SurveyListScreen = () => {
         {/* ✅ Component đã tách */}
         <SurveySelectionCard navigateTo="SurveyDetail" />
 
+       {/* Khung bao toàn bộ phần "Xem chi tiết" */}
+<View className="bg-white rounded-xl shadow-sm p-4 mb-6">
+  {/* Nút toggle danh sách khảo sát */}
+  <TouchableOpacity
+    className="flex-row items-center justify-between py-3"
+    onPress={handleToggle}
+    activeOpacity={0.7}
+  >
+    <Text className="text-primary font-semibold text-base">Xem chi tiết thông tin các bài khảo sát</Text>
+    {showAllDetails ? (
+      <ChevronUp size={18} color="#E83E8C" />
+    ) : (
+      <ChevronDown size={18} color="#E83E8C" />
+    )}
+  </TouchableOpacity>
+
+  {/* Khi mở thì hiển thị toàn bộ danh sách */}
+  {showAllDetails && (
+    <View className="mt-3">
+      {surveyTypes.map(type => (
+        <View
+          key={type.id}
+          className="bg-gray-50 rounded-lg p-3 mb-3 border border-gray-200"
+        >
+          <Text className="text-primary font-semibold text-base">
+            {type.name} ({type.fullNameVi})
+          </Text>
+          <Text className="text-secondary-dark font-medium mt-1">{type.shortTitle}</Text>
+          <Text className="text-secondary text-sm mt-0.5">{type.description}</Text>
+        </View>
+      ))}
+    </View>
+  )}
+</View>
+
+
+        {/* Lợi ích khi hoàn thành */}
         <View className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <Text className="text-lg font-bold text-secondary-dark mb-4">Lợi ích khi hoàn thành</Text>
           <View className="space-y-3">

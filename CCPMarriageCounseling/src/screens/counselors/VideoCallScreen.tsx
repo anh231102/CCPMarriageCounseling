@@ -5,6 +5,7 @@ import { Audio } from "expo-av"
 import { WebView } from "react-native-webview"
 import { useRoute } from "@react-navigation/native"
 import bookingApi from "@/src/config/api/booking.api" 
+import Loading from "@/src/components/share/Loading"
 
 const VideoCallScreen = () => {
   const route = useRoute<any>()
@@ -54,7 +55,7 @@ const VideoCallScreen = () => {
   if (!permissionGranted || !joinUrl) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" }}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <Loading size={60} color="#007AFF" />
       </View>
     )
   }

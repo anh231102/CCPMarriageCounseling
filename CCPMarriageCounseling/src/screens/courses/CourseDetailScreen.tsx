@@ -41,7 +41,7 @@ export const CourseDetailScreen = () => {
   const isEnrolled = course?.isEnrolled ?? initialCourse?.isEnrolled ?? true
   const isFree = initialCourse?.isFree ?? false
   const freeByMembershipName = initialCourse?.freeByMembershipName ?? ""
-  const isBuy = initialCourse?.isBuy ?? true
+  const isBuy = course?.isBuy ?? initialCourse?.isBuy ?? true
   const openedChapters = course?.chapters?.filter(chap => chap.status === 1) ?? [];
   const chapterCount = openedChapters.length;
   const processingCount = openedChapters.filter(chap => chap.isDone).length;
@@ -295,7 +295,7 @@ export const CourseDetailScreen = () => {
               )}
               <View className="flex-row items-center mb-2">
                 <Star size={20} color="#FFC107" fill="#FFC107" />
-                <Text className="text-secondary-dark ml-1 text-base">{course.rating?.toFixed(1) || "N/A"}</Text>
+                <Text className="text-secondary-dark ml-1 text-base">{course.rating?.toFixed(1) || 0}</Text>
                 <Text className="text-gray-500 text-sm ml-2">({course.rank || 0} xếp hạng)</Text>
               </View>
               <Text className="text-primary font-bold text-xl mb-4">

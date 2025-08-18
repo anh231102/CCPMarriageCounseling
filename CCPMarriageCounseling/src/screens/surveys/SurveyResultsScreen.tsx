@@ -109,13 +109,14 @@ const SurveyResultsScreen = () => {
 
           {isAuthenticated && (
             <CustomButton
-              onPress={() => navigation.navigate("LoveMap")}
+              onPress={() => navigation.navigate("ProfileTab", { screen: "LoveMapHistory" })}
               variant="solid"
             >
               <Text className="text-white font-medium text-center">
                 Xem bản đồ tình yêu chi tiết
               </Text>
             </CustomButton>
+
           )}
         </View>
       </ScrollView>

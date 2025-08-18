@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native"
 import { Star, Award, Crown, Medal, Trophy } from "lucide-react-native"
 import counselorApi from "@/src/config/api/counselor.api"
 import type { Counselor } from "@/src/config/types/counselor.type"
+import Loading from "../share/Loading"
 
 interface CounselorRecommendListProps {
   coupleId?: string
@@ -63,7 +64,7 @@ const CounselorRecommendList = ({ coupleId }: CounselorRecommendListProps) => {
   if (loading) {
     return (
       <View className="py-6 items-center">
-        <ActivityIndicator size="large" color="#E83E8C" />
+        <Loading size={30} color="#E83E8C" />
         <Text className="text-secondary mt-2">Đang tải gợi ý...</Text>
       </View>
     )

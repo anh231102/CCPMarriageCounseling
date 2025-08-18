@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react-native"
 import { useNavigation } from "@react-navigation/native"
 import postApi from "@/src/config/api/post.api"
 import type { PostItem } from "@/src/config/types/post.type"
+import Loading from "../share/Loading"
 
 const ListPostHorizontal: React.FC = () => {
   const [posts, setPosts] = useState<PostItem[]>([])
@@ -28,7 +29,7 @@ const ListPostHorizontal: React.FC = () => {
   if (loading) {
     return (
       <View className="py-8 items-center">
-        <ActivityIndicator size="small" color="#E83E8C" />
+        <Loading size={30} color="#E83E8C" />
         <Text className="text-gray-600 mt-2">Đang tải bài viết...</Text>
       </View>
     )

@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native"
 import { Star, Award, Crown, Medal, Trophy } from "lucide-react-native"
 import courseApi from "@/src/config/api/course.api"
 import type { RecommendedCourse } from "@/src/config/types/course.type"
+import Loading from "../share/Loading"
 
 interface CourseRecommendListProps {
     coupleId?: string
@@ -63,7 +64,7 @@ const CourseRecommendList = ({ coupleId }: CourseRecommendListProps) => {
     if (loading) {
         return (
             <View className="py-6 items-center">
-                <ActivityIndicator size="large" color="#E83E8C" />
+                <Loading size={30} color="#E83E8C" />
                 <Text className="text-secondary mt-2">Đang tải gợi ý...</Text>
             </View>
         )

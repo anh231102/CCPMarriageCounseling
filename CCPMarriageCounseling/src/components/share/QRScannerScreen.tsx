@@ -3,6 +3,7 @@ import { View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
 import { X } from 'lucide-react-native';
+import Loading from './Loading';
 
 export default function QRScannerScreen({ onScanned, onCancel, context }: { onScanned?: (code: string) => void, onCancel?: () => void, context?: string }) {
   const navigation = useNavigation<any>();
@@ -37,7 +38,7 @@ export default function QRScannerScreen({ onScanned, onCancel, context }: { onSc
         startInLoadingState
         renderLoading={() => (
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" }}>
-            <ActivityIndicator size="large" color="#007AFF" />
+            <Loading size={60} color="#007AFF" />
           </View>
         )}
       />

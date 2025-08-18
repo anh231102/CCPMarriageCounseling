@@ -6,6 +6,7 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } fro
 import { Star, MessageSquare, Send, Heart } from "lucide-react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import courseApi from "@/src/config/api/course.api"
+import Loading from "../share/Loading"
 
 interface CourseRatingFormProps {
   courseId: string
@@ -181,7 +182,7 @@ export const CourseRatingForm: React.FC<CourseRatingFormProps> = ({ courseId, on
             >
               {loading ? (
                 <>
-                  <ActivityIndicator color="#fff" size="small" />
+                  <Loading size={30} color="#fff"  />
                   <Text className="text-white font-bold text-lg ml-3">Đang gửi...</Text>
                 </>
               ) : (

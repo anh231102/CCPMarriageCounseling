@@ -7,6 +7,7 @@ import RenderHTML from "react-native-render-html"
 import Loading from "../share/Loading"
 import SurveyScores from "./SurveyScores" 
 import HTMLViewer from "../share/HTMLViewer"
+import LoveMapSurveyDetail from "../lovemap/LoveMapSurveyDetail"
 
 
 const SURVEY_META: Record<
@@ -99,7 +100,8 @@ const SurveyDetailBlock = ({ id }: { id: string }) => {
             source={{ html: `<div>${data.detail}</div>` }}
             baseStyle={{ color: "#343a40", fontSize: 14 }}
           /> */}
-           <HTMLViewer htmlContent={data.detail} />
+           <LoveMapSurveyDetail title={`Chi tiết ${data.name}`} description={data.detail || ""} />
+           
         </View>
       </View>
       
