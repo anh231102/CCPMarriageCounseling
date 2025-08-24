@@ -49,6 +49,7 @@ export interface CourseDetail {
   isEnrolled: boolean
   isBuy: boolean
   processingCount: number
+  isFree: string | null
 
 
 }
@@ -180,5 +181,11 @@ export interface RecommendedCourse {
 export interface RecommendedCourseResponse {
   success: boolean
   data: RecommendedCourse[]
+  error: string | null
+}
+
+export interface MaxCourseDiscountResponse {
+  success: boolean
+  data: number  // % giảm giá tối đa, ví dụ: 30
   error: string | null
 }

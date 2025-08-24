@@ -13,6 +13,7 @@ import MyProfileComponent from "@/src/components/share/MyProfileComponent"
 import ListPost from "@/src/components/post/ListPost"
 import CourseListMini from "@/src/components/courses/CourseListMini"
 import MembershipPromoPanel from "@/src/components/membership/MembershipPromoPanel"
+import notificationApi from "@/src/config/api/notification.api"
 
 const HomeScreen = () => {
   const navigation = useNavigation<any>()
@@ -21,6 +22,7 @@ const HomeScreen = () => {
   const [counselors, setCounselors] = useState<Counselor[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [unopenedCount, setUnopenedCount] = useState(0)
 
   const fetchCounselors = async () => {
     try {
@@ -37,6 +39,21 @@ const HomeScreen = () => {
   useEffect(() => {
     fetchCounselors()
   }, [])
+  useEffect(() => {
+  const fetchNotificationSummary = async () => {
+    try {
+      const summary = await notificationApi.getNotificationSummary()
+      setUnopenedCount(summary.unopenedCount)
+    } catch (err) {
+      console.error("Lỗi khi lấy thông báo:", err)
+    }
+  }
+  // Lắng nghe khi HomeScreen được focus
+  const unsubscribe = navigation.addListener("focus", fetchNotificationSummary)
+  // Gọi lần đầu
+  fetchNotificationSummary()
+  return unsubscribe
+}, [navigation])
 
   const onRefresh = async () => {
     setRefreshing(true)
@@ -53,16 +70,37 @@ const HomeScreen = () => {
       {/* Header */}
       <View className="bg-primary px-4 pt-2 pb-6">
         <View className="flex-row justify-between items-center">
-          <View>
-            <Text className="text-white text-lg font-medium">Xin chào,</Text>
-            <MyProfileComponent name />
-
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate("ProfileTab", { screen: "Profile" })}>
+            <View>
+              <Text className="text-white text-lg font-medium">Xin chào,</Text>
+              <MyProfileComponent name />
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("ProfileTab", { screen: "Notifications" })}
             className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
           >
             <Bell size={20} color="white" />
+            {unopenedCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  top: 4,
+                  right: 4,
+                  backgroundColor: "#69515C",
+                  borderRadius: 8,
+                  minWidth: 16,
+                  height: 16,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 4,
+                }}
+              >
+                <Text style={{ color: "white", fontSize: 10, fontWeight: "bold" }}>
+                  {unopenedCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
       </View>

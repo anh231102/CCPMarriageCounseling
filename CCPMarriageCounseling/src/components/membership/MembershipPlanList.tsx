@@ -70,7 +70,7 @@ const MembershipPlanList = ({ onBought }: Props) => {
                 [
                   {
                     text: "💳 Nạp tiền vào ví",
-                    onPress: () => navigation.navigate("RechargeScreen"),
+                    onPress: () => navigation.navigate("Wallet"),
                   },
                   { text: "Đóng", style: "cancel" },
                 ]

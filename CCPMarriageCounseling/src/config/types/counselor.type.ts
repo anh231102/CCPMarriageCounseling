@@ -58,3 +58,10 @@ export interface RecommendedCounselorByCoupleResponse {
   error: string | null
 }
 
+export interface FilterState {
+  minPrice: string
+  maxPrice: string
+  minYear: string
+  maxYear: string
+  selectedSubCategories: string[]
+}

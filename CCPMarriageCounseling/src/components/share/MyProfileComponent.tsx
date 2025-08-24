@@ -24,7 +24,7 @@ const MyProfileComponent = (props: Props) => {
       const data = await memberApi.getMyProfile()
       setProfile(data)
     } catch (err) {
-      
+
     } finally {
       setLoading(false)
     }
@@ -55,7 +55,11 @@ const MyProfileComponent = (props: Props) => {
         <View className="relative">
           {showImage && (
             <Image
-              source={{ uri: profile.avatar || "https://placeholder.svg?height=100&width=100" }}
+              source={
+                profile.avatar
+                  ? { uri: profile.avatar }
+                  : require("../../../assets/images/avatar.jpg")
+              }
               className="w-24 h-24 rounded-full"
             />
           )}

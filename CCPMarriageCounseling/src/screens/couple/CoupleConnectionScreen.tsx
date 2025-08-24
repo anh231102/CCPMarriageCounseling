@@ -55,7 +55,7 @@ const CoupleConnectionScreen = () => {
 
         if (!result.success) {
           const msg = result.error || ""
-          console.warn("Create couple failed:", msg)
+          
 
           if (msg.includes("active room") || msg.includes("phòng đang hoạt động")) {
             Alert.alert(
@@ -124,7 +124,7 @@ const CoupleConnectionScreen = () => {
           setPolling(true)
         }
       } catch (e) {
-        console.error("Lỗi setupCoupleRoom:", e)
+        
       }
     }
 

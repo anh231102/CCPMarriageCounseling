@@ -164,14 +164,8 @@ const SurveyDetailScreen = () => {
             <Text className="text-white font-bold">Bắt đầu khảo sát tổng hợp</Text>
           </CustomButton>
 
-          {/* Xem ví dụ */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate("LoveMap")}
-            className="flex-row items-center justify-center"
-          >
-            <Text className="text-primary font-medium">Xem ví dụ bản đồ tình yêu</Text>
-            <ArrowRight size={16} color="#E83E8C" className="ml-1" />
-          </TouchableOpacity>
+          
+         
         </View>
       </ScrollView>
     </View>

@@ -25,9 +25,9 @@ const CourseRecommendList = ({ coupleId }: CourseRecommendListProps) => {
                 } else {
                     res = await courseApi.getRecommendedCourses()
                 }
-                setData(res.slice(0, 5)) // chỉ lấy top 5
+                setData(res.slice(0, 5)) 
             } catch (err: any) {
-                console.error("API error:", err)
+                
                 setError("Không thể tải danh sách gợi ý")
             } finally {
                 setLoading(false)

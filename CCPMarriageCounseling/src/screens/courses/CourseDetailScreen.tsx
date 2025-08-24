@@ -39,13 +39,14 @@ export const CourseDetailScreen = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const isEnrolled = course?.isEnrolled ?? initialCourse?.isEnrolled ?? true
-  const isFree = initialCourse?.isFree ?? false
+  const isFree = course?.isFree
   const freeByMembershipName = initialCourse?.freeByMembershipName ?? ""
   const isBuy = course?.isBuy ?? initialCourse?.isBuy ?? true
   const openedChapters = course?.chapters?.filter(chap => chap.status === 1) ?? [];
   const chapterCount = openedChapters.length;
   const processingCount = openedChapters.filter(chap => chap.isDone).length;
   const Progress = chapterCount > 0 ? processingCount / chapterCount : 0;
+  const [maxDiscount, setMaxDiscount] = useState<number | null>(null)
 
   const fetchCourseDetails = useCallback(async () => {
     setLoading(true)
@@ -66,8 +67,14 @@ export const CourseDetailScreen = () => {
     }, [fetchCourseDetails])
   );
 
-  const handleEnrollCourse = () => {
+  const handleEnrollCourse = async () => {
     setShowConfirmModal(true);
+    try {
+      const discount = await courseApi.getMaxCourseDiscount();
+      setMaxDiscount(discount);
+    } catch {
+      setMaxDiscount(null);
+    }
   };
 
   const handlePressChapter = (chapter: Chapter) => {
@@ -78,6 +85,8 @@ export const CourseDetailScreen = () => {
       Alert.alert("Khóa học bị khóa", "Vui lòng đăng ký khóa học để xem nội dung này.")
     }
   }
+
+
 
   const handleRelatedCoursePress = (relatedCourse: Course) => {
     navigation.push("CourseDetail", {
@@ -140,14 +149,7 @@ export const CourseDetailScreen = () => {
               </View>
 
               {/* Course Image */}
-              <View className="items-center">
-                <View className="bg-white/10  rounded-2xl">
-                  <Image
-                    source={{ uri: course.thumble || "https://via.placeholder.com/120x120.png?text=Course" }}
-                    className="w-56 h-48 rounded-xl"
-                  />
-                </View>
-              </View>
+
             </LinearGradient>
 
             {/* Content */}
@@ -174,24 +176,54 @@ export const CourseDetailScreen = () => {
 
                 {/* Price Information */}
                 <View className="bg-gray-50 rounded-2xl p-4">
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-row items-center">
-                      <View className="bg-pink-100 p-2 rounded-xl mr-3">
-                        <CreditCard size={18} color="#E83E8C" />
-                      </View>
-                      <Text className="text-gray-700 font-medium">Giá khóa học</Text>
+                  <Text className="text-gray-800 font-bold text-lg mb-3">Chi tiết thanh toán</Text>
+
+                  {/* Giá gốc */}
+                  <View className="flex-row justify-between mb-2">
+                    <Text className="text-gray-600">Giá gốc</Text>
+                    <Text className="text-primary font-medium">
+                      {course.price === 0 ? "Miễn phí" : `${course.price?.toLocaleString("vi-VN")}đ`}
+                    </Text>
+                  </View>
+
+                  {/* Ưu đãi / Miễn phí */}
+                  {isFree ? (
+                    <View className="flex-row justify-between mb-2">
+                      <Text className="text-gray-600">Ưu đãi</Text>
+                      <Text className="text-green-600 font-medium">Miễn phí</Text>
                     </View>
-                    <View className="items-end">
-                      {course.price === 0 ? (
-                        <View className="bg-green-500 rounded-full px-3 py-1">
-                          <Text className="text-white font-bold text-sm">Miễn phí</Text>
-                        </View>
-                      ) : (
-                        <Text className="text-pink-600 font-bold text-lg">{course.price?.toLocaleString("vi-VN")}đ</Text>
-                      )}
+                  ) : maxDiscount && maxDiscount > 0 ? (
+                    <View className="flex-row justify-between mb-2">
+                      <Text className="text-gray-600">Ưu đãi giảm giá</Text>
+                      <Text className="text-green-600 font-medium">-{maxDiscount}%</Text>
                     </View>
+                  ) : (
+                    <View className="flex-row justify-between mb-2">
+                      <Text className="text-gray-600">Ưu đãi giảm giá</Text>
+                      <Text className="text-gray-500 font-medium">0%</Text>
+                    </View>
+                  )}
+
+                  {/* Tổng tiền */}
+                  <View className="flex-row justify-between border-t border-gray-200 pt-2 mt-2">
+                    <Text className="text-gray-800 font-bold">Tổng tiền</Text>
+                    {isFree ? (
+                      <Text className="text-green-600 font-bold text-lg">Miễn phí</Text>
+                    ) : (
+                      <Text className="text-primary font-bold text-lg">
+                        {(() => {
+                          if (!course.price) return "0đ"
+                          if (maxDiscount && maxDiscount > 0) {
+                            const finalPrice = course.price - (course.price * maxDiscount) / 100
+                            return `${finalPrice.toLocaleString("vi-VN")}đ`
+                          }
+                          return `${course.price.toLocaleString("vi-VN")}đ`
+                        })()}
+                      </Text>
+                    )}
                   </View>
                 </View>
+
               </View>
 
               {/* Action Buttons */}
@@ -298,9 +330,17 @@ export const CourseDetailScreen = () => {
                 <Text className="text-secondary-dark ml-1 text-base">{course.rating?.toFixed(1) || 0}</Text>
                 <Text className="text-gray-500 text-sm ml-2">({course.rank || 0} xếp hạng)</Text>
               </View>
-              <Text className="text-primary font-bold text-xl mb-4">
-                {course.price === 0 ? `Miễn phí ` : `${course.price?.toLocaleString("vi-VN")}đ`}
-              </Text>
+              <View className="flex-row items-center mb-2">
+                <Text className="text-primary font-bold text-xl ">
+                  {course.price === 0 ? `Miễn phí ` : `${course.price?.toLocaleString("vi-VN")}đ`}
+                </Text>
+                {isFree && (
+                  <View className="bg-green-50 border border-green-200 rounded-full px-3 py-1 ml-5">
+                    <Text className="text-green-700 font-bold text-sm">Bạn được miễn phí khóa học này</Text>
+                  </View>
+                )}
+              </View>
+
               <CustomButton
                 onPress={handleEnrollCourse}
                 className="bg-primary py-3 rounded-lg"
@@ -312,7 +352,7 @@ export const CourseDetailScreen = () => {
         </View>
 
         <CourseDescription description={course.description} />
-        <CourseLearningOutcomes />
+        <CourseLearningOutcomes subCategories={course.subCategories} />
         <CourseContentList
           chapters={course.chapters}
           isEnrolled={isEnrolled}

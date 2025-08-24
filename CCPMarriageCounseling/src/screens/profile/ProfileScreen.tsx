@@ -36,8 +36,8 @@ const ProfileScreen = () => {
     <ScrollView className="flex-1 bg-gray-50">
       {/* Header */}
       <View className="p-6">
-  <MyProfileComponent image name touchProfile />
-</View>
+        <MyProfileComponent image name touchProfile />
+      </View>
 
 
       {/* Menu */}
@@ -129,7 +129,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("PersonTypeHistory" )}
+            onPress={() => navigation.navigate("PersonTypeHistory")}
             className="flex-row items-center p-4 border-b border-gray-100"
           >
             <View className="w-10 h-10 bg-warning/10 rounded-full items-center justify-center mr-3">
@@ -173,7 +173,7 @@ const ProfileScreen = () => {
             <View className="w-10 h-10 bg-secondary/10 rounded-full items-center justify-center mr-3">
               <Settings size={20} color="#6C757D" />
             </View>
-            <View className="flex-1">                                                                                             
+            <View className="flex-1">
               <Text className="text-secondary-dark font-medium">Cài đặt</Text>
               <Text className="text-secondary text-sm">Quản lý cài đặt ứng dụng</Text>
             </View>

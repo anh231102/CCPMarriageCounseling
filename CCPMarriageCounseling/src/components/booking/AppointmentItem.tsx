@@ -9,6 +9,7 @@ import {
     MessageCircle,
     SquareX,
     X,
+    CalendarPlus2
 } from "lucide-react-native"
 import { useNavigation } from "@react-navigation/native"
 import { BookingMemberData, BookingStatus, getBookingStatusLabel } from "@/src/config/types/booking.type"
@@ -150,7 +151,7 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
             <View className="flex-col bg-white rounded-2xl   mb-4">
 
                 {/* Counselor Information Section */}
-                <View className="flex-col  mb-4 pb-4 border-b border-gray-100">
+                <View className="flex-col  mb-1 pb-4 border-b border-gray-100">
                     <View className="bg-pink-50 p-2 rounded-xl mr-3 self-start">
                         <Text className="text-pink-600 font-semibold text-sm">Tư vấn viên</Text>
                     </View>
@@ -218,22 +219,46 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
             </View>
 
             {/* Time & Type */}
-            <View className="flex-row flex-wrap mb-3">
-                <View className="flex-row items-center mr-4 mb-2">
-                    <Calendar size={16} color="#6C757D" className="mr-1" />
-                    <Text className="text-secondary">{new Date(item.timeStart).toLocaleDateString("vi-VN")}</Text>
+            <View className="mb-3 border-b border-gray-200 pb-2">
+                {/* Tiêu đề */}
+                <Text className="font-semibold text-base mb-2">Thông tin buổi Tư vấn</Text>
+
+                {/* Nhóm thông tin chính */}
+                <View className="flex-row ">
+                    {/* Ngày */}
+                    <View className="flex-row items-center mr-4 mb-2">
+                        <Calendar size={16} color="#6C757D" className="mr-1" />
+                        <Text className="text-secondary">
+                            {new Date(item.timeStart).toLocaleDateString("vi-VN")}
+                        </Text>
+                    </View>
+
+                    {/* Giờ */}
+                    <View className="flex-row items-center mr-4 mb-2">
+                        <Clock size={16} color="#6C757D" className="mr-1" />
+                        <Text className="text-secondary">
+                            {new Date(item.timeStart).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} -{" "}
+                            {new Date(item.timeEnd).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        </Text>
+                    </View>
+
+                    {/* Hình thức */}
+                    <View className="flex-row items-center mb-2">
+                        <IconComponent size={16} color="#6C757D" className="mr-2" />
+                        <Text className="text-secondary">
+                            {item.subCategories[0]?.name || "Video call"}
+                        </Text>
+                    </View>
                 </View>
-                <View className="flex-row items-center mr-4 mb-2">
-                    <Clock size={16} color="#6C757D" className="mr-1" />
-                    <Text className="text-secondary">
-                        {new Date(item.timeStart).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} -{" "}
-                        {new Date(item.timeEnd).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                    </Text>
-                </View>
-                <View className="flex-row items-center mb-2">
-                    <IconComponent size={16} color="#6C757D" className="mr-5 ml-2" />
-                    <Text className="text-secondary">{item.subCategories[0]?.name || "Video call"}</Text>
-                </View>
+            </View>
+
+            {/* Thời điểm đặt lịch */}
+            <View className="flex-row items-center mb-4">
+                <CalendarPlus2 size={16} color="#6C757D" className="mr-1" />
+                <Text className="text-secondary ml-1">
+                    Ngày tạo lịch: {new Date(item.createAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })},{" "}
+                    {new Date(item.createAt).toLocaleDateString("vi-VN")}
+                </Text>
             </View>
 
             {/* Actions */}
@@ -346,6 +371,7 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                 errorInvite={errorInvite}
                 handleInvitePartner={handleInvitePartner}
             />
+
         </View>
     )
 }

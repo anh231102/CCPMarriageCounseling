@@ -30,6 +30,7 @@ import VideoCallScreen from "../screens/counselors/VideoCallScreen"
 import PaymentWebView from "../screens/profile/PaymentWebView"
 import ReportAppointmentScreen from "../screens/counselors/ReportAppointmentScreen"
 import RateAppointmentScreen from "../screens/counselors/RateAppointmentScreen"
+import ChangePasswordScreen from "../screens/profile/ChangePasswordScreen"
 
 
 
@@ -134,6 +135,11 @@ const ProfileNavigator = () => {
         name="RateAppointment"
         component={RateAppointmentScreen}
         options={{ title: "Đánh giá buổi tư vấn" }}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+        options={{ title: "Đổi mật khẩu" }}
       />
       <Stack.Screen name="ReportAppointment" component={ReportAppointmentScreen} options={{ title: "Báo cáo buổi tư vấn" }} />
 

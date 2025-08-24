@@ -57,7 +57,7 @@ const SettingsScreen = () => {
   return (
     <ScrollView className="flex-1 bg-gray-50">
       <View className="p-4">
-        <View className="bg-black rounded-lg p-4 shadow-sm mb-4">
+        {/* <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
           <Text className="text-lg font-bold text-secondary-dark mb-4">Cài đặt chung</Text>
 
           <View className="flex-row justify-between items-center mb-3">
@@ -96,20 +96,23 @@ const SettingsScreen = () => {
               thumbColor="#FFFFFF"
             />
           </View>
-        </View>
+        </View> */}
 
-        <View className="bg-black rounded-lg p-4 shadow-sm mb-4">
+        <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
           <Text className="text-lg font-bold text-secondary-dark mb-4">Bảo mật</Text>
 
-          <View className="flex-row justify-between items-center mb-3">
+          <TouchableOpacity
+            className="flex-row justify-between items-center mb-3"
+            onPress={() => navigation.navigate("ChangePassword")}
+          >
             <View className="flex-row items-center">
               <Lock size={20} color="#6C757D" className="mr-3" />
-              <Text className="text-secondary-dark">Đổi mật khẩu</Text>
+              <Text className="text-secondary-dark ml-3">Đổi mật khẩu</Text>
             </View>
             <ChevronRight size={16} color="#6C757D" />
-          </View>
+          </TouchableOpacity>
 
-          <View className="flex-row justify-between items-center mb-3">
+          {/* <View className="flex-row justify-between items-center mb-3">
             <View className="flex-row items-center">
               <Shield size={20} color="#6C757D" className="mr-3" />
               <Text className="text-secondary-dark">Đăng nhập sinh trắc học</Text>
@@ -133,10 +136,10 @@ const SettingsScreen = () => {
               trackColor={{ false: "#D1D5DB", true: "#E83E8C" }}
               thumbColor="#FFFFFF"
             />
-          </View>
+          </View> */}
         </View>
 
-        <View className="bg-black rounded-lg p-4 shadow-sm mb-4">
+        {/* <View className="bg-white rounded-lg p-4 shadow-sm mb-4">
           <Text className="text-lg font-bold text-secondary-dark mb-4">Hỗ trợ</Text>
 
           <TouchableOpacity className="flex-row justify-between items-center mb-3">
@@ -162,9 +165,9 @@ const SettingsScreen = () => {
             </View>
             <ChevronRight size={16} color="#6C757D" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
-        <View className="bg-black rounded-lg p-4 shadow-sm mb-6">
+        {/* <View className="bg-white rounded-lg p-4 shadow-sm mb-6">
           <Text className="text-lg font-bold text-secondary-dark mb-4">Tài khoản</Text>
 
           <TouchableOpacity
@@ -173,7 +176,7 @@ const SettingsScreen = () => {
           >
             <Text className="text-danger font-medium">Xóa tài khoản</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <Text className="text-secondary text-center mb-6">
           CCP - Nền tảng tư vấn hôn nhân

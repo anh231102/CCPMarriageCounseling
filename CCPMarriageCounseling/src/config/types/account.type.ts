@@ -7,3 +7,15 @@ export interface WalletBalanceResponse {
 export interface WalletBalanceData {
   remaining: number
 }
+
+export interface ChangePasswordRequest {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
+export interface ChangePasswordResponse {
+  success: boolean
+  data: string | null
+  error: string | null
+}

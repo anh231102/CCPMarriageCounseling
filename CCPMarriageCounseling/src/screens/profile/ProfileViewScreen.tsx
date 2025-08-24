@@ -232,6 +232,7 @@ const ProfileViewScreen = () => {
           </View>
 
           <View className="px-4">
+            
             <ProfileInfoCard
               icon={<User size={18} color="#EC4899" />}
               label="Họ và tên"

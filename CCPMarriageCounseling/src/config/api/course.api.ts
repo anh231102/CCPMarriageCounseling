@@ -12,6 +12,7 @@ import type {
   PostCourseRatingResponse,
   RecommendedCourse,
   RecommendedCourseResponse,
+  MaxCourseDiscountResponse,
 } from "@/src/config/types/course.type"
 
 const getAllCoursesForUser = async () => {
@@ -153,6 +154,19 @@ const getRecommendationsByCouple = async (
   return response.data.data
 }
 
+const getMaxCourseDiscount = async (): Promise<number> => {
+  const response = await axiosInstance.get<MaxCourseDiscountResponse>(
+    "/Course/max-course-discount"
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy giảm giá tối đa")
+  }
+
+  return response.data.data
+}
+
+
 
 const courseApi = {
   getAllCoursesForUser,
@@ -167,6 +181,7 @@ const courseApi = {
   postCourseRating,
   getRecommendedCourses,
   getRecommendationsByCouple,
+  getMaxCourseDiscount,
 }
 
 export default courseApi

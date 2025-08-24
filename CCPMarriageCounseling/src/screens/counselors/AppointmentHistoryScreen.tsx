@@ -66,7 +66,7 @@ const AppointmentHistoryScreen = () => {
       const data = await bookingApi.getMyBookings()
       setBookings(data)
     } catch (error) {
-      
+
     } finally {
       setLoading(false)
     }
@@ -108,8 +108,8 @@ const AppointmentHistoryScreen = () => {
         (statusFilter === null || bk.status === statusFilter),
     )
     .sort((a, b) => {
-      const tA = new Date(a.timeStart).getTime()
-      const tB = new Date(b.timeStart).getTime()
+      const tA = new Date(a.createAt).getTime()
+      const tB = new Date(b.createAt).getTime()
       return sortType === "newest" ? tB - tA : tA - tB
     })
 
@@ -165,7 +165,7 @@ const AppointmentHistoryScreen = () => {
             <>
               {/* Header - Find Counselor */}
               <TouchableOpacity
-                onPress={() => navigation.navigate("CounselorList")}
+                onPress={() => navigation.navigate("CounselorsTab", { screen: "CounselorList" })}
                 className="bg-pink-50 rounded-2xl p-4 mb-6 shadow-sm"
                 activeOpacity={0.8}
               >
@@ -213,12 +213,15 @@ const AppointmentHistoryScreen = () => {
                     Bạn chưa có buổi tư vấn nào. Hãy đặt lịch với chuyên gia để được hỗ trợ.
                   </Text>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("CounselorList")}
+                    onPress={() => navigation.navigate("CounselorsTab")}
                     className="bg-pink-500 rounded-2xl p-4 w-full items-center shadow-md"
-                    activeOpacity={0.8}
+                    activeOpacity={0.8} // giảm độ mờ khi bấm để có hiệu ứng feedback
                   >
-                    <Text className="text-white font-bold text-base">Tìm chuyên gia ngay</Text>
+                    <Text className="text-white font-bold text-base">
+                      Tìm chuyên gia ngay
+                    </Text>
                   </TouchableOpacity>
+
                 </View>
               )
             ) : (

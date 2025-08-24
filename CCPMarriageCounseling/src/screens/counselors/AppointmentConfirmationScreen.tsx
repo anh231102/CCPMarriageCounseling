@@ -109,7 +109,7 @@ const AppointmentConfirmationScreen = () => {
         note: note || "",
         subCategoryIds: selectedSubCategories.map((s) => s.id),
       }
-      console.log("Booking data:", bookingData)
+      
       const result = await bookingApi.postBooking(bookingData)
 
       setIsLoading(false)
