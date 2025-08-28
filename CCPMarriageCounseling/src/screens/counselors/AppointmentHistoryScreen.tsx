@@ -10,6 +10,7 @@ import {
   Animated,
   Dimensions,
   SafeAreaView,
+  RefreshControl,
 } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { ArrowRight, CalendarDays, Users } from "lucide-react-native"
@@ -58,6 +59,8 @@ const AppointmentHistoryScreen = () => {
     problemAnalysis: string | null
     guides: string | null
   } | null>(null)
+  const [refreshing, setRefreshing] = useState(false);
+
 
   // Fetch bookings
   const fetchBookings = async () => {
@@ -75,6 +78,11 @@ const AppointmentHistoryScreen = () => {
   useEffect(() => {
     fetchBookings()
   }, [])
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchBookings();
+    setRefreshing(false);
+  };
 
   // Reset page về 1 khi filter/search thay đổi
   useEffect(() => {
@@ -159,6 +167,7 @@ const AppointmentHistoryScreen = () => {
         <FlatList
           data={activeTab === "history" ? pagedBookings : []}
           keyExtractor={(item) => item.id}
+           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={["#E83E8C"]} tintColor="#E83E8C" />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 20 }}
           ListHeaderComponent={

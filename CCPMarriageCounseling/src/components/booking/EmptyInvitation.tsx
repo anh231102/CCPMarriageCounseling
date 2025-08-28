@@ -9,7 +9,7 @@ import { type BookingMemberData } from "@/src/config/types/booking.type"
 import Loading from "../share/Loading"
 
 const getTypeIcon = (subCategories: any[]) => {
-    if (!subCategories || subCategories.length === 0) return MessageCircle
+    if (!subCategories || subCategories.length === 0 || !subCategories[0] || !subCategories[0].name) return MessageCircle
     const name = subCategories[0].name.toLowerCase()
     if (name.includes("video")) return Video
     if (name.includes("thoại") || name.includes("call")) return Phone

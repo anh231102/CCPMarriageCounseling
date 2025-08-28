@@ -1,13 +1,21 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native"
 import { useNavigation, useRoute } from "@react-navigation/native"
-import { Star, Calendar, Phone, Mail, MessageCircle } from "lucide-react-native"
+import { Star, Calendar, Phone, Mail, MessageCircle, ArrowRight } from "lucide-react-native"
 import { Counselor } from "@/src/config/types/counselor.type"
 import CounselorFeedbackList from "@/src/components/counselor/CounselorFeedbackList"
+import CounselorListMini from "@/src/components/counselor/CounselorListMini"
+import Loading from "@/src/components/share/Loading"
+import { useEffect, useRef, useState } from "react"
+import counselorApi from "@/src/config/api/counselor.api"
 
 const CounselorDetailScreen = () => {
   const navigation = useNavigation<any>()
   const route = useRoute<any>()
   const { counselor }: { counselor: Counselor } = route.params
+  const [loading, setLoading] = useState(true)
+  const [counselors, setCounselors] = useState<Counselor[]>([])
+  const scrollRef = useRef<ScrollView>(null)
+
 
   const handleBookAppointment = () => {
     navigation.navigate("BookAppointment", {
@@ -16,9 +24,25 @@ const CounselorDetailScreen = () => {
       counselor,
     })
   }
+  const fetchCounselors = async () => {
+    try {
+      setLoading(true)
+      const data: Counselor[] = await counselorApi.getCounselorWithSub()
+      setCounselors(data)
+    } catch (err) {
+      console.error("Lỗi khi lấy danh sách chuyên gia:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
+  useEffect(() => {
+    fetchCounselors()
+    scrollRef.current?.scrollTo({ y: 0, animated: false })
+
+  }, [counselor])
 
   return (
-    <ScrollView className="flex-1 bg-gray-50">
+    <ScrollView className="flex-1 bg-gray-50" ref={scrollRef}>
       <View className="p-6 items-center">
         <Image source={{ uri: counselor.avatar ?? undefined }} className="w-24 h-24 rounded-full mb-3" />
         <Text className="text-black text-xl font-bold">{counselor.fullname}</Text>
@@ -109,6 +133,25 @@ const CounselorDetailScreen = () => {
           <Text className="text-lg font-bold text-secondary-dark mb-3">Đánh giá</Text>
           <CounselorFeedbackList counselorId={counselor.id} />
         </View>
+      </View>
+      <View className="bg-white mx-4 p-6 rounded-lg shadow-sm mb-6">
+        <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-lg font-bold text-secondary-dark">Chuyên gia nổi bật</Text>
+          <TouchableOpacity onPress={() =>
+            navigation.navigate("CounselorsTab", {
+              screen: "CounselorList",
+            })
+          } className="flex-row items-center">
+            <Text className="text-primary mr-1">Xem tất cả</Text>
+            <ArrowRight size={16} color="#E83E8C" />
+          </TouchableOpacity>
+        </View>
+
+        {loading ? (
+          <Loading size={30} />
+        ) : (
+          <CounselorListMini data={counselors.filter((c) => c.id !== counselor.id)} />
+        )}
       </View>
     </ScrollView>
   )

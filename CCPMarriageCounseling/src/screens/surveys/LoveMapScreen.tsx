@@ -24,6 +24,7 @@ import type { Couple } from "../../config/types/couple.type"
 import Loading from "@/src/components/share/Loading"
 import CounselorRecommendList from "@/src/components/counselor/CounselorRecommendList"
 import CourseRecommendList from "@/src/components/courses/CourseRecommendList "
+import RecommendCategory from "@/src/components/recommend/RecommendCategory"
 
 interface RouteParams {
   coupleId: string
@@ -439,18 +440,32 @@ const LoveMapScreen = () => {
           )}
         </View>
 
+        <View className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+          <Text className="text-lg font-bold text-secondary-dark mb-3">
+            Chuyên mục gợi ý
+          </Text>
+          <Text className="text-secondary mb-4 leading-relaxed">
+            Dựa trên kết quả phân tích mối quan hệ của hai bạn, hệ thống đã xác định các{" "}
+            <Text className="font-semibold text-primary">chuyên mục ưu tiên cải thiện</Text> dành riêng cho cặp đôi này.
+            Từ đó, chúng tôi gợi ý thêm{" "}
+            <Text className="font-semibold text-primary">tư vấn viên phù hợp</Text> và{" "}
+            <Text className="font-semibold text-primary">khóa học cá nhân hóa</Text> giúp hai bạn phát triển bản thân và xây dựng mối quan hệ bền vững hơn.
+          </Text>
+          <RecommendCategory coupleId={coupleId} />
+        </View>
+
         {/* Counselor Recommendations */}
         <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <Text className="text-xl font-bold text-secondary-dark mb-4">Lời khuyên từ tư vấn viên</Text>
+
           {/* <CounselorRecommendation
             rec1={coupleData.rec1 ?? ""}
             rec2={coupleData.rec2 ?? ""}
             onRegister={() => navigation.navigate("CounselorsTab")}
           /> */}
-          <CounselorRecommendList coupleId={coupleId}/>
+          <CounselorRecommendList coupleId={coupleId} />
         </View>
         <View className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <Text className="text-xl font-bold text-secondary-dark mb-4">Khóa học phù hợp cho cặp đôi</Text>
+
           <CourseRecommendList coupleId={coupleId} />
         </View>
 

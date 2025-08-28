@@ -29,7 +29,7 @@ export default function QRScannerScreen({ onScanned, onCancel, context }: { onSc
     <View style={{ flex: 1 }}>
       <WebView
         originWhitelist={['*']}
-        source={{ uri: "https://v0-quet-qr-voi-web.vercel.app/" }}
+        source={{ uri: "https://qr-code-3olr.vercel.app/" }}
         onMessage={handleMessage}
         javaScriptEnabled
         domStorageEnabled
@@ -38,7 +38,7 @@ export default function QRScannerScreen({ onScanned, onCancel, context }: { onSc
         startInLoadingState
         renderLoading={() => (
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" }}>
-            <Loading size={60} color="#007AFF" />
+            <Loading size={60} color="#E83E8C" />
           </View>
         )}
       />

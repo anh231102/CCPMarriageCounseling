@@ -13,6 +13,7 @@ import {
   CoupleHistoryResponse,
   ApplyLatestResultResponse,
   CreateVirtualCoupleRequest,
+  CoupleSubcategoriesResponse,
 } from "@/src/config/types/couple.type"
 
 const createCouple = async (surveyIds: string[]): Promise<CreateCoupleResponse> => {
@@ -224,6 +225,26 @@ const createVirtualCouple = async (
   }
 };
 
+const getCoupleSubcategories = async (coupleId: string): Promise<string[]> => {
+  try {
+    const response = await axiosInstance.get<CoupleSubcategoriesResponse>(
+      `/Couple/${coupleId}/subcategories`
+    )
+
+    if (!response.data.success) {
+      throw new Error(response.data.error || "Không thể lấy subcategories của Couple")
+    }
+
+    return response.data.data
+  } catch (error: any) {
+    if (error.response) {
+      console.error("[getCoupleSubcategories] API Error Response:", error.response.data)
+    } else {
+      console.error("[getCoupleSubcategories] Error:", error.message)
+    }
+    throw error
+  }
+}
 
 const coupleApi = {
   createCouple,
@@ -237,6 +258,7 @@ const coupleApi = {
   getCoupleHistory,
   applyLatestResult,
   createVirtualCouple,
+  getCoupleSubcategories,
 }
 
 export default coupleApi

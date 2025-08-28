@@ -3,6 +3,7 @@ import axiosInstance from "./axiosInstance"
 import {
   Member,
   MemberProfileResponse,
+  MemberSubcategoriesResponse,
   UpdateMemberProfileRequest,
   UpdateMemberProfileResponse,
 } from "@/src/config/types/member.type"
@@ -26,10 +27,20 @@ const updateMyProfile = async (payload: UpdateMemberProfileRequest): Promise<str
 
   return response.data.data // "Profile updated successfully."
 }
+const getMySubcategories = async (): Promise<string[]> => {
+  const response = await axiosInstance.get<MemberSubcategoriesResponse>("/Member/my-subcategories")
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy danh mục phụ")
+  }
+
+  return response.data.data
+}
 
 const memberApi = {
   getMyProfile,
   updateMyProfile,
+  getMySubcategories,
 }
 
 export default memberApi

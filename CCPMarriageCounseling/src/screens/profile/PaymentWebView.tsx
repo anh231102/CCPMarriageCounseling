@@ -51,7 +51,11 @@ const PaymentWebView = () => {
     >
       <TouchableOpacity
         style={{
-          backgroundColor: "#E83E8C",
+           backgroundColor: paymentResult === "success"
+      ? "#28A745"
+      : paymentResult === "failure"
+        ? "#DC3545"
+        : "#E83E8C",
           borderRadius: 24,
           paddingVertical: 18,
           paddingHorizontal: 60,

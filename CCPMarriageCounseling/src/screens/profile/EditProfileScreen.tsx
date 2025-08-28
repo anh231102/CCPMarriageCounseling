@@ -94,9 +94,8 @@ const EditProfileScreen = () => {
         phone,
         avatar: avatar || "",
         gender,
-        dob: formatDateLocal(convertInputToDate(birthdate)),
+        dob: birthdate ? formatDateLocal(convertInputToDate(birthdate)) : undefined,
       }
-
       const res = await memberApi.updateMyProfile(payload)
 
       Alert.alert("Thành công", res, [

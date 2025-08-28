@@ -33,6 +33,7 @@ const CoupleConnectionScreen = () => {
   const [polling, setPolling] = useState<boolean>(false)
   const [pollingData, setPollingData] = useState<Couple | null>(null)
   const [showActiveRoomCard, setShowActiveRoomCard] = useState<boolean>(false)
+  const [showGuide, setShowGuide] = useState(false)
 
   const pollingInterval = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -55,7 +56,7 @@ const CoupleConnectionScreen = () => {
 
         if (!result.success) {
           const msg = result.error || ""
-          
+
 
           if (msg.includes("active room") || msg.includes("phòng đang hoạt động")) {
             Alert.alert(
@@ -124,7 +125,7 @@ const CoupleConnectionScreen = () => {
           setPolling(true)
         }
       } catch (e) {
-        
+
       }
     }
 
@@ -192,6 +193,87 @@ const CoupleConnectionScreen = () => {
             Kết nối với đối tác của bạn để chia sẻ kết quả khảo sát và xem bản đồ tình yêu đôi chi tiết.
           </Text>
 
+          <TouchableOpacity
+            onPress={() => setShowGuide(!showGuide)}
+            className="mt-2 bg-white rounded-lg shadow-sm p-3"
+          >
+            <Text className="text-primary font-medium text-center">
+              {showGuide ? "Ẩn hướng dẫn" : "Xem hướng dẫn kết nối"}
+            </Text>
+          </TouchableOpacity>
+
+          {showGuide && (
+            <View className="mt-3 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              {/* Header */}
+              <View className="flex-row items-center mb-4">
+                <View className="bg-pink-50 p-2 rounded-xl mr-3">
+                  <Users size={20} color="#E83E8C" />
+                </View>
+                <Text className="text-gray-800 font-bold text-lg flex-1">
+                  Cách để đối tác kết nối với bạn
+                </Text>
+              </View>
+
+              {/* Steps */}
+              <View className="space-y-3">
+                {/* Step 1 */}
+                <View className="flex-row items-start">
+                  <View className="bg-pink-500 rounded-full w-6 h-6 items-center justify-center mr-3 mt-0.5">
+                    <Text className="text-white text-xs font-bold">1</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-gray-700 text-base leading-6">
+                      Vào mục <Text className="font-bold text-pink-600">Cá nhân</Text>
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Step 2 */}
+                <View className="flex-row items-start">
+                  <View className="bg-pink-500 rounded-full w-6 h-6 items-center justify-center mr-3 mt-0.5">
+                    <Text className="text-white text-xs font-bold">2</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-gray-700 text-base leading-6">
+                      Chọn <Text className="font-bold text-pink-600">Kết nối cặp đôi</Text>
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Step 3 */}
+                <View className="flex-row items-start">
+                  <View className="bg-pink-500 rounded-full w-6 h-6 items-center justify-center mr-3 mt-0.5">
+                    <Text className="text-white text-xs font-bold">3</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-gray-700 text-base leading-6">
+                      Chọn <Text className="font-bold text-pink-600">Tham gia bằng mã</Text>
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Step 4 */}
+                <View className="flex-row items-start">
+                  <View className="bg-pink-500 rounded-full w-6 h-6 items-center justify-center mr-3 mt-0.5">
+                    <Text className="text-white text-xs font-bold">4</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-gray-700 text-base leading-6">
+                      Đối tác nhập mã bạn cung cấp hoặc quét mã QR để tham gia phòng
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Footer Note */}
+              <View className="mt-4 bg-pink-50 rounded-xl p-3 border border-pink-200">
+                <Text className="text-pink-700 text-sm text-center leading-5">
+                  💡 <Text className="font-semibold">Lưu ý:</Text> Đảm bảo đối tác của bạn đã cài đặt ứng dụng để có thể kết nối thành công
+                </Text>
+              </View>
+            </View>
+
+          )}
         </View>
 
         {isConnected && partnerData ? (

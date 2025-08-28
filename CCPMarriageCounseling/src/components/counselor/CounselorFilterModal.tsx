@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Modal, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from "react-native"
-import { X, DollarSign, Clock, Award, RotateCcw, Check } from "lucide-react-native"
+import { X, DollarSign, Clock, Award, RotateCcw, Check, Star, } from "lucide-react-native"
 import { LinearGradient } from "expo-linear-gradient"
 
 interface SubCategory {
@@ -16,6 +16,8 @@ interface FilterState {
   minYear: string
   maxYear: string
   selectedSubCategories: string[]
+  rating: number
+
 }
 
 interface Props {
@@ -34,6 +36,7 @@ const CounselorFilterModal = ({ visible, onClose, onApply, allSubCategories, ini
   const [minYear, setMinYear] = useState("")
   const [maxYear, setMaxYear] = useState("")
   const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([])
+  const [rating, setRating] = useState(initialFilter?.rating || 0)
 
   useEffect(() => {
     if (initialFilter) {
@@ -52,6 +55,7 @@ const CounselorFilterModal = ({ visible, onClose, onApply, allSubCategories, ini
       minYear,
       maxYear,
       selectedSubCategories,
+      rating,
     })
     onClose()
   }
@@ -62,6 +66,7 @@ const CounselorFilterModal = ({ visible, onClose, onApply, allSubCategories, ini
     setMinYear("")
     setMaxYear("")
     setSelectedSubCategories([])
+    setRating(0)
   }
 
   return (
@@ -85,6 +90,44 @@ const CounselorFilterModal = ({ visible, onClose, onApply, allSubCategories, ini
           </View>
 
           <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+            <View className="mb-6">
+              {/* Rating Filter */}
+              <View className="mb-6">
+                <View className="flex-row items-center mb-4">
+                  <View className="bg-yellow-50 p-2 rounded-xl mr-3">
+                    <Star size={20} color="#F59E0B" />
+                  </View>
+                  <Text className="text-lg font-semibold text-gray-800">
+                    Đánh giá tối thiểu
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <TouchableOpacity
+                      key={star}
+                      onPress={() =>
+                        setRating((prev) => (prev === star ? 0 : star))
+                      }
+                      activeOpacity={0.7}
+                      style={{ marginRight: 8 }}
+                    >
+                      <Star
+                        size={32}
+                        color={star <= rating ? "#F59E0B" : "#D1D5DB"}
+                        fill={star <= rating ? "#F59E0B" : "transparent"}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <Text className="text-gray-500 text-sm mt-2">
+                  {rating > 0
+                    ? `Hiển thị chuyên gia có đánh giá từ ${rating} sao trở lên`
+                    : "Không lọc theo đánh giá"}
+                </Text>
+              </View>
+            </View>
             {/* Price Range Section */}
             <View className="mb-6">
               <View className="flex-row items-center mb-4">
@@ -170,19 +213,17 @@ const CounselorFilterModal = ({ visible, onClose, onApply, allSubCategories, ini
                         prev.includes(cat.id) ? prev.filter((id) => id !== cat.id) : [...prev, cat.id],
                       )
                     }}
-                    className={`px-4 py-2 rounded-full mr-2 mb-2 border ${
-                      selectedSubCategories.includes(cat.id)
-                        ? "bg-pink-500 border-pink-500"
-                        : "bg-gray-50 border-gray-200"
-                    }`}
+                    className={`px-4 py-2 rounded-full mr-2 mb-2 border ${selectedSubCategories.includes(cat.id)
+                      ? "bg-pink-500 border-pink-500"
+                      : "bg-gray-50 border-gray-200"
+                      }`}
                     activeOpacity={0.7}
                   >
                     <View className="flex-row items-center">
                       {selectedSubCategories.includes(cat.id) && <Check size={14} color="#fff" className="mr-1" />}
                       <Text
-                        className={`text-sm font-medium ${
-                          selectedSubCategories.includes(cat.id) ? "text-white" : "text-gray-700"
-                        }`}
+                        className={`text-sm font-medium ${selectedSubCategories.includes(cat.id) ? "text-white" : "text-gray-700"
+                          }`}
                       >
                         {cat.name}
                       </Text>

@@ -173,3 +173,9 @@ export interface CreateVirtualCoupleRequest {
   virtualName: string
   virtualDob: string 
 }
+
+export interface CoupleSubcategoriesResponse {
+  success: boolean
+  data: string[]
+  error: string | null
+}

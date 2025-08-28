@@ -64,4 +64,5 @@ export interface FilterState {
   minYear: string
   maxYear: string
   selectedSubCategories: string[]
+  rating: number;
 }

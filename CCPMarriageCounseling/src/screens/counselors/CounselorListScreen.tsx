@@ -34,6 +34,7 @@ const CounselorListScreen = () => {
     minYear: "",
     maxYear: "",
     selectedSubCategories: [],
+    rating: 0,
   })
   const [allSubCategories, setAllSubCategories] = useState<SubCategory[]>([])
   const [page, setPage] = useState(1)
@@ -84,7 +85,8 @@ const CounselorListScreen = () => {
     const matchPrice = (!filter.minPrice || item.price >= +filter.minPrice) && (!filter.maxPrice || item.price <= +filter.maxPrice)
     const matchYear = (!filter.minYear || item.yearOfJob >= +filter.minYear) && (!filter.maxYear || item.yearOfJob <= +filter.maxYear)
     const matchSub = filter.selectedSubCategories.length === 0 || item.subCategories.some((cat) => filter.selectedSubCategories.includes(cat.id))
-    return matchName && matchPrice && matchYear && matchSub
+    const matchRating = !filter.rating || (item.rating ?? 0) >= filter.rating
+    return matchName && matchPrice && matchYear && matchSub && matchRating
   })
   const paged = filtered.slice(0, page * PAGE_SIZE)
 

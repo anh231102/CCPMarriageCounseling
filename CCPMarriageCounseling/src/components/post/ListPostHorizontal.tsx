@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native"
 import postApi from "@/src/config/api/post.api"
 import type { PostItem } from "@/src/config/types/post.type"
 import Loading from "../share/Loading"
+import { LinearGradient } from "expo-linear-gradient"
 
 const ListPostHorizontal: React.FC = () => {
   const [posts, setPosts] = useState<PostItem[]>([])
@@ -70,7 +71,11 @@ const ListPostHorizontal: React.FC = () => {
             activeOpacity={0.8}
           >
             <Image
-              source={{ uri: "https://images.unsplash.com/photo-1506744038136-46273834b3fb" }}
+              source={
+                typeof post.image === 'string'
+                  ? { uri: post.image }
+                  : require("../../../assets/images/postImage1.jpg")
+              }
               className="w-full h-32"
               resizeMode="cover"
             />
@@ -79,6 +84,14 @@ const ListPostHorizontal: React.FC = () => {
                 {post.title}
               </Text>
               <Text className="text-pink-600 font-semibold">Đọc thêm</Text>
+            </View>
+            <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+              <LinearGradient
+                colors={["#E83E8C", "#FF6B9D"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{ height: 4, width: "100%" }}
+              />
             </View>
           </TouchableOpacity>
         )}

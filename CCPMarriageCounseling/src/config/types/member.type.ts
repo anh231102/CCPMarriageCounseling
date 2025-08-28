@@ -34,3 +34,9 @@ export interface UpdateMemberProfileResponse {
   data: string
   error: string | null
 }
+
+export interface MemberSubcategoriesResponse {
+  success: boolean
+  data: string[]
+  error: string | null
+}
