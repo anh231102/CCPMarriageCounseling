@@ -28,7 +28,7 @@ const SurveyDetailScreen = () => {
         const filtered = allSurveys.filter((s) => selectedSurveyIds.includes(s.id))
         setSelectedSurveys(filtered)
       } catch (error) {
-        console.error("Không thể tải dữ liệu khảo sát", error)
+        
       }
     }
 

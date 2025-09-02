@@ -20,7 +20,7 @@ const registerMember = async (payload: RegisterMemberRequest): Promise<number> =
     "/Account/register-member",
     payload
   )
-  console.log("Đăng ký với payload:", payload)
+ 
 
   return response.data.data // Trả về 1 nếu thành công
 }

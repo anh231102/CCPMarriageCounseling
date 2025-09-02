@@ -86,7 +86,15 @@ export const CourseDetailScreen = () => {
     }
   }
 
+// Thêm vào sau useFocusEffect
 
+
+const fetchMyRating = async () => {
+  try {
+    const data = await courseApi.getCourseDetailById(courseId)
+    setCourse(prev => prev ? { ...prev, myRating: data.myRating } : prev)
+  } catch {}
+}
 
   const handleRelatedCoursePress = (relatedCourse: Course) => {
     navigation.push("CourseDetail", {
@@ -359,13 +367,29 @@ export const CourseDetailScreen = () => {
           onPressChapter={handlePressChapter}
         />
         <CourseReviews CourseId={course.id} openReviewForm={true} reloadKey={reviewReloadKey} />
-        {isEnrolled && (
-          <>
-            <View className="p-4  shadow-sm mb-4">
-              <CourseRatingForm courseId={course.id} Progress={Progress} onSuccess={() => setReviewReloadKey(prev => prev + 1)} />
+        {course.myRating != null ? (
+          <View className="p-4 shadow-sm mb-4">
+            <View className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-4 ">
+              <Text className="text-green-700 font-semibold text-base text-center">
+                Bạn đã đánh giá khóa học này. Cảm ơn bạn!
+              </Text>
             </View>
-          </>
+          </View>
+        ) : (
+          isEnrolled && (
+            <View className="p-4 shadow-sm mb-4">
+              <CourseRatingForm
+                courseId={course.id}
+                Progress={Progress}
+                onSuccess={() => {
+                  setReviewReloadKey(prev => prev + 1)
+                  fetchMyRating()
+                }}
+              />
+            </View>
+          )
         )}
+
         {!isEnrolled && (
           <>
             <View className="mt-6 px-4 mb-3">

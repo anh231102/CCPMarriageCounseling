@@ -41,7 +41,7 @@ const SurveyHistoryDetailScreen = () => {
         const personType = await personTypeApi.getPersonTypeByName(surveyResult.result, surveyResult.surveyId)
         setPersonTypeDetail(personType.detail)
       } catch (error) {
-        console.error("Lỗi khi lấy chi tiết loại tính cách:", error)
+       
       }
     }
 
@@ -80,7 +80,7 @@ const SurveyHistoryDetailScreen = () => {
       const message = `Tôi vừa hoàn thành bài khảo sát ${meta.fullName} và nhận được kết quả: ${surveyResult.result}. ${surveyResult.description}`
       await RNShare.share({ message, title: `Kết quả khảo sát ${meta.name}` })
     } catch (error) {
-      console.log("Lỗi chia sẻ:", error)
+    
     }
   }
 

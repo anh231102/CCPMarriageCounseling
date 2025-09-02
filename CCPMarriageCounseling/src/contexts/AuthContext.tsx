@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const now = Date.now() / 1000; // Giờ hiện tại (đơn vị giây)
           if (decoded.exp && decoded.exp < now) {
             // Token hết hạn
-            console.log("Token đã hết hạn");
+           
             await AsyncStorage.removeItem("access-token");
             logout(); // <- Tự động logout
             return;
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(userData);
           setIsAuth(true);
         } catch (e) {
-          console.error("Token lỗi:", e);
+          
           await AsyncStorage.removeItem("access-token");
           logout();
         }

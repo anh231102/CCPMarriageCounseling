@@ -22,7 +22,7 @@ const MembershipScreen = () => {
         setCurrentMembership(null)
       }
     } catch (error) {
-      console.error("Error fetching membership status", error)
+      
     }
   }
 

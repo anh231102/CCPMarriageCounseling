@@ -39,6 +39,19 @@ export const ConclusionAndRateButtons = ({ onConclusion, onRate }: ButtonProps) 
     </View>
 )
 
+export const ConclusionAndRebookButtons = ({ onConclusion, onRebook }: ButtonProps) => (
+    <View className="flex-row justify-between mb-2">
+        <TouchableOpacity onPress={onRebook} className="flex-1 flex-row items-center justify-center bg-success/10 rounded-lg p-2">
+            <Calendar size={16} color="#28A745" className="mr-1" />
+            <Text className="text-success font-medium">Đặt lịch lại</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onConclusion} className="flex-1 flex-row ml-2 items-center justify-center bg-primary/10 rounded-lg p-2">
+            <FileText size={16} color="#E83E8C" className="mr-1" />
+            <Text className="text-primary font-medium">Xem kết luận</Text>
+        </TouchableOpacity>
+    </View>
+)
+
 export const RebookAndReportButtons = ({ onConclusion, onReport }: ButtonProps) => (
     <View className="flex-row justify-between mb-2">
         <TouchableOpacity onPress={onConclusion} className="flex-1 flex-row items-center justify-center bg-primary/10 rounded-lg p-2">

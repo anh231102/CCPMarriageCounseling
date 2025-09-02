@@ -26,7 +26,7 @@ const VideoCallScreen = () => {
         Alert.alert("Cần quyền truy cập", "Vui lòng cấp quyền Camera và Micro.")
       }
     } catch (error) {
-      console.error(error)
+      
       Alert.alert("Lỗi", "Không thể yêu cầu quyền truy cập thiết bị.")
     }
   }

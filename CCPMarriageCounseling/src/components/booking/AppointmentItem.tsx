@@ -23,6 +23,7 @@ import {
     RebookButtons,
     ScheduleButtons,
     BookingConfirmActions,
+    ConclusionAndRebookButtons,
 } from "./ActionButtons"
 import { useAuth } from "../../hooks/useAuth"
 import InvitePartnerModal from "./InvitePartnerModal"
@@ -117,7 +118,7 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                                 err?.response?.data?.error ||
                                 err?.message ||
                                 "Không thể hủy lời mời"
-                            console.log("Lỗi hủy lời mời:", err)
+                            
                             Alert.alert("Lỗi", backendError)
                         }
                     }
@@ -295,7 +296,8 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                         onConclusion={() => onConclusionOpen({
                             problemSummary: item.problemSummary,
                             problemAnalysis: item.problemAnalysis,
-                            guides: item.guides
+                            guides: item.guides,
+                            bookingId: item.id,
                         })}
                         onReport={() => navigation.navigate("ReportAppointment", { appointmentId: item.id, counselor: item.counselor })}
                     />
@@ -309,7 +311,8 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                         onConclusion={() => onConclusionOpen({
                             problemSummary: item.problemSummary,
                             problemAnalysis: item.problemAnalysis,
-                            guides: item.guides
+                            guides: item.guides,
+                            bookingId: item.id,
                         })}
                         onRate={() => navigation.navigate("RateAppointment", { appointmentId: item.id, counselor: item.counselor })}
                     />
@@ -322,7 +325,8 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                     onConclusion={() => onConclusionOpen({
                         problemSummary: item.problemSummary,
                         problemAnalysis: item.problemAnalysis,
-                        guides: item.guides
+                        guides: item.guides,
+                        bookingId: item.id,
                     })}
                     onRebook={() => navigation.navigate("CounselorsTab", { screen: "CounselorList" })}
                 />
@@ -333,7 +337,7 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                     onRebook={() => navigation.navigate("CounselorsTab", { screen: "CounselorList" })}
                 />
             )}
-            {item.status === BookingStatus.BaoCao && (
+            {item.status === BookingStatus.BaoCao && item.rating === null && (
 
 
                 <>
@@ -344,7 +348,26 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                         onConclusion={() => onConclusionOpen({
                             problemSummary: item.problemSummary,
                             problemAnalysis: item.problemAnalysis,
-                            guides: item.guides
+                            guides: item.guides,
+                            bookingId: item.id,
+                        })}
+                        onRate={() => navigation.navigate("RateAppointment", { appointmentId: item.id, counselor: item.counselor })}
+                    />
+                </>
+            )}
+            {item.status === BookingStatus.BaoCao && item.rating != null && (
+
+
+                <>
+                    <View className="items-center bg-orange-100 p-2 rounded-lg mt-2 mb-2">
+                        <Text className="text-orange-600 font-medium">Chờ phản hồi từ hệ thống</Text>
+                    </View>
+                    <ConclusionAndRebookButtons
+                        onConclusion={() => onConclusionOpen({
+                            problemSummary: item.problemSummary,
+                            problemAnalysis: item.problemAnalysis,
+                            guides: item.guides,
+                            bookingId: item.id,
                         })}
                         onRate={() => navigation.navigate("RateAppointment", { appointmentId: item.id, counselor: item.counselor })}
                     />

@@ -41,6 +41,7 @@ export interface CourseDetail {
   description: string | null
   price: number | null
   rating: number | null
+  myRating: number | null
   rank: number
   chapterCount: number
   chapters: Chapter[]

@@ -74,9 +74,7 @@ const cancelCoupleRoom = async (): Promise<void> => {
     }
   } catch (error: any) {
     if (error.response) {
-      console.error("[cancelCoupleRoom] API Error Response:", error.response.data)
     } else {
-      console.error("[cancelCoupleRoom] Error:", error.message)
     }
     throw error
   }
@@ -126,9 +124,9 @@ const completeCoupleRoom = async (coupleId: string): Promise<string> => {
     return response.data.data || "Hoàn tất thành công"
   } catch (error: any) {
     if (error.response) {
-      console.error("[completeCoupleRoom] API Error:", error.response.data)
+     
     } else {
-      console.error("[completeCoupleRoom] Error:", error.message)
+
     }
     throw error
   }
@@ -147,9 +145,7 @@ const getCoupleResult = async (coupleId: string): Promise<Couple> => {
     return response.data.data
   } catch (error: any) {
     if (error.response) {
-      console.error("[getCoupleResult] API Error Response:", error.response.data)
     } else {
-      console.error("[getCoupleResult] Error:", error.message)
     }
     throw error
   }
@@ -168,9 +164,7 @@ const getCoupleHistory = async (): Promise<Couple[]> => {
     return response.data.data; // Trả về danh sách Couple
   } catch (error: any) {
     if (error.response) {
-      console.error("[getCoupleHistory] API Error Response:", error.response.data);
     } else {
-      console.error("[getCoupleHistory] Error:", error.message);
     }
     throw error;
   }
@@ -238,9 +232,7 @@ const getCoupleSubcategories = async (coupleId: string): Promise<string[]> => {
     return response.data.data
   } catch (error: any) {
     if (error.response) {
-      console.error("[getCoupleSubcategories] API Error Response:", error.response.data)
     } else {
-      console.error("[getCoupleSubcategories] Error:", error.message)
     }
     throw error
   }
@@ -258,7 +250,7 @@ const coupleApi = {
   getCoupleHistory,
   applyLatestResult,
   createVirtualCouple,
-  getCoupleSubcategories,
+  getCoupleSubcategories
 }
 
 export default coupleApi

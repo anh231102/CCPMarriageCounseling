@@ -15,7 +15,7 @@ const putChangePassword = async (body: ChangePasswordRequest): Promise<string> =
   const response = await axiosInstance.put<ChangePasswordResponse>("/Account/change-password", body)
 
   if (!response.data.success) {
-    console.error(response.data.error || "Không thể đổi mật khẩu")
+   
     throw new Error(response.data.error || "Không thể đổi mật khẩu")
   }
 

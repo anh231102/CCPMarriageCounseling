@@ -128,7 +128,7 @@ const MembershipPromoPanel = () => {
                             end={{ x: 1, y: 1 }}
                             style={{
                                 borderRadius: 24,
-                                height: 230,
+                                height: 250,
                                 shadowColor: "#000",
                                 shadowOpacity: 0.2,
                                 shadowRadius: 6,
@@ -198,6 +198,12 @@ const MembershipPromoPanel = () => {
                                         <Gift size={16} color="#FFD700" />
                                         <Text className="text-white/90 text-sm ml-2">
                                             Giảm {item.memberShip.discountBooking}% phí tư vấn
+                                        </Text>
+                                    </View>
+                                    <View className="flex-row items-center">
+                                        <Gift size={16} color="#FFD700" />
+                                        <Text className="text-white/90 text-sm ml-2">
+                                            Miễn phí cho các khóa học dành riêng cho gói thành viên 
                                         </Text>
                                     </View>
                                 </View>

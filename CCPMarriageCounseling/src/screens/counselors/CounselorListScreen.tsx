@@ -53,7 +53,7 @@ const CounselorListScreen = () => {
           .filter((cat): cat is SubCategory => !!cat)
         setAllSubCategories(unique)
       } catch (err) {
-        console.error("Lỗi khi lấy danh sách tư vấn viên:", err)
+       
       } finally {
         setLoading(false)
       }
@@ -73,7 +73,7 @@ const CounselorListScreen = () => {
         .filter((cat): cat is SubCategory => !!cat)
       setAllSubCategories(unique)
     } catch (err) {
-      console.error("Lỗi khi reload danh sách tư vấn viên:", err)
+      
     } finally {
       setRefreshing(false)
     }

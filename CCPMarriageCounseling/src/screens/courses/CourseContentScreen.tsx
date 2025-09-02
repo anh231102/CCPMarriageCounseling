@@ -53,7 +53,7 @@ const CourseContentScreen = ({ route, navigation }: any) => {
       setQuizSubmitted(false)
       setQuizResult(null)
     } catch (err) {
-      console.error("❌ Error fetching chapter detail:", err)
+      
       setError("Không thể tải chi tiết chương học. Vui lòng thử lại.")
     } finally {
       setLoading(false)
@@ -102,7 +102,7 @@ const CourseContentScreen = ({ route, navigation }: any) => {
         // Sau khi đánh dấu, cập nhật lại dữ liệu
         await fetchChapterContent()
       } catch (err) {
-        console.error("Lỗi đánh dấu hoàn thành chương:", err)
+        
         Alert.alert("Lỗi", "Không thể đánh dấu hoàn thành chương.")
       }
       nextChapter = lessons[currentIndex + 1]
@@ -547,6 +547,7 @@ const CourseContentScreen = ({ route, navigation }: any) => {
         userName={user?.name}
         courseName={courseDetail?.name}
         date={new Date().toLocaleDateString("vi-VN")}
+        onGoBack={() => navigation.goBack()}
       />
 
     </>

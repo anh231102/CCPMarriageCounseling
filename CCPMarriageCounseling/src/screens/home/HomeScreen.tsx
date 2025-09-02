@@ -30,7 +30,7 @@ const HomeScreen = () => {
       const data: Counselor[] = await counselorApi.getCounselorWithSub()
       setCounselors(data)
     } catch (err) {
-      console.error("Lỗi khi lấy danh sách chuyên gia:", err)
+     
     } finally {
       setLoading(false)
     }
@@ -45,7 +45,7 @@ const HomeScreen = () => {
       const summary = await notificationApi.getNotificationSummary()
       setUnopenedCount(summary.unopenedCount)
     } catch (err) {
-      console.error("Lỗi khi lấy thông báo:", err)
+      
     }
   }
   // Lắng nghe khi HomeScreen được focus

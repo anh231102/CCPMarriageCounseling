@@ -85,7 +85,7 @@ const AppointmentConfirmationScreen = () => {
         const percent = await bookingApi.getMyBookingDiscount()
         setDiscountPercent(percent)
       } catch (error) {
-        console.error("Không thể lấy mức giảm giá:", error)
+        
       }
     }
 

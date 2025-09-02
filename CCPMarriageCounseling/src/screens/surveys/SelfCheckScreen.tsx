@@ -156,7 +156,7 @@ const SelfCheckScreen = () => {
               onPress: async () => {
                 try {
                   const existingRoom = await coupleApi.getLatestCoupleRoom()
-                  console.log("🔵 Đã lấy được phòng hiện tại:", existingRoom)
+                  
                   navigation.navigate("CoupleSurveyRoom", {
                     coupleId: existingRoom.id,
                     isSurvey: isSurvey ?? false,

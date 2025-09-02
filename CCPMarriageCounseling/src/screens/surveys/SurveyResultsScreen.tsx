@@ -45,7 +45,7 @@ const SurveyResultsScreen = () => {
           "Tôi vừa hoàn thành bộ khảo sát tổng hợp tính cách & mối quan hệ trên ứng dụng Tư vấn hôn nhân. Hãy thử ngay!",
       })
     } catch (error) {
-      console.log(error)
+      
     }
   }
 
@@ -88,7 +88,7 @@ const SurveyResultsScreen = () => {
           </Text>
           <RecommendCategory />
         </View>
-        
+
         <View className="bg-white rounded-xl p-6 mb-4 shadow-sm">
           <CounselorRecommendList />
 

@@ -7,7 +7,7 @@ import { StatusBar } from "expo-status-bar"
 import MainNavigator from "./src/navigation/MainNavigator"
 import AuthNavigator from "./src/navigation/AuthNavigator"
 import { AuthProvider, useAuth } from "./src/contexts/AuthContext"
-import Loading from "./src/components/share/Loading" 
+import Loading from "./src/components/share/Loading"
 import { LogBox } from 'react-native'
 
 
@@ -15,6 +15,8 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from 'react-native-reanimated';
+import { NetworkProvider } from "./src/contexts/NetworkContext"
+import NetworkStatusBanner from "./src/components/share/NetworkStatusBanner"
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn, // chỉ log warning và error
@@ -27,22 +29,27 @@ function AppContent() {
   const { isAuth, isLoading } = useAuth()
 
   if (isLoading) {
-    return <Loading /> 
+    return <Loading />
   }
 
   return (
-    <NavigationContainer>
-      <StatusBar style="auto" />
-      {isAuth ? <MainNavigator /> : <AuthNavigator />}
-    </NavigationContainer>
+    <>
+      <NetworkStatusBanner />
+      <NavigationContainer>
+        <StatusBar style="auto" />
+        {isAuth ? <MainNavigator /> : <AuthNavigator />}
+      </NavigationContainer>
+    </>
   )
 }
 
 export default function App() {
   LogBox.ignoreLogs(['[Reanimated] Reading from `value` during component render']);
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <NetworkProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </NetworkProvider>
   )
 }

@@ -14,7 +14,7 @@ const CounselorListScreen = () => {
         const data = await counselorApi.getAllCounselor()
         setCounselors(data)
       } catch (err) {
-        console.error("Lỗi khi tải dữ liệu tư vấn viên:", err)
+       
       } finally {
         setLoading(false)
       }

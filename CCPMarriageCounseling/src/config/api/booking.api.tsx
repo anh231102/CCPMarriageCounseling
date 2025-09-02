@@ -20,6 +20,9 @@ import type {
   DeclineInvitationResponse,
   AssignMember2Response,
   CancelInvitationResponse,
+  PersonTypeBundleRequest,
+  PersonTypeBundleData,
+  PersonTypeBundleResponse,
 } from "@/src/config/types/booking.type"
 
 const postBooking = async (bookingData: BookingRequest): Promise<BookingData> => {
@@ -176,6 +179,20 @@ export const postCancelInvitation = async (bookingId: string): Promise<string> =
   return response.data.data
 }
 
+const postPersonTypeBundle = async (
+  payload: PersonTypeBundleRequest
+): Promise<PersonTypeBundleData> => {
+  const response = await axiosInstance.post<PersonTypeBundleResponse>(
+    "/Booking/person-type-bundle",
+    payload
+  )
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Không thể lấy dữ liệu personality bundle")
+  }
+
+  return response.data.data
+}
 
 
 const bookingApi = {
@@ -192,6 +209,7 @@ const bookingApi = {
   postDeclineInvitation,
   putAssignMember2,
   postCancelInvitation,
+  postPersonTypeBundle,
 }
 
 export default bookingApi

@@ -34,7 +34,7 @@ const InviteCodeCard = ({ inviteCode }: Props) => {
         title: "Mời bạn kết nối cặp đôi",
       });
     } catch (error) {
-      console.log("Lỗi chia sẻ:", error);
+     
     }
   };
 

@@ -27,7 +27,7 @@ const CounselorRecommendList = ({ coupleId }: CounselorRecommendListProps) => {
         }
         setData(res.slice(0, 3)) // chỉ lấy top 3
       } catch (err: any) {
-        console.error("Lỗi khi lấy dữ liệu recommend:", err)
+        
         setError("Không thể tải danh sách gợi ý")
       } finally {
         setLoading(false)

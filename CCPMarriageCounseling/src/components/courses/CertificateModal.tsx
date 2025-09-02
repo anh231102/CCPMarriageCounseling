@@ -9,6 +9,7 @@ import Logo from "../share/Logo"
 interface CertificateModalProps {
     visible: boolean
     onClose: () => void
+    onGoBack?: () => void
     userName?: string
     courseName?: string
     date?: string
@@ -17,6 +18,7 @@ interface CertificateModalProps {
 const CertificateModal: React.FC<CertificateModalProps> = ({
     visible,
     onClose,
+    onGoBack,
     userName = "Tên học viên",
     courseName = "",
     date,
@@ -119,7 +121,10 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
                         {/* Action Buttons */}
                         <View className="space-y-3">
                             {/* Close Button */}
-                            <TouchableOpacity onPress={onClose} className="rounded-2xl overflow-hidden shadow-md" activeOpacity={0.8}>
+                            <TouchableOpacity onPress={() => {
+                                onClose();
+                                if (onGoBack) onGoBack();
+                            }} className="rounded-2xl overflow-hidden shadow-md" activeOpacity={0.8}>
                                 <LinearGradient
                                     colors={["#E83E8C", "#BE185D"]}
                                     start={{ x: 0, y: 0 }}
@@ -142,9 +147,9 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={{
-                            height: 8,      
-                            width: "100%",  
-                            borderRadius: 4, 
+                            height: 8,
+                            width: "100%",
+                            borderRadius: 4,
                         }}
                     />
 

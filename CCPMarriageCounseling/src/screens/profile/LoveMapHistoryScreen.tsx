@@ -60,7 +60,7 @@ const LoveMapHistoryScreen = () => {
       const validLoveMaps = allHistory.filter((couple) => couple.status === 2);
       setAllLoveMaps(validLoveMaps);
     } catch (error) {
-      console.error("Error loading love maps:", error);
+      
       Alert.alert("Lỗi", "Không thể tải danh sách bản đồ tình yêu");
     } finally {
       setLoading(false);

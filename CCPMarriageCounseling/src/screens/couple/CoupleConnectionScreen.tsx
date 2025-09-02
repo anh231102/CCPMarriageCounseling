@@ -151,7 +151,7 @@ const CoupleConnectionScreen = () => {
           })
         }
       } catch (e) {
-        console.error("Polling lỗi:", e)
+        
       }
     }, 3000)
 

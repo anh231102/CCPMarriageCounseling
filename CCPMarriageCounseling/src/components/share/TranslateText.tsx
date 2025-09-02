@@ -25,7 +25,7 @@ const TranslateText = () => {
 
       setTranslated(response.data.translatedText)
     } catch (error) {
-      console.error("Lỗi dịch:", error)
+     
       setTranslated("Không thể dịch nội dung.")
     } finally {
       setLoading(false)

@@ -43,11 +43,11 @@ export const uploadImageToCloudinary = async (localUri: string): Promise<string 
     if (data.secure_url) {
       return data.secure_url;
     } else {
-      console.error("Upload failed:", data);
+      
       return null;
     }
   } catch (error) {
-    console.error("Upload error:", error);
+
     return null;
   }
 };

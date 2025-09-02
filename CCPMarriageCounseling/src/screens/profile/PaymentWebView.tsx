@@ -19,9 +19,9 @@ const PaymentWebView = () => {
   const handleNavigationChange = (navState: any) => {
     const { url } = navState;
 
-    if (url.startsWith("https://v0-2-page-payment-website.vercel.app/success")) {
+    if (url.startsWith("https://payment-noti.vercel.app/success")) {
       setPaymentResult("success");
-    } else if (url.startsWith("https://v0-2-page-payment-website.vercel.app/failure")) {
+    } else if (url.startsWith("https://payment-noti.vercel.app/failure")) {
       setPaymentResult("failure");
     }
   };

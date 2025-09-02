@@ -6,6 +6,7 @@ import { Search, Bell, BellRing, Calendar, ChevronDown } from "lucide-react-nati
 import { LinearGradient } from "expo-linear-gradient"
 import notificationApi from "@/src/config/api/notification.api"
 import Loading from "@/src/components/share/Loading"
+import { getNotiTypeLabel, NotiType } from "@/src/config/types/notification.type"
 
 const PAGE_SIZE = 10
 
@@ -55,21 +56,21 @@ const NotificationsScreen = () => {
     : notifications
 
   const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  const now = new Date()
-  // Đặt giờ phút giây về 0 để so sánh ngày
-  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-  const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const diffTime = nowOnly.getTime() - dateOnly.getTime()
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    const date = new Date(dateString)
+    const now = new Date()
+    // Đặt giờ phút giây về 0 để so sánh ngày
+    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const diffTime = nowOnly.getTime() - dateOnly.getTime()
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
-  const timeStr = date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
+    const timeStr = date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
 
-  if (diffDays === 0) return `Hôm nay, ${timeStr}`
-  if (diffDays === 1) return `Hôm qua, ${timeStr}`
-  if (diffDays < 7) return `${diffDays} ngày trước, ${timeStr}`
-  return date.toLocaleDateString("vi-VN", { day: "numeric", month: "short" }) + `, ${timeStr}`
-}
+    if (diffDays === 0) return `Hôm nay, ${timeStr}`
+    if (diffDays === 1) return `Hôm qua, ${timeStr}`
+    if (diffDays < 7) return `${diffDays} ngày trước, ${timeStr}`
+    return date.toLocaleDateString("vi-VN", { day: "numeric", month: "short" }) + `, ${timeStr}`
+  }
 
   const getNotificationIcon = (type: string) => {
     return <BellRing size={20} color="#E83E8C" />
@@ -134,13 +135,12 @@ const NotificationsScreen = () => {
                     </View>
                     <View className="flex-1">
                       <Text
-                        className={`font-bold text-base mb-1 ${notification.isRead ? "text-gray-700" : "text-pink-800"
-                          }`}
+                        className={`font-bold text-base mb-1 ${notification.isRead ? "text-gray-700" : "text-pink-800"}`}
                         numberOfLines={1}
                       >
-                        {notification.notiType}
+                        {getNotiTypeLabel(Number(notification.notiType) as NotiType)}
                       </Text>
-                      {!notification.isRead && <View className="bg-pink-500 rounded-full w-2 h-2 self-start" />}
+
                     </View>
                   </View>
 

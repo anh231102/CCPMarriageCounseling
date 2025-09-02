@@ -1,6 +1,7 @@
 import { Member } from "./member.type"
 import { Counselor } from "./counselor.type"
 import { SubCategory } from "./category.type"
+import { Couple } from "./couple.type"
 
 export interface BookingRequest {
   counselorId: string
@@ -173,4 +174,42 @@ export interface CancelInvitationResponse {
   success: boolean
   data: string
   error: string | null
+}
+
+export interface PersonTypeBundleRequest {
+  bookingId: string
+}
+
+export interface PersonTypeBundleResponse {
+  success: boolean
+  data: PersonTypeBundleData
+  error: string | null
+}
+
+export interface PersonTypeBundleData {
+  member1: MemberPersonality | null
+  member2: MemberPersonality | null
+  couple: Couple | null   // 👈 tái sử dụng Couple type
+}
+
+export interface MemberPersonality {
+  mbti: SurveyResult[]
+  disc: SurveyResult[]
+  loveLanguage: SurveyResult[]
+  bigFive: SurveyResult[]
+}
+
+export interface SurveyResult {
+  surveyId: string
+  result: string
+  description: string
+  rawScores: string
+  scores: Record<string, number>
+  createAt: string
+}
+export interface ConclusionType {
+  problemSummary: string | null
+  problemAnalysis: string | null
+  guides: string | null
+  bookingId: string
 }

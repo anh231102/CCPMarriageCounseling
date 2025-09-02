@@ -24,7 +24,7 @@ const MembershipPlanList = ({ onBought }: Props) => {
         setMembershipList(response.data)
       }
     } catch (error) {
-      console.error("Lỗi khi lấy danh sách gói thành viên", error)
+      
     } finally {
       setLoading(false)
     }
@@ -117,15 +117,19 @@ const MembershipPlanList = ({ onBought }: Props) => {
               <View className="mb-4 space-y-2">
                 <View className="flex-row items-center">
                   <CheckCircle size={16} color="#28A745" className="mr-2" />
-                  <Text className="text-secondary">Giảm {plan.discountCourse}% học phí</Text>
+                  <Text className="text-secondary ml-2">Giảm {plan.discountCourse}% học phí</Text>
                 </View>
                 <View className="flex-row items-center">
                   <CheckCircle size={16} color="#28A745" className="mr-2" />
-                  <Text className="text-secondary">Giảm {plan.discountBooking}% phí tư vấn</Text>
+                  <Text className="text-secondary ml-2">Giảm {plan.discountBooking}% phí tư vấn</Text>
                 </View>
                 <View className="flex-row items-center">
                   <CheckCircle size={16} color="#28A745" className="mr-2" />
-                  <Text className="text-secondary">Thời hạn: {plan.expiryDate} ngày</Text>
+                  <Text className="text-secondary ml-2">Miễn phí cho các khóa học dành riêng cho gói thành viên </Text>
+                </View>
+                <View className="flex-row items-center">
+                  <CheckCircle size={16} color="#28A745" className="mr-2" />
+                  <Text className="text-secondary ml-2">Thời hạn: {plan.expiryDate} ngày</Text>
                 </View>
               </View>
 

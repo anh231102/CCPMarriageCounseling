@@ -28,7 +28,7 @@ const ProfileScreen = () => {
     try {
       await logout()
     } catch (error) {
-      console.error("Lỗi khi đăng xuất:", error)
+      
     }
   }
 

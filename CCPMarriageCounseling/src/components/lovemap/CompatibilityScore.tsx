@@ -67,7 +67,10 @@ const CompatibilityScore = ({
       <View className="flex-row justify-between">
         {/* Member 1 */}
         <TouchableOpacity onPress={() => onPressPerson("member")} className="items-center flex-1">
-          <Text className="text-secondary text-sm">{member1.fullname}</Text>
+          <View className="h-10">
+            <Text className="text-secondary text-sm">{member1.fullname}</Text>
+          </View>
+
           <Image
             source={
               member1.avatar
@@ -92,7 +95,10 @@ const CompatibilityScore = ({
 
         {/* Member 2 */}
         <TouchableOpacity onPress={() => onPressPerson("member1")} className="items-center flex-1">
-          <Text className="text-secondary text-sm">{member2.fullname}</Text>
+          <View className="h-10">
+            <Text className="text-secondary text-sm">{member2.fullname}</Text>
+          </View>
+
           <Image
             source={
               member2.avatar
@@ -102,7 +108,7 @@ const CompatibilityScore = ({
             className="w-12 h-12 rounded-full my-2"
           />
 
-         
+
 
           <View className="bg-secondary/10 rounded-lg px-3 py-2">
             <Text className="text-secondary font-bold">{mbti2 || "N/A"}</Text>

@@ -16,13 +16,14 @@ import { useNavigation } from "@react-navigation/native"
 import { ArrowRight, CalendarDays, Users } from "lucide-react-native"
 
 import bookingApi from "@/src/config/api/booking.api"
-import { type BookingMemberData, BookingStatus, getBookingStatusLabel } from "@/src/config/types/booking.type"
+import { type BookingMemberData, BookingStatus, ConclusionType, getBookingStatusLabel, MemberPersonality } from "@/src/config/types/booking.type"
 import Loading from "@/src/components/share/Loading"
 import ConclusionModal from "@/src/components/booking/ConclusionModal"
 import AppointmentItem from "@/src/components/booking/AppointmentItem"
 import BookingHistoryControls from "@/src/components/booking/BookingHistoryControls"
 import BookingFilterModal from "@/src/components/booking/BookingFilterModal"
 import EmptyInvitation from "@/src/components/booking/EmptyInvitation"
+import ConclusionLoveMapModal from "@/src/components/booking/ConclusionLoveMapModal"
 
 const { width } = Dimensions.get("window")
 const PAGE_SIZE = 8
@@ -54,12 +55,11 @@ const AppointmentHistoryScreen = () => {
   const slideAnim = useState(new Animated.Value(width))[0]
   const [page, setPage] = useState(1)
   const [showConclusion, setShowConclusion] = useState(false)
-  const [selectedConclusion, setSelectedConclusion] = useState<{
-    problemSummary: string | null
-    problemAnalysis: string | null
-    guides: string | null
-  } | null>(null)
+ const [selectedConclusion, setSelectedConclusion] = useState<any>(null)
   const [refreshing, setRefreshing] = useState(false);
+  const [conclusionModalVisible, setConclusionModalVisible] = useState(false)
+
+
 
 
   // Fetch bookings
@@ -126,14 +126,14 @@ const AppointmentHistoryScreen = () => {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const pagedBookings = filteredBookings.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  const handleOpenConclusion = (conclusion: {
-    problemSummary: string | null
-    problemAnalysis: string | null
-    guides: string | null
-  }) => {
-    setSelectedConclusion(conclusion)
-    setShowConclusion(true)
-  }
+ 
+
+const handleOpenConclusion = (conclusion: ConclusionType) => {
+  setSelectedConclusion(conclusion)
+  setConclusionModalVisible(true)
+}
+
+
 
   return (
     <>
@@ -264,6 +264,11 @@ const AppointmentHistoryScreen = () => {
           guides={selectedConclusion.guides}
         />
       )}
+      <ConclusionLoveMapModal
+  visible={conclusionModalVisible}
+  onClose={() => setConclusionModalVisible(false)}
+  conclusion={selectedConclusion}
+/>
     </>
   )
 }
