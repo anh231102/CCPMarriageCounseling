@@ -10,7 +10,7 @@ import type { MembershipStatus } from "@/src/config/types/membership.type"
 import Loading from "../share/Loading"
 
 const { width } = Dimensions.get("window")
-const CARD_WIDTH = width - 32 // Account for horizontal padding
+const CARD_WIDTH = width - 28 // Account for horizontal padding
 
 const MembershipPromoPanel = () => {
     const navigation = useNavigation<any>()

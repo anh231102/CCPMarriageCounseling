@@ -247,7 +247,7 @@ const AppointmentItem = ({ item, onConclusionOpen, onReload, onUpdateItem, }: {
                     <View className="flex-row items-center mb-2">
                         <IconComponent size={16} color="#6C757D" className="mr-2" />
                         <Text className="text-secondary">
-                            {item.subCategories[0]?.name || "Video call"}
+                            { "Video call"}
                         </Text>
                     </View>
                 </View>

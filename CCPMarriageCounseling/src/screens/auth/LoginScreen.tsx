@@ -19,6 +19,7 @@ import CustomButton from "@/src/components/CustomButton"
 import InputField from "@/src/components/InputField"
 import type { AuthStackParamList } from "@/src/navigation/AuthNavigator"
 import Logo from "@/src/components/share/Logo"
+import Loading from "@/src/components/share/Loading"
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">
 
@@ -29,6 +30,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
 
   const handleLogin = async () => {
@@ -38,7 +40,7 @@ const LoginScreen = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) return;
-
+    setLoading(true);
     try {
       await login(email.trim(), password);
       setErrors({});
@@ -48,6 +50,8 @@ const LoginScreen = () => {
         apiError = error.response.data.error || error.response.data.message;
       }
       setErrors((prev) => ({ ...prev, api: apiError }));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,19 +115,19 @@ const LoginScreen = () => {
               {/* Lỗi API nếu có */}
               <View>
                 {errors.api && (
-                  <Text style={{ color: "red", marginLeft: 8,  }}>{errors.api}</Text>
+                  <Text style={{ color: "red", marginLeft: 8, }}>{errors.api}</Text>
                 )}
               </View>
 
               {/* Nút Quên mật khẩu luôn bên phải */}
-              <View style={{ alignSelf: "flex-end",  }}>
+              {/* <View style={{ alignSelf: "flex-end",  }}>
                 <CustomButton
                   onPress={() => navigation.navigate("ForgotPassword")}
                   variant="link"
                 >
                   <Text className="text-primary font-medium">Quên mật khẩu?</Text>
                 </CustomButton>
-              </View>
+              </View> */}
             </View>
           </View>
 
@@ -133,7 +137,11 @@ const LoginScreen = () => {
             disabled={isLoading}
             className="rounded-md p-4"
           >
-            <Text className="text-primary-foreground font-bold text-lg">Đăng nhập</Text>
+            {loading ? (
+              <Loading color="#fff" size={30} />
+            ) : (
+              <Text className="text-primary-foreground font-bold text-lg">Đăng nhập</Text>
+            )}
           </CustomButton>
 
           <View className="flex-row justify-center mt-8">
@@ -143,7 +151,7 @@ const LoginScreen = () => {
             </CustomButton>
           </View>
 
-          <View className="mt-10">
+          {/* <View className="mt-10">
             <View className="flex-row items-center mb-6">
               <View className="flex-1 h-px bg-gray-300" />
               <Text className="mx-4 text-secondary">Hoặc đăng nhập với</Text>
@@ -164,7 +172,7 @@ const LoginScreen = () => {
                 </CustomButton>
               ))}
             </View>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

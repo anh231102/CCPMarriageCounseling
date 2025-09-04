@@ -309,15 +309,7 @@ const AppointmentConfirmationScreen = () => {
             </View>
           </View>
 
-          <View className="flex-row items-center mb-3">
-            <CheckCircle size={18} color="#28A745" className="mr-2" />
-            <Text className="text-secondary">Thanh toán khi tư vấn</Text>
-          </View>
-
-          <View className="flex-row items-center">
-            <CheckCircle size={18} color="#28A745" className="mr-2" />
-            <Text className="text-secondary">Miễn phí hủy trước 24 giờ</Text>
-          </View>
+          
         </View>
 
         {/* Nút xác nhận */}

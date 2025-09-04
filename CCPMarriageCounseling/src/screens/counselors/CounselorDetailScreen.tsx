@@ -75,16 +75,19 @@ const CounselorDetailScreen = () => {
           </View>
 
           <Text className="text-gray-900 text-2xl font-bold text-center mb-2">{counselor.fullname}</Text>
+          <Text className="text-primary font-bold">{`${counselor.price.toLocaleString("vi-VN")}đ/Suất tư vấn`}</Text>
+          <View className="flex-row space-x-3 mt-3">
+            <View className="flex-row items-center bg-amber-50 px-3 py-1 rounded-full">
+              <Star size={16} color="#FFC107" fill="#FFC107" />
+              <Text className="text-amber-700 ml-1 font-semibold">{formatRating(counselor.rating)}</Text>
+            </View>
 
-          <View className="flex-row items-center bg-amber-50 px-3 py-1 rounded-full">
-            <Star size={16} color="#FFC107" fill="#FFC107" />
-            <Text className="text-amber-700 ml-1 font-semibold">{formatRating(counselor.rating)}</Text>
+            <View className="flex-row items-center  bg-gray-100 px-3 py-1 rounded-full">
+              <User size={14} color="#6B7280" />
+              <Text className="text-gray-600 ml-1 text-sm">{counselor.yearOfJob} năm kinh nghiệm</Text>
+            </View>
           </View>
 
-          <View className="flex-row items-center mt-3 bg-gray-100 px-3 py-1 rounded-full">
-            <User size={14} color="#6B7280" />
-            <Text className="text-gray-600 ml-1 text-sm">{counselor.yearOfJob} năm kinh nghiệm</Text>
-          </View>
         </View>
       </View>
 

@@ -44,14 +44,16 @@ const MyWalletScreen = () => {
   const [showTopUpModal, setShowTopUpModal] = useState(false)
   const [walletBalance, setWalletBalance] = useState<number | null>(null)
   const [loadingBalance, setLoadingBalance] = useState(true)
+  const [amountError, setAmountError] = useState("");
+
 
 
 
   const quickAmounts = [50000, 100000, 200000, 500000, 1000000, 2000000]
 
   const paymentMethods = [
-  { id: "vnpay", name: "VNPAY", icon: "💸", fee: 0 },
-]
+    { id: "vnpay", name: "VNPAY", icon: "💸", fee: 0 },
+  ]
 
   useFocusEffect(
     React.useCallback(() => {
@@ -86,6 +88,7 @@ const MyWalletScreen = () => {
       Alert.alert("Lỗi", "Số tiền nạp tối thiểu là 10,000 VND");
       return;
     }
+    if (amountError) return;
 
     try {
       // Gọi API lấy URL thanh toán VNPAY
@@ -198,42 +201,58 @@ const MyWalletScreen = () => {
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* Amount Selection */}
             <View className="mb-6">
-              <Text className="text-lg font-bold text-secondary-dark mb-4">Chọn số tiền</Text>
-              <View className="flex-row flex-wrap mb-4">
-                {quickAmounts.map((amount) => (
-                  <TouchableOpacity
-                    key={amount}
-                    onPress={() => {
-                      setSelectedAmount(amount)
-                      setCustomAmount("")
-                    }}
-                    className={`w-1/3 p-3 m-1 rounded-xl border ${selectedAmount === amount ? "border-primary bg-primary/10" : "border-gray-200 bg-gray-50"
-                      }`}
-                  >
-                    <Text
-                      className={`text-center font-medium ${selectedAmount === amount ? "text-primary" : "text-secondary-dark"
-                        }`}
-                    >
-                      {formatCurrency(amount)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
+              <Text className="text-lg font-bold text-secondary-dark mb-4">Nhập số tiền</Text>
               <View className="mb-4">
-                <Text className="text-secondary-dark font-medium mb-2">Hoặc nhập số tiền khác</Text>
+                
                 <TextInput
                   className="border border-gray-200 rounded-xl p-4 bg-gray-50 text-secondary-dark"
                   placeholder="Nhập số tiền"
                   placeholderTextColor="#6C757D"
                   value={customAmount}
                   onChangeText={(text) => {
-                    setCustomAmount(text)
-                    setSelectedAmount(null)
+                    const onlyNumber = text.replace(/[^0-9]/g, "");
+                    const amount = Number(onlyNumber);
+                    if (amount > 20000000) {
+                      setAmountError("Không thể nạp quá 20 triệu đồng");
+                    } else {
+                      setAmountError("");
+                    }
+                    setCustomAmount(onlyNumber);
+                    setSelectedAmount(null);
                   }}
                   keyboardType="numeric"
                 />
+                {amountError ? (
+                  <Text style={{ color: "red", marginTop: 4 }}>{amountError}</Text>
+                ) : null}
               </View>
+              <View>
+                <Text className="text-secondary-dark font-medium mb-2">Hoặc chọn số tiền khác</Text>
+                <View className="flex-row flex-wrap mb-4">
+
+                  {quickAmounts.map((amount) => (
+                    <TouchableOpacity
+                      key={amount}
+                      onPress={() => {
+                        setSelectedAmount(amount)
+                        setCustomAmount("")
+                      }}
+                      className={`w-1/3 p-3 m-1 rounded-xl border ${selectedAmount === amount ? "border-primary bg-primary/10" : "border-gray-200 bg-gray-50"
+                        }`}
+                    >
+                      <Text
+                        className={`text-center font-medium ${selectedAmount === amount ? "text-primary" : "text-secondary-dark"
+                          }`}
+                      >
+                        {formatCurrency(amount)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+
+
             </View>
 
             {/* Payment Methods */}

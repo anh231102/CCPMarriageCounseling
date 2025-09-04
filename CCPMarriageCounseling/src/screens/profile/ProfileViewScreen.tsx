@@ -80,7 +80,7 @@ const ProfileViewScreen = () => {
           { text: "Hủy", style: "cancel" },
           {
             text: "Thực hiện",
-            onPress: () => navigation.navigate("PersonTypeResultDetail", { type: surveyId, memberId: profile.id }),
+            onPress: () => navigation.navigate("SurveyTab", { screen: "SurveyList" }),
           },
         ]
       )
@@ -191,7 +191,7 @@ const ProfileViewScreen = () => {
           <View className="flex-1">
             {/* Avatar and Basic Info */}
             <View className="flex-row items-center">
-              <View className="w-20 h-20 rounded-full border-4 border-white shadow-lg mr-4">
+              <View className="w-20 h-20 rounded-full shadow-lg mr-4">
                 <MyProfileComponent image />
               </View>
               <View className="flex-1">

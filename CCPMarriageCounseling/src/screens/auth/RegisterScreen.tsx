@@ -38,19 +38,23 @@ const RegisterScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string; api?: string }>({});
 
   const handleRegister = async () => {
     const newErrors: typeof errors = {};
     if (!name.trim()) newErrors.name = "Vui lòng nhập họ và tên";
     if (!email.trim()) newErrors.email = "Vui lòng nhập email";
+    else if (!email.includes("@")) newErrors.email = "Email không hợp lệ";
     if (!password) newErrors.password = "Vui lòng nhập mật khẩu";
+    else if (password.length < 6) newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
     if (password !== confirmPassword) newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
+
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) return;
-
+    setLoading(true);
     try {
       await register(email, password, name);
       Alert.alert("Đăng ký thành công", "Bạn đã đăng ký tài khoản thành công!");
@@ -62,7 +66,9 @@ const RegisterScreen = () => {
         apiError = err.response.data.error || err.response.data.message;
       }
       setErrors((prev) => ({ ...prev, api: apiError }));
-      
+
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -170,7 +176,7 @@ const RegisterScreen = () => {
             disabled={isLoading}
             className={`rounded-xl p-4 items-center ${isLoading ? "bg-primary-light" : "bg-primary"}`}
           >
-            {isLoading ? (
+            {loading ? (
               <Loading color="#FFFFFF" size={30} />
             ) : (
               <Text className="text-white font-bold text-lg">Đăng ký</Text>
@@ -184,11 +190,7 @@ const RegisterScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <Text className="text-xs text-secondary text-center mt-8">
-            Bằng việc đăng ký, bạn đồng ý với{" "}
-            <Text className="text-primary">Điều khoản sử dụng</Text> và{" "}
-            <Text className="text-primary">Chính sách bảo mật</Text> của chúng tôi
-          </Text>
+         
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

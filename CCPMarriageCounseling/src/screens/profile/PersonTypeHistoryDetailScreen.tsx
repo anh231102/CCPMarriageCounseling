@@ -194,13 +194,7 @@ const SurveyHistoryDetailScreen = () => {
             <Text className="text-white font-bold ml-2">Làm lại bài khảo sát</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate("SurveyTab", { screen: "LoveMap" })}
-            className="bg-white border border-primary rounded-xl p-4 flex-row items-center justify-center"
-          >
-            <Award size={20} color={meta.color} />
-            <Text className="text-primary font-bold ml-2">Xem bản đồ tình yêu tổng hợp</Text>
-          </TouchableOpacity>
+          
         </View>
 
         {/* Footer Note */}

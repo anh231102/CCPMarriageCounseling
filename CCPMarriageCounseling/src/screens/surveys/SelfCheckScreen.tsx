@@ -10,6 +10,8 @@ import {
   Platform,
   KeyboardAvoidingView,
   Image,
+  Modal,
+  FlatList,
 } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { useNavigation, useRoute } from "@react-navigation/native"
@@ -23,6 +25,57 @@ import MyProfileComponent from "@/src/components/share/MyProfileComponent"
 import * as ImagePicker from "expo-image-picker"
 import { Picker } from "@react-native-picker/picker"
 import uploadImageApi from "@/src/config/api/uploadImage.api"
+
+interface CustomPickerProps {
+  label: string;
+  options: { label: string; value: any }[];
+  selectedValue: any;
+  onValueChange: (value: any) => void;
+}
+
+const CustomPicker: React.FC<CustomPickerProps> = ({ label, options, selectedValue, onValueChange }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  return (
+    <View className="">
+      
+      <TouchableOpacity
+        className="bg-gray-50 rounded-xl border border-gray-200 p-3 py-5"
+        onPress={() => setModalVisible(true)}
+      >
+        <Text className="text-gray-900">{options.find(o => o.value === selectedValue)?.label || "Chọn"}</Text>
+      </TouchableOpacity>
+
+      <Modal visible={modalVisible} transparent animationType="fade">
+        <View className="flex-1 justify-center items-center bg-black/40">
+          <View className="bg-white rounded-2xl w-11/12 max-h-80 overflow-hidden">
+            <FlatList
+              data={options}
+              keyExtractor={(item) => item.value?.toString() ?? ""}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  className="p-4 border-b border-gray-200"
+                  onPress={() => {
+                    onValueChange(item.value);
+                    setModalVisible(false);
+                  }}
+                >
+                  <Text className="text-gray-900">{item.label}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity
+              className="p-4 items-center"
+              onPress={() => setModalVisible(false)}
+            >
+              <Text className="text-red-500 font-semibold">Đóng</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
 
 const formatDateLocal = (date: Date): string => {
   const yyyy = date.getFullYear()
@@ -156,7 +209,7 @@ const SelfCheckScreen = () => {
               onPress: async () => {
                 try {
                   const existingRoom = await coupleApi.getLatestCoupleRoom()
-                  
+
                   navigation.navigate("CoupleSurveyRoom", {
                     coupleId: existingRoom.id,
                     isSurvey: isSurvey ?? false,
@@ -342,18 +395,20 @@ const SelfCheckScreen = () => {
               {/* Gender Picker */}
               <View className="mb-4">
                 <Text className="mb-2 text-sm font-medium text-gray-800">Giới tính đối tác</Text>
-                <View className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
-                  <Picker
-                    selectedValue={formData.partnerGender}
-                    onValueChange={(value) => handleInputChange("partnerGender", value)}
-                    style={{ height: 54 }}
-                    itemStyle={{ fontSize: 12 }}
-                  >
-                    <Picker.Item label="Chọn giới tính" value="" />
-                    <Picker.Item label="Nam" value="Nam" />
-                    <Picker.Item label="Nữ" value="Nữ" />
-                    <Picker.Item label="Khác" value="Khác" />
-                  </Picker>
+                <View className="">
+                  <View className="mb-4">
+                    <CustomPicker
+                      label=""
+                      options={[
+                        { label: "Chọn giới tính", value: "" },
+                        { label: "Nam", value: "Nam" },
+                        { label: "Nữ", value: "Nữ" },
+                        { label: "Khác", value: "Khác" },
+                      ]}
+                      selectedValue={formData.partnerGender}
+                      onValueChange={(value) => handleInputChange("partnerGender", value)}
+                    />
+                  </View>
                 </View>
               </View>
 
